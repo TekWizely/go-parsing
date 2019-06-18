@@ -2,7 +2,7 @@
 Package parser implements the base components of a token analyzer, enabling the
 creation of hand-written parsers for generating Abstract Syntax Trees.
 
-Some Features of this Lexer:
+Some Features of this Parser:
 
  * Infinite Lookahead
  * Mark / Reset Functionality
