@@ -2,33 +2,25 @@ package lexer
 
 import "testing"
 
+// expectTokensHasNext
+//
+func expectTokensHasNext(t *testing.T, tokens *Tokens, match bool) {
+	if tokens.HasNext() != match {
+		t.Errorf("Tokens.HasNext() expecting '%t'", match)
+	}
+}
+
 // expectTokensNext
 //
 func expectTokensNext(t *testing.T, tokens *Tokens, typ TokenType, str string) {
 	tok := tokens.Next()
 	if tok.Type != typ {
-		t.Errorf("Tokens.Next() Expecting Token.Type '%s', received '%s'", typ, tok.Type)
+		t.Errorf("Tokens.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
 	}
 	if tok.String != str {
-		t.Errorf("Tokens.Next() Expecting Token.String '%s', received '%s'", str, tok.String)
+		t.Errorf("Tokens.Next() expecting Token.String '%s', received '%s'", str, tok.String)
 	}
 }
-
-// expectTokensHasNext
-//
-func expectTokensHasNext(t *testing.T, tokens *Tokens, match bool) {
-	if tokens.HasNext() != match {
-		t.Errorf("Tokens.HasNext() expected to return %t", match)
-	}
-}
-
-// // expectTokensEOF
-// //
-// func expectTokensEOF(t *testing.T, tokens *Tokens) {
-// 	if tokens.HasNext() == true {
-// 		t.Errorf("Tokens.HasNext() expected to return false")
-// 	}
-// }
 
 // TestTokensHasNext1
 //

@@ -5,8 +5,8 @@ import "testing"
 // expectCanReset
 //
 func expectCanReset(t *testing.T, l *Lexer, m *Marker, match bool) {
-	if r := l.CanReset(m); r != match {
-		t.Errorf("Expecting Lexer.CanReset() to return %t, but received %t", match, r)
+	if l.CanReset(m) != match {
+		t.Errorf("Lexer.CanReset() expecting '%t'", match)
 	}
 }
 

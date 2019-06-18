@@ -1,8 +1,7 @@
 package lexer
 
 // Tokens is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
-//
-// Tokens implements a basic iterator pattern with HasNext() and Next() methods.
+// Implements a basic iterator pattern with HasNext() and Next() methods.
 //
 type Tokens struct {
 	lexer *Lexer

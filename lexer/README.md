@@ -1,13 +1,12 @@
 # go-parsing / lexer
 [![GoDoc](https://godoc.org/github.com/tekwizely/go-parsing/lexer?status.svg)](https://godoc.org/github.com/tekwizely/go-parsing/lexer)
-[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/TekWizely/go-parsing/blob/master/LICENSE)
+[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/tekwizely/go-parsing/blob/master/LICENSE)
 
 ## Overview
 
-Base components of a lexical analyzer, enabling the
-creation of hand-written lexers for tokenizing textual content.
+Base components of a lexical analyzer, enabling the creation of hand-written lexers for tokenizing textual content.
 
-The tokenized data is suitable for processing with a parser. 
+The tokenized data is suitable for processing with a parser.
 
 Some Features of this Lexer:
 
@@ -57,7 +56,7 @@ func LexRunes(input []rune, start LexerFn) *Tokens
 func LexBytes(input []byte, start LexerFn) *Tokens
 ```
 
-#### Lexer Functions ( `lexer.LexerFN` )
+#### Lexer Functions ( `lexer.LexerFn` )
 
 In addition to the `input` data, each Lex function also accepts a function which serves as the starting point for your lexer.
 
@@ -65,13 +64,15 @@ The main Lexer process will call into this `start` function to initiate lexing.
 
 Lexer functions scan runes and emit tokens.
 
-Lexer defines `LexerFN` with the following signature:
+Lexer defines `LexerFn` with the following signature:
 
 ```go
+// LexerFn are user functions that scan runes and emit tokens.
+//
 type LexerFn func(*Lexer) LexerFn
 ```
 
-#### Scanning Input Data ( `lexer.Lexer` )
+#### Scanning Runes ( `lexer.Lexer` )
 
 When called, your lexer function will receive a `Lexer` object which provides methods to inspect runes and match them to tokens.
 
@@ -121,7 +122,7 @@ func (l *Lexer) HasNext() bool
 
 **NOTE:** When the Lexer calls your lexer function, it guarantees that `HasNext() == true`, allowing you to consume that first rune without having to confirm its availability.
 
-**NOTE:** `HasNext()` is functionally equivalent to `CanPeek(1)` - So if you've already confirmed `CanPeek(n >= 1)` then you can safely forgo the `HasNext()` check. 
+**NOTE:** `HasNext()` is functionally equivalent to `CanPeek(1)` - So if you've already confirmed `CanPeek(n >= 1)` then you can safely forgo the `HasNext()` check.
 
 ###### Consume The Rune
 
@@ -138,7 +139,7 @@ func (l *Lexer) Next() rune
 Once you've built up a token by consuming 1 or more runes, you may want to review it in its entirety before deciding what type of token it represents.
 
 For this we have the following PeekToken functions:
- 
+
 ###### Return Type: `string`
 
 ```go
@@ -151,7 +152,7 @@ func (l *Lexer) PeekToken() string
 ###### Return Type: `[]rune`
 
 ```go
-// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune )
+// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune ).
 //
 func (l *Lexer) PeekTokenRunes() []rune
 ```
@@ -222,7 +223,7 @@ For this, we have `CanReset()`:
 
 ```go
 // CanReset confirms if the marker is still valid.
-// If CanReset returns true, you can safely reset the lexer state to the marker position. 
+// If CanReset returns true, you can safely reset the lexer state to the marker position.
 //
 func (l *Lexer) CanReset(m *Marker) bool
 ```
@@ -242,7 +243,7 @@ func (l *Lexer) Reset(m *Marker) LexerFn
 
 #### Returning From Lexer Function ( `return LexerFn` )
 
-You'll notice that the `LexerFN` return type is another `LexerFN`
+You'll notice that the `LexerFn` return type is another `LexerFn`
 
 This is to allow for simplified flow control of your lexer function.
 
@@ -294,7 +295,7 @@ You define your own token types starting from `T_START`:
 ```go
 const (
     T_INT = lexer.T_START + iota
-    T_CHAR    
+    T_CHAR
 )
 ```
 
@@ -310,7 +311,7 @@ Tokens implements a basic iterator pattern.
 
 A well-behaved program will first ensure that a token is available before trying to retrieve it.
 
-For this, we have `HasNext()` : 
+For this, we have `HasNext()` :
 
 ```go
 // HasNext confirms if there are tokens available.
@@ -318,7 +319,7 @@ For this, we have `HasNext()` :
 //
 func (t *Tokens) HasNext() bool
 ```
-    
+
 ###### Retrieving A Token
 
 Once you confirm its safe to do so, `Next()` will retrieve the next Token from the lexer output.

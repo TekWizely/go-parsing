@@ -187,9 +187,9 @@ func (l *Lexer) PeekToken() string {
 	return b.String()
 }
 
-// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune )
+// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune ).
 // Panics if EOF already emitted.
-// This is a convenience method and simply executes return []rune(l.PeekToken())
+// This is a convenience method and simply executes return []rune(l.PeekToken()).
 //
 func (l *Lexer) PeekTokenRunes() []rune {
 	return []rune(l.PeekToken())
@@ -197,8 +197,9 @@ func (l *Lexer) PeekTokenRunes() []rune {
 
 // EmitToken emits a token of the specified type, along with all of the consumed runes.
 // It is safe to emit T_EOF via this method.
-// If the type is T_EOF, then the consumed runes are ignore and this is treated as EmitEOF()
+// If the type is T_EOF, then the consumed runes are discarded and this is treated as EmitEOF().
 // All outstanding markers are invalidated after this call.
+// See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
 //
 func (l *Lexer) EmitToken(t TokenType) {
@@ -214,7 +215,7 @@ func (l *Lexer) EmitToken(t TokenType) {
 // The emitted token will have a Text() value of "".
 // It is safe to emit T_EOF via this method.
 // All outstanding markers are invalidated after this call.
-// See EmitEOF for more details on the effects of emitting EOF
+// See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
 //
 func (l *Lexer) EmitType(t TokenType) {
@@ -251,7 +252,8 @@ func (l *Lexer) EmitErrorf(format string, args ...interface{}) {
 }
 
 // EmitEOF emits a token of type TokenEOF, discarding consumed runes.
-// You will likely never need to call this directly, as Lex will auto-emit EOF before exiting, if not already emitted.
+// You will likely never need to call this directly, as Lex will auto-emit EOF (T_EOF) before exiting,
+// if not already emitted.
 // No more reads to the underlying RuneReader will happen once EOF is emitted.
 // No more runes can be consumed once EOF is emitted.
 // All outstanding markers are invalidated after this call.
@@ -358,10 +360,10 @@ func (l *Lexer) growPeek(n int) bool {
 	return true
 }
 
-// peekHead computes the peek buffer head as a function of the tokenTail
+// peekHead computes the peek buffer head as a function of the tokenTail.
 //
 func (l *Lexer) peekHead() *list.Element {
-	// If token is non-empty
+	// If any consumed runes
 	//
 	if l.tokenLen > 0 {
 		// Peek buffer starts after token
@@ -375,7 +377,7 @@ func (l *Lexer) peekHead() *list.Element {
 }
 
 // emit Emits a Token, optionally including the matched text.
-// If TokenType is T_EOF, emitExt is ignored and treated as false
+// If TokenType is T_EOF, emitExt is ignored and treated as false.
 // Panics if EOF already emitted.
 //
 func (l *Lexer) emit(t TokenType, emitText bool) {
@@ -389,9 +391,8 @@ func (l *Lexer) emit(t TokenType, emitText bool) {
 
 	// If emitting EOF
 	//
-
 	if T_EOF == t {
-		// Clear the peek buffer, discarding matched tokens
+		// Clear the peek buffer, discarding consumed runes
 		//
 		l.tokenTail = nil
 		l.tokenLen = 0
@@ -431,7 +432,7 @@ func (l *Lexer) consume(returnText bool) string {
 		}
 		s = b.String()
 	} else {
-		// Discard token
+		// Discard runes
 		//
 		for l.tokenLen > 0 {
 			l.runes.Remove(l.runes.Front())

@@ -30,8 +30,8 @@ func assertPanic(t *testing.T, f func(), msg string) {
 // expectCanPeek
 //
 func expectCanPeek(t *testing.T, l *Lexer, peek int, match bool) {
-	if r := l.CanPeek(peek); r != match {
-		t.Errorf("Expecting Lexer.CanPeek(%d) to return '%t', but received '%t'", peek, match, r)
+	if l.CanPeek(peek) != match {
+		t.Errorf("Lexer.CanPeek(%d) expecting '%t'", peek, match)
 	}
 }
 
@@ -46,8 +46,8 @@ func expectPeek(t *testing.T, l *Lexer, peek int, match rune) {
 // expectHasNext
 //
 func expectHasNext(t *testing.T, l *Lexer, match bool) {
-	if r := l.HasNext(); r != match {
-		t.Errorf("Expecting Lexer.HasNext() to return '%t', but received '%t'", match, r)
+	if l.HasNext() != match {
+		t.Errorf("Lexer.HasNext() expecting '%t'", match)
 	}
 }
 
@@ -55,7 +55,7 @@ func expectHasNext(t *testing.T, l *Lexer, match bool) {
 //
 func expectNext(t *testing.T, l *Lexer, match rune) {
 	if r := l.Next(); r != match {
-		t.Errorf("Expecting Lexer.Next() to return '%c', but received '%c'", match, r)
+		t.Errorf("Lexer.Next() expecting rune '%c', received '%c'", match, r)
 	}
 }
 
@@ -64,7 +64,7 @@ func expectNext(t *testing.T, l *Lexer, match rune) {
 func expectPeekToken(t *testing.T, l *Lexer, match string) {
 	s := l.PeekToken()
 	if s != match {
-		t.Errorf("Expecting Lexer.PeekToken() to match '%s', received '%s'", match, s)
+		t.Errorf("Lexer.PeekToken() expecting '%s', received '%s'", match, s)
 	}
 }
 
@@ -74,7 +74,7 @@ func expectPeekTokenRunes(t *testing.T, l *Lexer, match string) {
 	r := l.PeekTokenRunes()
 	s := string(r)
 	if s != match {
-		t.Errorf("Expecting Lexer.PeekTokenRunes() to match '%s', received '%s'", match, s)
+		t.Errorf("Lexer.PeekTokenRunes() expecting '%s', received '%s'", match, s)
 	}
 }
 
@@ -83,7 +83,7 @@ func expectPeekTokenRunes(t *testing.T, l *Lexer, match string) {
 func expectEOF(t *testing.T, l *Lexer) {
 	eof := l.eof && l.runes.Len() == l.tokenLen
 	if !eof {
-		t.Error("Expecting to be at EOF")
+		t.Error("Lexer expecting to be at EOF")
 	}
 }
 
@@ -128,7 +128,7 @@ func TestNilFn(t *testing.T) {
 	expectTokensHasNext(t, tokens, false)
 }
 
-// TestEmitTokenType
+// TestLexerFnSkippedWhenNoHasNext
 //
 func TestLexerFnSkippedWhenNoHasNext(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
@@ -165,6 +165,28 @@ func TestEmitEmptyToken(t *testing.T) {
 	expectTokensHasNext(t, tokens, false)
 }
 
+// TestCanPeek
+//
+func TestCanPeek(t *testing.T) {
+	fn := func(l *Lexer) LexerFn {
+		expectCanPeek(t, l, 1, true)
+
+		expectPeek(t, l, 1, '1')
+
+		expectCanPeek(t, l, 2, true)
+
+		expectPeek(t, l, 2, '2')
+
+		expectCanPeek(t, l, 3, true)
+
+		expectPeek(t, l, 3, '3')
+
+		return nil
+	}
+	tokens := LexString("123", fn)
+	expectTokensHasNext(t, tokens, false)
+}
+
 // TestCanPeekPastEOF
 //
 func TestCanPeekPastEOF(t *testing.T) {
@@ -195,6 +217,9 @@ func TestCanPeekRangeError(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		assertPanic(t, func() {
 			l.CanPeek(-1)
+		}, "Lexer.CanPeek: range error")
+		assertPanic(t, func() {
+			l.CanPeek(0)
 		}, "Lexer.CanPeek: range error")
 		return nil
 	}
@@ -258,6 +283,9 @@ func TestPeekRangeError(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		assertPanic(t, func() {
 			l.Peek(-1)
+		}, "Lexer.Peek: range error")
+		assertPanic(t, func() {
+			l.Peek(0)
 		}, "Lexer.Peek: range error")
 		return nil
 	}

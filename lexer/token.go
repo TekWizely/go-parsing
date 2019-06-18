@@ -42,6 +42,6 @@ func newToken(typ TokenType, str string) *Token {
 	return &Token{Type: typ, String: str}
 }
 
-// eof returns true if the TokenType == T_EOF
+// eof returns true if the TokenType == T_EOF.
 //
 func (t *Token) eof() bool { return T_EOF == t.Type }

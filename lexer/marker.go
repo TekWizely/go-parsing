@@ -1,8 +1,6 @@
 package lexer
 
-import (
-	"container/list"
-)
+import "container/list"
 
 // Marker snapshots the state of the lexer to allow rewinding.
 //
