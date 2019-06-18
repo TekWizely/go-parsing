@@ -1,0 +1,31 @@
+##
+# Pre-commit hook configuration
+#
+#   https://pre-commit.com/
+#
+repos:
+
+    ##
+    # Standard hooks
+    #
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.3
+    hooks:
+      -   id: check-merge-conflict
+      -   id: check-yaml
+      -   id: end-of-file-fixer
+      -   id: trailing-whitespace
+
+    ##
+    # Go-Related Hooks
+    #
+-   repo: git://github.com/dnephin/pre-commit-golang
+    rev: v0.3.3
+    hooks:
+      - id: go-fmt
+      - id: go-vet
+      - id: go-lint
+#     - id: golangci-lint
+#     - id: go-critic      # Replace golint after this PR goes live : https://github.com/dnephin/pre-commit-golang/pull/33
+      - id: go-unit-tests
+      - id: go-build
