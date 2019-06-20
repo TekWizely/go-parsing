@@ -2,18 +2,18 @@ package lexer
 
 import "testing"
 
-// expectTokensHasNext
+// expectNexterHasNext
 //
-func expectTokensHasNext(t *testing.T, tokens TokenNexter, match bool) {
-	if tokens.HasNext() != match {
+func expectNexterHasNext(t *testing.T, nexter TokenNexter, match bool) {
+	if nexter.HasNext() != match {
 		t.Errorf("TokenNexter.HasNext() expecting '%t'", match)
 	}
 }
 
-// expectTokensNext
+// expectNexterNext
 //
-func expectTokensNext(t *testing.T, tokens TokenNexter, typ TokenType, str string) {
-	tok := tokens.Next()
+func expectNexterNext(t *testing.T, nexter TokenNexter, typ TokenType, str string) {
+	tok := nexter.Next()
 	if tok.Type != typ {
 		t.Errorf("TokenNexter.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
 	}
@@ -29,10 +29,10 @@ func TestTokensHasNext1(t *testing.T) {
 		l.EmitType(T_START)
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, true)
-	expectTokensNext(t, tokens, T_START, "")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterNext(t, nexter, T_START, "")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestTokensHasNext2
@@ -42,26 +42,26 @@ func TestTokensHasNext2(t *testing.T) {
 		l.EmitType(T_START)
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, true)
-	expectTokensHasNext(t, tokens, true) // Call again, should hit cached 'next' value
-	expectTokensNext(t, tokens, T_START, "")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterHasNext(t, nexter, true) // Call again, should hit cached 'next' value
+	expectNexterNext(t, nexter, T_START, "")
+	expectNexterHasNext(t, nexter, false)
 }
 
-// TestTokenEOF
+// TestTokensEOF
 //
 func TestTokensEOF(t *testing.T) {
-	tokens := LexString(".", nil)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", nil)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestTokensNextAfterEOF
 //
 func TestTokensNextAfterEOF(t *testing.T) {
-	tokens := LexString(".", nil)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", nil)
+	expectNexterHasNext(t, nexter, false)
 	assertPanic(t, func() {
-		tokens.Next()
+		nexter.Next()
 	}, "TokenNexter.Next: No token available")
 }

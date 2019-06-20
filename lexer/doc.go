@@ -189,20 +189,13 @@ lexer.
 
 `TokenNexter` implements a basic iterator pattern:
 
-	// TokenNexter is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
-	// Implements a basic iterator pattern with HasNext() and Next() methods.
-	//
 	type TokenNexter interface {
 
 		// HasNext confirms if there are tokens available.
-		// If it returns true, you can safely call Next() to retrieve the next token.
-		// If it returns false, EOF has been reached and calling Next() will generate a panic.
 		//
 		HasNext() bool
 
 		// Next Retrieves the next token from the lexer.
-		// See HasNext() to determine if any tokens are available.
-		// Panics if HasNext() returns false.
 		//
 		Next() *Token
 	}

@@ -124,8 +124,8 @@ func expectMatchEmitString(t *testing.T, l *Lexer, match string, emitType TokenT
 // TestNilFn
 //
 func TestNilFn(t *testing.T) {
-	tokens := LexString("", nil)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("", nil)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestLexerFnSkippedWhenNoHasNext
@@ -135,8 +135,8 @@ func TestLexerFnSkippedWhenNoHasNext(t *testing.T) {
 		t.Error("Lexer should not call LexerFn when HasNext() == false")
 		return nil
 	}
-	tokens := LexString("", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitTokenType
@@ -146,10 +146,10 @@ func TestEmitEmptyType(t *testing.T) {
 		l.EmitType(T_START)
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, true)
-	expectTokensNext(t, tokens, T_START, "")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterNext(t, nexter, T_START, "")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEmptyToken
@@ -159,10 +159,10 @@ func TestEmitEmptyToken(t *testing.T) {
 		l.EmitToken(T_START)
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, true)
-	expectTokensNext(t, tokens, T_START, "")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterNext(t, nexter, T_START, "")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeek
@@ -183,8 +183,8 @@ func TestCanPeek(t *testing.T) {
 
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeekPastEOF
@@ -207,8 +207,8 @@ func TestCanPeekPastEOF(t *testing.T) {
 
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeekRangeError
@@ -223,8 +223,8 @@ func TestCanPeekRangeError(t *testing.T) {
 		}, "Lexer.CanPeek: range error")
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeek1
@@ -234,8 +234,8 @@ func TestPeek1(t *testing.T) {
 		expectPeek(t, l, 1, '1')
 		return nil
 	}
-	tokens := LexString("1", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("1", fn)
+	expectNexterHasNext(t, nexter, false)
 
 }
 
@@ -247,8 +247,8 @@ func TestPeek11(t *testing.T) {
 		expectPeek(t, l, 1, 'A')
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeek12
@@ -259,8 +259,8 @@ func TestPeek12(t *testing.T) {
 		expectPeek(t, l, 2, 'B')
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekEmpty
@@ -273,8 +273,8 @@ func TestPeekEmpty(t *testing.T) {
 		}, "Lexer.Peek: No rune available")
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekRangeError
@@ -289,8 +289,8 @@ func TestPeekRangeError(t *testing.T) {
 		}, "Lexer.Peek: range error")
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestHasNextTrue
@@ -300,8 +300,8 @@ func TestHasNextTrue(t *testing.T) {
 		expectHasNext(t, l, true)
 		return nil
 	}
-	tokens := LexString("1", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("1", fn)
+	expectNexterHasNext(t, nexter, false)
 
 }
 
@@ -314,8 +314,8 @@ func TestHasNextFalse(t *testing.T) {
 		expectHasNext(t, l, false)
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, false)
 
 }
 
@@ -327,8 +327,8 @@ func TestNext1(t *testing.T) {
 		expectNext(t, l, 'A')
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNext2
@@ -341,8 +341,8 @@ func TestNext2(t *testing.T) {
 		expectNext(t, l, 'B')
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmpty
@@ -355,8 +355,8 @@ func TestNextEmpty(t *testing.T) {
 		}, "Lexer.Next: No rune available")
 		return nil
 	}
-	tokens := LexString(".", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString(".", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmit1
@@ -368,9 +368,9 @@ func TestNextEmit1(t *testing.T) {
 		l.EmitToken(T_CHAR)
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensNext(t, tokens, T_CHAR, "A")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterNext(t, nexter, T_CHAR, "A")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmit2
@@ -385,10 +385,10 @@ func TestNextEmit2(t *testing.T) {
 		l.EmitToken(T_CHAR)
 		return nil
 	}
-	tokens := LexString("AB", fn)
-	expectTokensNext(t, tokens, T_CHAR, "A")
-	expectTokensNext(t, tokens, T_CHAR, "B")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("AB", fn)
+	expectNexterNext(t, nexter, T_CHAR, "A")
+	expectNexterNext(t, nexter, T_CHAR, "B")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchInt
@@ -398,9 +398,9 @@ func TestMatchInt(t *testing.T) {
 		expectMatchEmitString(t, l, "123", T_INT)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensNext(t, tokens, T_INT, "123")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterNext(t, nexter, T_INT, "123")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchIntString
@@ -411,10 +411,10 @@ func TestMatchIntString(t *testing.T) {
 		expectMatchEmitString(t, l, "ABC", T_STRING)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_INT, "123")
-	expectTokensNext(t, tokens, T_STRING, "ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_INT, "123")
+	expectNexterNext(t, nexter, T_STRING, "ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchString
@@ -424,9 +424,9 @@ func TestMatchString(t *testing.T) {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchRunes
@@ -436,9 +436,9 @@ func TestMatchRunes(t *testing.T) {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
-	tokens := LexRunes([]rune("123ABC"), fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexRunes([]rune("123ABC"), fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchBytes
@@ -448,9 +448,9 @@ func TestMatchBytes(t *testing.T) {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
-	tokens := LexBytes([]byte("123ABC"), fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexBytes([]byte("123ABC"), fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMatchReader
@@ -460,9 +460,9 @@ func TestMatchReader(t *testing.T) {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
-	tokens := LexReader(strings.NewReader("123ABC"), fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexReader(strings.NewReader("123ABC"), fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscardToken1
@@ -473,8 +473,8 @@ func TestDiscardToken1(t *testing.T) {
 		l.DiscardToken()
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscardToken2
@@ -486,9 +486,9 @@ func TestDiscardToken2(t *testing.T) {
 		l.DiscardToken()
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_INT, "123")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_INT, "123")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscardToken3
@@ -500,9 +500,9 @@ func TestDiscardToken3(t *testing.T) {
 		expectMatchEmitString(t, l, "ABC", T_STRING)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF1
@@ -513,8 +513,8 @@ func TestEmitEOF1(t *testing.T) {
 		expectEOF(t, l)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF2
@@ -526,8 +526,8 @@ func TestEmitEOF2(t *testing.T) {
 		expectEOF(t, l)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF3
@@ -538,8 +538,8 @@ func TestEmitEOF3(t *testing.T) {
 		expectEOF(t, l)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF4
@@ -550,8 +550,8 @@ func TestEmitEOF4(t *testing.T) {
 		expectEOF(t, l)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF5
@@ -563,8 +563,8 @@ func TestEmitEOF5(t *testing.T) {
 		expectEOF(t, l)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitError
@@ -574,9 +574,9 @@ func TestEmitError(t *testing.T) {
 		l.EmitError("ERROR")
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensNext(t, tokens, T_LEX_ERR, "ERROR")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterNext(t, nexter, T_LEX_ERR, "ERROR")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitErrorf
@@ -586,9 +586,9 @@ func TestEmitErrorf(t *testing.T) {
 		l.EmitErrorf("ERROR: %s %d", "Error", 1)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensNext(t, tokens, T_LEX_ERR, "ERROR: Error 1")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterNext(t, nexter, T_LEX_ERR, "ERROR: Error 1")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitAfterEOF
@@ -629,8 +629,8 @@ func TestCanPeekAfterEOF(t *testing.T) {
 		expectCanPeek(t, l, 1, false)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekAfterEOF
@@ -644,8 +644,8 @@ func TestPeekAfterEOF(t *testing.T) {
 		}, "Lexer.Peek: No runes can be peeked after EOF is emitted")
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestHasNextAfterEOF
@@ -657,8 +657,8 @@ func TestHasNextAfterEOF(t *testing.T) {
 		expectHasNext(t, l, false)
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextAfterEOF
@@ -672,8 +672,8 @@ func TestNextAfterEOF(t *testing.T) {
 		}, "Lexer.Next: No runes can be consumed after EOF is emitted")
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekTokenAfterEOF
@@ -688,8 +688,8 @@ func TestPeekTokenAfterEOF(t *testing.T) {
 		}, "Lexer.PeekToken: No token peeks allowed after EOF is emitted")
 		return nil
 	}
-	tokens := LexString("123", fn)
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123", fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitErrorAfterEOF

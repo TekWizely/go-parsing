@@ -21,9 +21,9 @@ func TestMarkerUnused(t *testing.T) {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerCanReset
@@ -37,9 +37,9 @@ func TestMarkerCanReset(t *testing.T) {
 		expectCanReset(t, l, m, false)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerImmediateReset
@@ -55,9 +55,9 @@ func TestMarkerImmediateReset(t *testing.T) {
 		expectCanReset(t, l, m, false)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerReset
@@ -74,9 +74,9 @@ func TestMarkerReset(t *testing.T) {
 		expectCanReset(t, l, m, false)
 		return nil
 	}
-	tokens := LexString("123ABC", fn)
-	expectTokensNext(t, tokens, T_STRING, "123ABC")
-	expectTokensHasNext(t, tokens, false)
+	nexter := LexString("123ABC", fn)
+	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerResetInvalid
