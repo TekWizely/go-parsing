@@ -12,7 +12,7 @@ Initiating a Parser
 
 	// Parse initiates a parser against the input token stream.
 	//
-	func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits
+	func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter
 
 
 Parser Functions
@@ -126,18 +126,21 @@ you can use this pattern:
 
 Retrieving Emitted ASTs
 
-When called, the `Parse` function will return an `Emits` object which provides methods to retrieve ASTs emitted from the
+When called, the `Parse` function will return an `ASTNexter` which provides methods to retrieve ASTs emitted from the
 parser.
 
-`Emits` implements a basic iterator pattern:
+`ASTNexter` implements a basic iterator pattern:
 
-	// HasNext confirms if there are ASTs available.
-	//
-	func (e *Emits) HasNext() bool
+	type ASTNexter interface {
 
-	// Next Retrieves the next AST from the parser.
-	//
-	func (e *Emits) Next() interface{}
+		// HasNext confirms if there are ASTs available.
+		//
+		HasNext() bool
+
+		// Next Retrieves the next AST from the parser.
+		//
+		Next() interface{}
+	}
 
 
 Example Programs

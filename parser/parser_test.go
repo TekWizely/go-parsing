@@ -105,8 +105,8 @@ func expectEOF(t *testing.T, p *Parser) {
 //
 func TestNilFn(t *testing.T) {
 	tokens := mockLexer()
-	emits := Parse(tokens, nil)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, nil)
+	expectNexterHasNext(t, nexter, false)
 }
 
 func TestParserFnSkipedWhenNoHasNext(t *testing.T) {
@@ -115,8 +115,8 @@ func TestParserFnSkipedWhenNoHasNext(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 
 }
 
@@ -129,10 +129,10 @@ func TestEmit(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, true)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeek
@@ -154,8 +154,8 @@ func TestCanPeek(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO, T_THREE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeekPastEOF
@@ -179,8 +179,8 @@ func TestCanPeekPastEOF(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO, T_THREE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestCanPeekRangeError
@@ -196,8 +196,8 @@ func TestCanPeekRangeError(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeek1
@@ -208,8 +208,8 @@ func TestPeek1(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeek11
@@ -221,8 +221,8 @@ func TestPeek11(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeek12
@@ -234,8 +234,8 @@ func TestPeek12(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekEmpty
@@ -248,8 +248,8 @@ func TestPeekEmpty(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekRangeError
@@ -265,8 +265,8 @@ func TestPeekRangeError(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestHasNextTrue
@@ -277,8 +277,8 @@ func TestHasNextTrue(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestHasNextFalse
@@ -289,8 +289,8 @@ func TestHasNextFalse(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNext1
@@ -302,8 +302,8 @@ func TestNext1(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNext2
@@ -317,8 +317,8 @@ func TestNext2(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmpty
@@ -331,8 +331,8 @@ func TestNextEmpty(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer()
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmit1
@@ -345,9 +345,9 @@ func TestNextEmit1(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_ONE")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_ONE")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextEmit2
@@ -363,10 +363,10 @@ func TestNextEmit2(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_ONE")
-	expectEmitsNext(t, emits, "T_TWO")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_ONE")
+	expectNexterNext(t, nexter, "T_TWO")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscard1
@@ -379,8 +379,8 @@ func TestDiscard1(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscard2
@@ -396,9 +396,9 @@ func TestDiscard2(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_ONE")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_ONE")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscard3
@@ -414,9 +414,9 @@ func TestDiscard3(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_TWO")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_TWO")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF1
@@ -428,8 +428,8 @@ func TestEmitEOF1(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF2
@@ -442,8 +442,8 @@ func TestEmitEOF2(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF3
@@ -455,8 +455,8 @@ func TestEmitEOF3(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitAfterEOF
@@ -485,8 +485,8 @@ func TestCanPeekAfterEOF(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestPeekAfterEOF
@@ -501,8 +501,8 @@ func TestPeekAfterEOF(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestHesNextAfterEOF
@@ -515,8 +515,8 @@ func TestHasNextAfterEOF(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestNextAfterEOF
@@ -531,8 +531,8 @@ func TestNextAfterEOF(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestDiscardAfterEOF

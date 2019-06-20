@@ -25,9 +25,9 @@ func TestMarkerUnused(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerCanReset
@@ -42,9 +42,9 @@ func TestMarkerCanReset(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerImmediateReset
@@ -63,9 +63,9 @@ func TestMarkerImmediateReset(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerReset
@@ -84,9 +84,9 @@ func TestMarkerReset(t *testing.T) {
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestMarkerResetInvalid

@@ -6,69 +6,69 @@ import (
 	"github.com/tekwizely/go-parsing/lexer"
 )
 
-// expectEmitsHasNext
+// expectNexterHasNext
 //
-func expectEmitsHasNext(t *testing.T, emits *Emits, match bool) {
-	if emits.HasNext() != match {
-		t.Errorf("Emits.HasNext() expecting '%t'", match)
+func expectNexterHasNext(t *testing.T, nexter ASTNexter, match bool) {
+	if nexter.HasNext() != match {
+		t.Errorf("ASTNexter.HasNext() expecting '%t'", match)
 	}
 }
 
-// expectEmitsNext
+// expectNexterNext
 //
-func expectEmitsNext(t *testing.T, emits *Emits, match string) {
-	str := emits.Next().(string)
+func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
+	str := nexter.Next().(string)
 	if str != match {
-		t.Errorf("Emits.Next() expecting '%s', received '%s'", match, str)
+		t.Errorf("ASTNexter.Next() expecting '%s', received '%s'", match, str)
 	}
 }
 
-// TestEmitsHasNext1
+// TestNexterHasNext1
 //
-func TestEmitsHasNext1(t *testing.T) {
+func TestNexterHasNext1(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectNext(t, p, lexer.T_START, "")
 		p.Emit("T_START")
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, true)
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
-// TestEmitsHasNext2
+// TestNexterHasNext2
 //
-func TestEmitsHasNext2(t *testing.T) {
+func TestNexterHasNext2(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectNext(t, p, lexer.T_START, "")
 		p.Emit("T_START")
 		return nil
 	}
 	tokens := mockLexer(lexer.T_START)
-	emits := Parse(tokens, fn)
-	expectEmitsHasNext(t, emits, true)
-	expectEmitsHasNext(t, emits, true) // Call again, should hit cached 'next' value
-	expectEmitsNext(t, emits, "T_START")
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, fn)
+	expectNexterHasNext(t, nexter, true)
+	expectNexterHasNext(t, nexter, true) // Call again, should hit cached 'next' value
+	expectNexterNext(t, nexter, "T_START")
+	expectNexterHasNext(t, nexter, false)
 }
 
 // TestEmitEOF
 //
-func TestEmitsEOF(t *testing.T) {
+func TestNexterEOF(t *testing.T) {
 	tokens := mockLexer()
-	emits := Parse(tokens, nil)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, nil)
+	expectNexterHasNext(t, nexter, false)
 }
 
-// TestEmitsNextAfterEOF
+// TestNexterNextAfterEOF
 //
-func TestEmitsNextAfterEOF(t *testing.T) {
+func TestNexterNextAfterEOF(t *testing.T) {
 	tokens := mockLexer()
-	emits := Parse(tokens, nil)
-	expectEmitsHasNext(t, emits, false)
+	nexter := Parse(tokens, nil)
+	expectNexterHasNext(t, nexter, false)
 	assertPanic(t, func() {
-		emits.Next()
-	}, "Emits.Next: No AST available")
+		nexter.Next()
+	}, "ASTNexter.Next: No AST available")
 }

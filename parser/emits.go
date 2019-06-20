@@ -1,35 +1,48 @@
 package parser
 
-// Emits is returned by the Parse function and provides to retrieve emitted ASTs from the parser.
+// ASTNexter is returned by the Parse function and provides methods to retrieve ASTs emitted from the parser.
 // Implements a basic iterator pattern with HasNext() and Next() methods.
 //
-type Emits struct {
+type ASTNexter interface {
+
+	// HasNext confirms if there are ASTs available.
+	// If it returns true, you can safely call Next() to retrieve the next AST.
+	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	//
+	HasNext() bool
+
+	// Next Retrieves the next AST from the parser.
+	// See HasNext() to determine if any ASTs are available.
+	// Panics if HasNext() returns false.
+	//
+	Next() interface{}
+}
+
+// astNexter is the internal structure that backs the parser's ASTNexter.
+//
+type astNexter struct {
 	parser *Parser
 	next   interface{}
 	eof    bool
 }
 
-// Next Retrieves the next AST from the parser.
-// See HasNext() to determine if any ASTs are available.
-// Panics if HasNext() returns false.
+// Next implements ASTNexter.Next().
 //
-func (e *Emits) Next() interface{} {
+func (e *astNexter) Next() interface{} {
 	// We double check for saved next to maybe avoid the call
 	//
 	if e.next == nil && e.HasNext() == false {
-		panic("Emits.Next: No AST available")
+		panic("ASTNexter.Next: No AST available")
 	}
 	tok := e.next
 	e.next = nil
 	return tok
 }
 
-// HasNext confirms if there are ASTs available.
-// This method initiates calls to ParserFn functions and is the primary entry point for retrieving ASTs from the parser.
-// If it returns true, you can safely call Next() to retrieve the next AST.
-// If it returns false, EOF has been reached and calling Next() will generate a panic.
+// HasNext implements ASTNexter.HasNext().
+// Initiates calls to ParserFn functions and is the primary entry point for retrieving ASTs from the parser.
 //
-func (e *Emits) HasNext() bool {
+func (e *astNexter) HasNext() bool {
 	// If AST previously fetched, return now
 	//
 	if e.next != nil {

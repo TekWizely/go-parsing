@@ -26,7 +26,7 @@ Parsing is initiated through the `Parse` method:
 ```go
 // Parse initiates a parser against the input token stream.
 //
-func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits
+func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter
 ```
 
 #### Parser Functions ( `parser.ParserFN` )
@@ -198,35 +198,24 @@ You can shut down the main Parser loop from within your `ParserFn` by simply ret
 
 All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `ParserFn` calls.
 
-#### Retrieving Emitted ASTs ( `parser.Emits` )
+#### Retrieving Emitted ASTs ( `parser.ASTNexter` )
 
-When called, the Parse function will return an `Emits` object which provides methods to retrieve ASTs emitted from the parser.
+When called, the Parse function will return an `ASTNexter` which provides methods to retrieve ASTs emitted from the parser.
 
-##### AST Iterator ( `HasNext()` / `Next()` )
-
-Emits implements a basic iterator pattern.
-
-###### Before Retrieving, Ensure That You Can
-
-A well-behaved program will first ensure that an AST is available before trying to retrieve it.
-
-For this, we have `HasNext()` :
+`ASTNexter` implements a basic iterator pattern:
 
 ```go
-// HasNext confirms if there are ASTs available.
-// If it returns true, you can safely call Next() to retrieve the next AST.
-//
-func (e *Emits) HasNext() bool
-```
+type ASTNexter interface {
 
-###### Retrieving An AST
+	// HasNext confirms if there are ASTs available.
+	// If it returns true, you can safely call Next() to retrieve the next AST.
+	//
+	HasNext() bool
 
-Once you confirm its safe to do so, `Next()` will retrieve the next AST from the parser output.
-
-```go
-// Next Retrieves the next AST from the parser.
-//
-func (e *Emits) Next() interface{}
+	// Next Retrieves the next AST from the parser.
+	//
+	Next() interface{}
+}
 ```
 
 ## Example (calculator)

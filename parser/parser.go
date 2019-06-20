@@ -15,12 +15,12 @@ import (
 type ParserFn func(*Parser) ParserFn
 
 // Parse initiates a parser against the input token stream.
-// The returned *Emits can be used to retrieve emitted ASTs.
+// The returned ASTNexter can be used to retrieve emitted ASTs.
 // The parser will auto-emit EOF before exiting it if has not already been emitted.
 //
-func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits {
+func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter {
 	p := newParser(tokens, start)
-	return &Emits{parser: p}
+	return &astNexter{parser: p}
 }
 
 // Parser is passed into your ParserFn functions and provides methods to inspect tokens and emit ASTs.
