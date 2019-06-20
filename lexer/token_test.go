@@ -4,15 +4,15 @@ import "testing"
 
 // assertToken
 //
-func assertToken(t *testing.T, tok *Token, typ TokenType, str string, eof bool) {
-	if tok.Type != typ {
-		t.Errorf("Token.Type expecting '%s', received '%s'", typ.String(), tok.Type.String())
+func assertToken(t *testing.T, tok *token, typ TokenType, value string, eof bool) {
+	if tok.typ != typ {
+		t.Errorf("token.typ expecting '%s', received '%s'", typ.String(), tok.typ.String())
 	}
-	if tok.String != str {
-		t.Errorf("Token.String expecting '%s', received '%s'", str, tok.String)
+	if tok.value != value {
+		t.Errorf("token.value expecting '%s', received '%s'", value, tok.value)
 	}
 	if tok.eof() != eof {
-		t.Errorf("Token.EOF() expecting '%t', received '%t'", eof, tok.eof())
+		t.Errorf("token.EOF() expecting '%t'", eof)
 	}
 }
 

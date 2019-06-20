@@ -15,20 +15,20 @@ type TokenNexter interface {
 	// See HasNext() to determine if any tokens are available.
 	// Panics if HasNext() returns false.
 	//
-	Next() *Token
+	Next() Token
 }
 
 // tokenNexter is the internal structure that backs the lexer's TokenNexter.
 //
 type tokenNexter struct {
 	lexer *Lexer
-	next  *Token
+	next  Token
 	eof   bool
 }
 
 // Next implements TokenNexter.Next().
 //
-func (t *tokenNexter) Next() *Token {
+func (t *tokenNexter) Next() Token {
 	// We double check for saved next to maybe avoid the call
 	//
 	if t.next == nil && t.HasNext() == false {
@@ -73,7 +73,7 @@ func (t *tokenNexter) HasNext() bool {
 	// Consume the token.
 	// We'll either cache it or discard it.
 	//
-	token := t.lexer.tokens.Remove(t.lexer.tokens.Front()).(*Token)
+	token := t.lexer.tokens.Remove(t.lexer.tokens.Front()).(*token)
 	// Is the token EOF?
 	//
 	if token.eof() {

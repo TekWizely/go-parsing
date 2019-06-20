@@ -12,13 +12,13 @@ func expectNexterHasNext(t *testing.T, nexter TokenNexter, match bool) {
 
 // expectNexterNext
 //
-func expectNexterNext(t *testing.T, nexter TokenNexter, typ TokenType, str string) {
+func expectNexterNext(t *testing.T, nexter TokenNexter, typ TokenType, value string) {
 	tok := nexter.Next()
-	if tok.Type != typ {
-		t.Errorf("TokenNexter.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
+	if tok.Type() != typ {
+		t.Errorf("TokenNexter.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type())
 	}
-	if tok.String != str {
-		t.Errorf("TokenNexter.Next() expecting Token.String '%s', received '%s'", str, tok.String)
+	if tok.Value() != value {
+		t.Errorf("TokenNexter.Next() expecting Token.String '%s', received '%s'", value, tok.Value())
 	}
 }
 

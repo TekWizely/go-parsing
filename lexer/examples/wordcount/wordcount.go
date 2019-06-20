@@ -63,20 +63,20 @@ func main() {
 	//
 	for tokens.HasNext() {
 		t := tokens.Next()
-		chars += len(t.String)
+		chars += len(t.Value())
 
-		switch t.Type {
+		switch t.Type() {
 		case T_WORD:
 			words++
 			emptyLine = false
 
 		case T_NEWLINE:
 			lines++
-			spaces += len(t.String)
+			spaces += len(t.Value())
 			emptyLine = true
 
 		case T_SPACE:
-			spaces += len(t.String)
+			spaces += len(t.Value())
 			emptyLine = false
 
 		default:

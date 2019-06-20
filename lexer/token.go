@@ -31,17 +31,36 @@ func (t TokenType) String() string {
 
 // Token represents a token (with optional text string) returned from the lexer.
 //
-type Token struct {
-	Type   TokenType
-	String string
+type Token interface {
+	Type() TokenType
+	Value() string
+}
+
+// token is the internal structure that backs the lexer's Token.
+//
+type token struct {
+	typ   TokenType
+	value string
 }
 
 // newToken
 //
-func newToken(typ TokenType, str string) *Token {
-	return &Token{Type: typ, String: str}
+func newToken(typ TokenType, value string) *token {
+	return &token{typ: typ, value: value}
+}
+
+// Type implements Token.Type().
+//
+func (t *token) Type() TokenType {
+	return t.typ
+}
+
+// Value implements Token.Value().
+//
+func (t *token) Value() string {
+	return t.value
 }
 
 // eof returns true if the TokenType == T_EOF.
 //
-func (t *Token) eof() bool { return T_EOF == t.Type }
+func (t *token) eof() bool { return T_EOF == t.typ }

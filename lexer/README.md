@@ -315,7 +315,7 @@ type TokenNexter interface {
 
 	// Next Retrieves the next token from the lexer.
 	//
-	Next() *Token
+	Next() Token
 }
 ```
 
