@@ -29,7 +29,7 @@ type TokenNexter interface {
 	// See HasNext() to determine if any tokens are available.
 	// Panics if HasNext() returns false.
 	//
-	Next() *lexer.Token
+	Next() lexer.Token
 }
 
 // Parse initiates a parser against the input token stream.
@@ -82,7 +82,7 @@ func (p *Parser) CanPeek(n int) bool {
 // Panics if nth token not available.
 // Panics if EOF already emitted.
 //
-func (p *Parser) Peek(n int) *lexer.Token {
+func (p *Parser) Peek(n int) lexer.Token {
 	if n < 1 {
 		panic("Parser.Peek: range error")
 	}
@@ -100,7 +100,7 @@ func (p *Parser) Peek(n int) *lexer.Token {
 	for ; n > 1; n-- {
 		e = e.Next()
 	}
-	return e.Value.(*lexer.Token)
+	return e.Value.(lexer.Token)
 }
 
 // PeekType allows you to look ahead at token types without consuming them.
@@ -112,7 +112,7 @@ func (p *Parser) Peek(n int) *lexer.Token {
 // This is mostly a convenience method that calls Peek(n), returning the token type.
 //
 func (p *Parser) PeekType(n int) lexer.TokenType {
-	return p.Peek(n).Type
+	return p.Peek(n).Type()
 }
 
 // HasNext confirms if a token is available to consume.
@@ -130,7 +130,7 @@ func (p *Parser) HasNext() bool {
 // Panics if no token available.
 // Panics if EOF already emitted.
 //
-func (p *Parser) Next() *lexer.Token {
+func (p *Parser) Next() lexer.Token {
 	// Nothing can be peeked after EOF
 	//
 	if p.eofOut {
@@ -144,7 +144,7 @@ func (p *Parser) Next() *lexer.Token {
 	e := p.peekHead()
 	p.matchTail = e // Consume peek into token
 	p.matchLen++
-	return e.Value.(*lexer.Token)
+	return e.Value.(lexer.Token)
 }
 
 // Emit emits an AST.

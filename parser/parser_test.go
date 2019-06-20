@@ -62,13 +62,13 @@ func expectPeekType(t *testing.T, p *Parser, peek int, match lexer.TokenType) {
 
 // expectPeek
 //
-func expectPeek(t *testing.T, p *Parser, peek int, typ lexer.TokenType, str string) {
+func expectPeek(t *testing.T, p *Parser, peek int, typ lexer.TokenType, value string) {
 	tok := p.Peek(peek)
-	if tok.Type != typ {
-		t.Errorf("Parser.Peek(%d) expecting Token.Type '%s', received '%s'", peek, typ, tok.Type)
+	if tok.Type() != typ {
+		t.Errorf("Parser.Peek(%d) expecting Token.Type '%s', received '%s'", peek, typ, tok.Type())
 	}
-	if tok.String != str {
-		t.Errorf("Parser.Peek(%d) expecting Token.String '%s', received '%s'", peek, str, tok.String)
+	if tok.Value() != value {
+		t.Errorf("Parser.Peek(%d) expecting Token.String '%s', received '%s'", peek, value, tok.Value())
 	}
 }
 
@@ -82,13 +82,13 @@ func expectHasNext(t *testing.T, p *Parser, match bool) {
 
 // expectNext
 //
-func expectNext(t *testing.T, p *Parser, typ lexer.TokenType, str string) {
+func expectNext(t *testing.T, p *Parser, typ lexer.TokenType, value string) {
 	tok := p.Next()
-	if tok.Type != typ {
-		t.Errorf("Parser.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
+	if tok.Type() != typ {
+		t.Errorf("Parser.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type())
 	}
-	if tok.String != str {
-		t.Errorf("Parser.Next() expecting Token.String '%s', received '%s'", str, tok.String)
+	if tok.Value() != value {
+		t.Errorf("Parser.Next() expecting Token.String '%s', received '%s'", value, tok.Value())
 	}
 }
 

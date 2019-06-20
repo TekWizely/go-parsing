@@ -63,7 +63,7 @@ Your Parser function receives a `*Parser` when called and can use the following 
 
 	// Peek allows you to look ahead at tokens without consuming them.
 	//
-	func (p *Parser) Peek(n int) *lexer.Token
+	func (p *Parser) Peek(n int) lexer.Token
 
 	// HasNext confirms if a token is available to consume.
 	//
@@ -71,7 +71,7 @@ Your Parser function receives a `*Parser` when called and can use the following 
 
 	// Next consumes and returns the next token in the input.
 	//
-	func (p *Parser) Next() *lexer.Token
+	func (p *Parser) Next() lexer.Token
 
 
 Emitting ASTs

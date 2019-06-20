@@ -75,7 +75,7 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the tok
 // Peek allows you to look ahead at tokens without consuming them.
 // n is 1-based.
 //
-func (p *Parser) Peek(n int) *lexer.Token
+func (p *Parser) Peek(n int) lexer.Token
 ```
 
 ##### Consuming Tokens ( `HasNext()` / `Next()` )
@@ -104,7 +104,7 @@ Once you confirm its safe to do so, `Next()` will consume the next token from th
 ```go
 // Next consumes and returns the next token in the input.
 //
-func (p *Parser) Next() *lexer.Token
+func (p *Parser) Next() lexer.Token
 ```
 
 ##### Emitting ASTs ( `Emit()` )

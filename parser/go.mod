@@ -6,7 +6,7 @@ go 1.12
 //
 // $ go get github.com/tekwizely/go-parsing/lexer@master
 //
-require github.com/tekwizely/go-parsing/lexer v0.0.0-20190620064451-d1cd406dab0b
+require github.com/tekwizely/go-parsing/lexer v0.0.0-20190620203355-f59e82d2158e
 
 // For Local testing against changes that aren't upstream
 //
