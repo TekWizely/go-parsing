@@ -17,7 +17,7 @@ const (
 
 // mockLexer
 //
-func mockLexer(tokens ...lexer.TokenType) lexer.TokenNexter {
+func mockLexer(tokens ...lexer.TokenType) TokenNexter {
 	i := 0
 	var fn lexer.LexerFn
 	fn = func(l *lexer.Lexer) lexer.LexerFn {

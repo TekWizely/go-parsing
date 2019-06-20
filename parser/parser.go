@@ -14,11 +14,29 @@ import (
 //
 type ParserFn func(*Parser) ParserFn
 
+// TokenNexter matches the signature of lexer.TokenNexter to work toward removing direct dependency on the lexer pkg.
+// Implements a basic iterator pattern with HasNext() and Next() methods.
+//
+type TokenNexter interface {
+
+	// HasNext confirms if there are tokens available.
+	// If it returns true, you can safely call Next() to retrieve the next token.
+	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	//
+	HasNext() bool
+
+	// Next Retrieves the next token from the lexer.
+	// See HasNext() to determine if any tokens are available.
+	// Panics if HasNext() returns false.
+	//
+	Next() *lexer.Token
+}
+
 // Parse initiates a parser against the input token stream.
 // The returned ASTNexter can be used to retrieve emitted ASTs.
 // The parser will auto-emit EOF before exiting it if has not already been emitted.
 //
-func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter {
+func Parse(tokens TokenNexter, start ParserFn) ASTNexter {
 	p := newParser(tokens, start)
 	return &astNexter{parser: p}
 }
@@ -28,15 +46,15 @@ func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter {
 // inspect/consume the next token in the input.
 //
 type Parser struct {
-	tokens    lexer.TokenNexter // Source for lexer tokens
-	cache     *list.List        // Cache of fetched lexer tokens ready for pickup by the parser
-	matchTail *list.Element     // Points to last element of consumed tokens, nil if no tokens consumed yet
-	matchLen  int               // Len of peek buffer.  Makes growPeek faster when no growth needed
-	nextFn    ParserFn          // the next parsing function to enter
-	emits     *list.List        // Cache of emitted ASTs ready for pickup
-	eof       bool              // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
-	eofOut    bool              // Has EOF been emitted to the output buffer?
-	markerId  int               // Incremented after each emit/discard - used to validate markers
+	tokens    TokenNexter   // Source for lexer tokens
+	cache     *list.List    // Cache of fetched lexer tokens ready for pickup by the parser
+	matchTail *list.Element // Points to last element of consumed tokens, nil if no tokens consumed yet
+	matchLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
+	nextFn    ParserFn      // the next parsing function to enter
+	emits     *list.List    // Cache of emitted ASTs ready for pickup
+	eof       bool          // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
+	eofOut    bool          // Has EOF been emitted to the output buffer?
+	markerId  int           // Incremented after each emit/discard - used to validate markers
 }
 
 // CanPeek confirms if the requested number of tokens are available in the peek buffer.
@@ -185,7 +203,7 @@ func (p *Parser) Discard() {
 
 // newParser
 //
-func newParser(tokens lexer.TokenNexter, start ParserFn) *Parser {
+func newParser(tokens TokenNexter, start ParserFn) *Parser {
 	return &Parser{
 		tokens:    tokens,
 		cache:     list.New(),

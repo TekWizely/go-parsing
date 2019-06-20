@@ -26,7 +26,7 @@ Parsing is initiated through the `Parse` method:
 ```go
 // Parse initiates a parser against the input token stream.
 //
-func Parse(tokens lexer.TokenNexter, start ParserFn) ASTNexter
+func Parse(tokens TokenNexter, start ParserFn) ASTNexter
 ```
 
 #### Parser Functions ( `parser.ParserFN` )
