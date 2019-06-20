@@ -18,7 +18,7 @@ type ParserFn func(*Parser) ParserFn
 // The returned *Emits can be used to retrieve emitted ASTs.
 // The parser will auto-emit EOF before exiting it if has not already been emitted.
 //
-func Parse(tokens *lexer.Tokens, start ParserFn) *Emits {
+func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits {
 	p := newParser(tokens, start)
 	return &Emits{parser: p}
 }
@@ -28,15 +28,15 @@ func Parse(tokens *lexer.Tokens, start ParserFn) *Emits {
 // inspect/consume the next token in the input.
 //
 type Parser struct {
-	tokens    *lexer.Tokens // Source for lexer tokens
-	cache     *list.List    // Cache of fetched lexer tokens ready for pickup by the parser
-	matchTail *list.Element // Points to last element of consumed tokens, nil if no tokens consumed yet
-	matchLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
-	nextFn    ParserFn      // the next parsing function to enter
-	emits     *list.List    // Cache of emitted ASTs ready for pickup
-	eof       bool          // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
-	eofOut    bool          // Has EOF been emitted to the output buffer?
-	markerId  int           // Incremented after each emit/discard - used to validate markers
+	tokens    lexer.TokenNexter // Source for lexer tokens
+	cache     *list.List        // Cache of fetched lexer tokens ready for pickup by the parser
+	matchTail *list.Element     // Points to last element of consumed tokens, nil if no tokens consumed yet
+	matchLen  int               // Len of peek buffer.  Makes growPeek faster when no growth needed
+	nextFn    ParserFn          // the next parsing function to enter
+	emits     *list.List        // Cache of emitted ASTs ready for pickup
+	eof       bool              // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
+	eofOut    bool              // Has EOF been emitted to the output buffer?
+	markerId  int               // Incremented after each emit/discard - used to validate markers
 }
 
 // CanPeek confirms if the requested number of tokens are available in the peek buffer.
@@ -185,7 +185,7 @@ func (p *Parser) Discard() {
 
 // newParser
 //
-func newParser(tokens *lexer.Tokens, start ParserFn) *Parser {
+func newParser(tokens lexer.TokenNexter, start ParserFn) *Parser {
 	return &Parser{
 		tokens:    tokens,
 		cache:     list.New(),

@@ -12,12 +12,12 @@ Initiating a Parser
 
 	// Parse initiates a parser against the input token stream.
 	//
-	func Parse(tokens *lexer.Tokens, start ParserFn) *Emits
+	func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits
 
 
 Parser Functions
 
-In addition to the `Tokens` supplier, the Parse function also accepts a function which serves as the starting point for
+In addition to the `TokenNexter`, the Parse function also accepts a function which serves as the starting point for
 your parser:
 
 	// ParserFn are user functions that scan tokens and emit ASTs.

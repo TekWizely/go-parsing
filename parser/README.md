@@ -26,12 +26,12 @@ Parsing is initiated through the `Parse` method:
 ```go
 // Parse initiates a parser against the input token stream.
 //
-func Parse(tokens *lexer.Tokens, start ParserFn) *Emits
+func Parse(tokens lexer.TokenNexter, start ParserFn) *Emits
 ```
 
 #### Parser Functions ( `parser.ParserFN` )
 
-In addition to the `Tokens` supplier, the Parse function also accepts a function which serves as the starting point for your parser.
+In addition to the `TokenNexter`, the Parse function also accepts a function which serves as the starting point for your parser.
 
 The main Parser process will call into this `start` function to initiate parsing.
 
