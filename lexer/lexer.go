@@ -19,34 +19,34 @@ import (
 type LexerFn func(*Lexer) LexerFn
 
 // LexString initiates a lexer against the input string.
-// The returned *Tokens can be used to retrieve emitted tokens.
+// The returned TokenNexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input string in an io.RuneReader, then calling LexRuneReader().
 //
-func LexString(input string, start LexerFn) *Tokens {
+func LexString(input string, start LexerFn) TokenNexter {
 	return LexRuneReader(strings.NewReader(input), start)
 }
 
 // LexRuneReader initiates a lexer against the input io.RuneReader.
-// The returned *Tokens can be used to retrieve emitted tokens.
+// The returned TokenNexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // LexRuneReader is the primary lexer entrypoint. All others are convenience methods that delegate to here.
 //
-func LexRuneReader(input io.RuneReader, start LexerFn) *Tokens {
+func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter {
 	l := newLexer(input, start)
-	return &Tokens{lexer: l}
+	return &tokenNexter{lexer: l}
 }
 
 // LexReader initiates a lexer against the input io.Reader.
-// The returned *Tokens can be used to retrieve emitted tokens.
+// The returned TokenNexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input io.Reader in an io.RuneReader, then calling LexRuneReader().
 // If the provided reader already implements io.RuneReader, it is used without wrapping.
 //
-func LexReader(input io.Reader, start LexerFn) *Tokens {
+func LexReader(input io.Reader, start LexerFn) TokenNexter {
 	var runeReader io.RuneReader
 	if r, ok := input.(io.RuneReader); ok {
 		runeReader = r
@@ -57,22 +57,22 @@ func LexReader(input io.Reader, start LexerFn) *Tokens {
 }
 
 // LexRunes initiates a lexer against the input []rune.
-// The returned *Tokens can be used to retrieve emitted tokens.
+// The returned TokenNexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []rune in an io.RuneReader, then calling LexRuneReader().
 //
-func LexRunes(input []rune, start LexerFn) *Tokens {
+func LexRunes(input []rune, start LexerFn) TokenNexter {
 	return LexRuneReader(strings.NewReader(string(input)), start)
 }
 
 // LexBytes initiates a lexer against the input []byte.
-// The returned *Tokens can be used to retrieve emitted tokens.
+// The returned TokenNexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []byte in an io.RuneReader, then calling LexRuneReader().
 //
-func LexBytes(input []byte, start LexerFn) *Tokens {
+func LexBytes(input []byte, start LexerFn) TokenNexter {
 	return LexRuneReader(bytes.NewReader(input), start)
 }
 

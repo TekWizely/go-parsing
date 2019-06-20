@@ -1,35 +1,48 @@
 package lexer
 
-// Tokens is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
+// TokenNexter is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
 // Implements a basic iterator pattern with HasNext() and Next() methods.
 //
-type Tokens struct {
+type TokenNexter interface {
+
+	// HasNext confirms if there are tokens available.
+	// If it returns true, you can safely call Next() to retrieve the next token.
+	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	//
+	HasNext() bool
+
+	// Next Retrieves the next token from the lexer.
+	// See HasNext() to determine if any tokens are available.
+	// Panics if HasNext() returns false.
+	//
+	Next() *Token
+}
+
+// tokenNexter is the internal structure that backs the lexer's TokenNexter.
+//
+type tokenNexter struct {
 	lexer *Lexer
 	next  *Token
 	eof   bool
 }
 
-// Next Retrieves the next token from the lexer.
-// See HasNext() to determine if any tokens are available.
-// Panics if HasNext() returns false.
+// Next implements TokenNexter.Next().
 //
-func (t *Tokens) Next() *Token {
+func (t *tokenNexter) Next() *Token {
 	// We double check for saved next to maybe avoid the call
 	//
 	if t.next == nil && t.HasNext() == false {
-		panic("Tokens.Next: No token available")
+		panic("TokenNexter.Next: No token available")
 	}
 	tok := t.next
 	t.next = nil
 	return tok
 }
 
-// HasNext confirms if there are tokens available.
-// This method initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
-// If it returns true, you can safely call Next() to retrieve the next token.
-// If it returns false, EOF has been reached and calling Next() will generate a panic.
+// HasNext implements TokenNexter.HasNext().
+// Initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
 //
-func (t *Tokens) HasNext() bool {
+func (t *tokenNexter) HasNext() bool {
 	// If token previously fetched, return now
 	//
 	if t.next != nil {

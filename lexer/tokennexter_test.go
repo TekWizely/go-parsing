@@ -4,21 +4,21 @@ import "testing"
 
 // expectTokensHasNext
 //
-func expectTokensHasNext(t *testing.T, tokens *Tokens, match bool) {
+func expectTokensHasNext(t *testing.T, tokens TokenNexter, match bool) {
 	if tokens.HasNext() != match {
-		t.Errorf("Tokens.HasNext() expecting '%t'", match)
+		t.Errorf("TokenNexter.HasNext() expecting '%t'", match)
 	}
 }
 
 // expectTokensNext
 //
-func expectTokensNext(t *testing.T, tokens *Tokens, typ TokenType, str string) {
+func expectTokensNext(t *testing.T, tokens TokenNexter, typ TokenType, str string) {
 	tok := tokens.Next()
 	if tok.Type != typ {
-		t.Errorf("Tokens.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
+		t.Errorf("TokenNexter.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type)
 	}
 	if tok.String != str {
-		t.Errorf("Tokens.Next() expecting Token.String '%s', received '%s'", str, tok.String)
+		t.Errorf("TokenNexter.Next() expecting Token.String '%s', received '%s'", str, tok.String)
 	}
 }
 
@@ -63,5 +63,5 @@ func TestTokensNextAfterEOF(t *testing.T) {
 	expectTokensHasNext(t, tokens, false)
 	assertPanic(t, func() {
 		tokens.Next()
-	}, "Tokens.Next: No token available")
+	}, "TokenNexter.Next: No token available")
 }

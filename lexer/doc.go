@@ -15,23 +15,23 @@ Lexing is initiated through various Lex* methods, each accepting a different typ
 
 	// Input Type: string
 	//
-	func LexString(input string, start LexerFn) *Tokens
+	func LexString(input string, start LexerFn) TokenNexter
 
 	// Input Type: io.RuneReader
 	//
-	func LexRuneReader(input io.RuneReader, start LexerFn) *Tokens
+	func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter
 
 	// Input Type: io.Reader
 	//
-	func LexReader(input io.Reader, start LexerFn) *Tokens
+	func LexReader(input io.Reader, start LexerFn) TokenNexter
 
 	// Input Type: []rune
 	//
-	func LexRunes(input []rune, start LexerFn) *Tokens
+	func LexRunes(input []rune, start LexerFn) TokenNexter
 
 	// Input Type: []byte
 	//
-	func LexBytes(input []byte, start LexerFn) *Tokens
+	func LexBytes(input []byte, start LexerFn) TokenNexter
 
 
 Lexer Functions
@@ -184,18 +184,28 @@ You define your own token types starting from T_START:
 
 Retrieving Emitted Tokens
 
-When called, the `Lex*` functions will return a `Tokens` object which provides methods to retrieve tokens emitted from the
+When called, the `Lex*` functions will return a `TokenNexter` which provides methods to retrieve tokens emitted from the
 lexer.
 
-`Tokens` implements a basic iterator pattern:
+`TokenNexter` implements a basic iterator pattern:
 
-	// HasNext confirms if there are tokens available.
+	// TokenNexter is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
+	// Implements a basic iterator pattern with HasNext() and Next() methods.
 	//
-	func (t *Tokens) HasNext() bool
+	type TokenNexter interface {
 
-	// Next Retrieves the next token from the lexer.
-	//
-	func (t *Tokens) Next() *Token
+		// HasNext confirms if there are tokens available.
+		// If it returns true, you can safely call Next() to retrieve the next token.
+		// If it returns false, EOF has been reached and calling Next() will generate a panic.
+		//
+		HasNext() bool
+
+		// Next Retrieves the next token from the lexer.
+		// See HasNext() to determine if any tokens are available.
+		// Panics if HasNext() returns false.
+		//
+		Next() *Token
+	}
 
 
 Example Programs

@@ -29,31 +29,31 @@ Lexing is initiated through various `Lex*` methods, each accepting a different t
 ###### Input Type: `string`
 
 ```go
-func LexString(input string, start LexerFn) *Tokens
+func LexString(input string, start LexerFn) TokenNexter
 ```
 
 ###### Input Type: `io.RuneReader`
 
 ```go
-func LexRuneReader(input io.RuneReader, start LexerFn) *Tokens
+func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter
 ```
 
 ###### Input Type: `io.Reader`
 
 ```go
-func LexReader(input io.Reader, start LexerFn) *Tokens
+func LexReader(input io.Reader, start LexerFn) TokenNexter
 ```
 
 ###### Input Type: `[]rune`
 
 ```go
-func LexRunes(input []rune, start LexerFn) *Tokens
+func LexRunes(input []rune, start LexerFn) TokenNexter
 ```
 
 ###### Input Type: `[]byte`
 
 ```go
-func LexBytes(input []byte, start LexerFn) *Tokens
+func LexBytes(input []byte, start LexerFn) TokenNexter
 ```
 
 #### Lexer Functions ( `lexer.LexerFn` )
@@ -299,35 +299,30 @@ const (
 )
 ```
 
-#### Retrieving Emitted Tokens ( `lexer.Tokens` )
+#### Retrieving Emitted Tokens ( `lexer.TokenNexter` )
 
-When called, the Lex* functions will return a `Tokens` object which provides methods to retrieve tokens emitted from the lexer.
+When called, the Lex* functions will return a `TokenNexter` which provides methods to retrieve tokens emitted from the lexer.
 
-##### Token Iterator ( `HasNext()` / `Next()` )
-
-Tokens implements a basic iterator pattern.
-
-###### Before Retrieving, Ensure That You Can
-
-A well-behaved program will first ensure that a token is available before trying to retrieve it.
-
-For this, we have `HasNext()` :
+`TokenNexter` implements a basic iterator pattern:
 
 ```go
-// HasNext confirms if there are tokens available.
-// If it returns true, you can safely call Next() to retrieve the next token.
+// TokenNexter is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
+// Implements a basic iterator pattern with HasNext() and Next() methods.
 //
-func (t *Tokens) HasNext() bool
-```
+type TokenNexter interface {
 
-###### Retrieving A Token
+	// HasNext confirms if there are tokens available.
+	// If it returns true, you can safely call Next() to retrieve the next token.
+	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	//
+	HasNext() bool
 
-Once you confirm its safe to do so, `Next()` will retrieve the next Token from the lexer output.
-
-```go
-// Next Retrieves the next token from the lexer.
-//
-func (t *Tokens) Next() *Token
+	// Next Retrieves the next token from the lexer.
+	// See HasNext() to determine if any tokens are available.
+	// Panics if HasNext() returns false.
+	//
+	Next() *Token
+}
 ```
 
 ## Example (wordcount)
