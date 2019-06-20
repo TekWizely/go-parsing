@@ -24,7 +24,7 @@ repos:
     hooks:
       - id: go-fmt
       - id: go-vet
-      - id: go-lint
+#     - id: go-lint
 #     - id: golangci-lint
 #     - id: go-critic      # Replace golint after this PR goes live : https://github.com/dnephin/pre-commit-golang/pull/33
       - id: go-unit-tests
