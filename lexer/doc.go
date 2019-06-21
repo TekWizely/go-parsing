@@ -15,23 +15,23 @@ Lexing is initiated through various Lex* methods, each accepting a different typ
 
 	// Input Type: string
 	//
-	func LexString(input string, start LexerFn) TokenNexter
+	func LexString(input string, start LexerFn) token.Nexter
 
 	// Input Type: io.RuneReader
 	//
-	func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter
+	func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter
 
 	// Input Type: io.Reader
 	//
-	func LexReader(input io.Reader, start LexerFn) TokenNexter
+	func LexReader(input io.Reader, start LexerFn) token.Nexter
 
 	// Input Type: []rune
 	//
-	func LexRunes(input []rune, start LexerFn) TokenNexter
+	func LexRunes(input []rune, start LexerFn) token.Nexter
 
 	// Input Type: []byte
 	//
-	func LexBytes(input []byte, start LexerFn) TokenNexter
+	func LexBytes(input []byte, start LexerFn) token.Nexter
 
 
 Lexer Functions
@@ -110,11 +110,11 @@ Once you've determined what the consumed rune(s) represent, you can emit a token
 
 	// EmitToken emits a token of the specified type, along with all of the consumed runes.
 	//
-	func (l *Lexer) EmitToken(t TokenType)
+	func (l *Lexer) EmitToken(t token.Type)
 
 	// EmitType emits a token of the specified type, discarding consumed runes.
 	//
-	func (l *Lexer) EmitType(t TokenType)
+	func (l *Lexer) EmitType(t token.Type)
 
 NOTE: See the section of the document regarding "Token Types" for details on defining tokens for your lexer.
 
@@ -161,17 +161,13 @@ you can use this pattern:
 
 Token Types
 
-Lexer defines the TokenType type and a few pre-defined values:
-
-	// TokenType identifies the type of lex tokens.
-	//
-	type TokenType int
+Lexer defines a few pre-defined token values:
 
 	const (
-		T_LEX_ERR TokenType = iota // Lexer error
-		T_UNKNOWN                  // Unknown rune(s)
-		T_EOF                      // EOF
-		T_START                    // Marker for user tokens ( use T_START + iota )
+		T_LEX_ERR token.Type = iota // Lexer error
+		T_UNKNOWN                   // Unknown rune(s)
+		T_EOF                       // EOF
+		T_START                     // Marker for user tokens ( use T_START + iota )
 	)
 
 You define your own token types starting from T_START:
@@ -184,12 +180,12 @@ You define your own token types starting from T_START:
 
 Retrieving Emitted Tokens
 
-When called, the `Lex*` functions will return a `TokenNexter` which provides methods to retrieve tokens emitted from the
+When called, the `Lex*` functions will return a `token.Nexter` which provides methods to retrieve tokens emitted from the
 lexer.
 
-`TokenNexter` implements a basic iterator pattern:
+`token.Nexter` implements a basic iterator pattern:
 
-	type TokenNexter interface {
+	type Nexter interface {
 
 		// HasNext confirms if there are tokens available.
 		//
@@ -197,7 +193,7 @@ lexer.
 
 		// Next Retrieves the next token from the lexer.
 		//
-		Next() Token
+		Next() token.Token
 	}
 
 

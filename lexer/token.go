@@ -1,66 +1,40 @@
 package lexer
 
-import "strconv"
-
-// TokenType identifies the type of lex tokens.
-//
-type TokenType int
+import "github.com/tekwizely/go-parsing/lexer/token"
 
 const (
-	T_LEX_ERR TokenType = iota // Lexer error
-	T_UNKNOWN                  // Unknown rune(s)
-	T_EOF                      // EOF
-	T_START                    // Marker for user tokens ( use T_START + iota )
-	t_end                      // internal marker
+	T_LEX_ERR token.Type = iota // Lexer error
+	T_UNKNOWN                   // Unknown rune(s)
+	T_EOF                       // EOF
+	T_START                     // Marker for user tokens ( use T_START + iota )
+	t_end                       // internal marker
 )
-
-// String
-//
-func (t TokenType) String() string {
-	switch t {
-	case T_LEX_ERR:
-		return "T_LEX_ERR"
-	case T_UNKNOWN:
-		return "T_UNKNOWN"
-	case T_EOF:
-		return "T_EOF"
-	default:
-		return "token(" + strconv.Itoa(int(t)) + ")"
-	}
-}
-
-// Token represents a token (with optional text string) returned from the lexer.
-//
-type Token interface {
-	Type() TokenType
-	Value() string
-}
 
 // token is the internal structure that backs the lexer's Token.
 //
-type token struct {
-	typ   TokenType
+type _token struct {
+	typ   token.Type
 	value string
 }
 
 // newToken
 //
-func newToken(typ TokenType, value string) *token {
-	return &token{typ: typ, value: value}
+func newToken(typ token.Type, value string) *_token {
+	return &_token{typ: typ, value: value}
 }
 
 // Type implements Token.Type().
 //
-func (t *token) Type() TokenType {
+func (t *_token) Type() token.Type {
 	return t.typ
 }
 
 // Value implements Token.Value().
 //
-func (t *token) Value() string {
+func (t *_token) Value() string {
 	return t.value
 }
 
-// eof returns true if the TokenType == T_EOF.
+// eof returns true if the token.Type == T_EOF.
 //
-func (t *token) eof() bool { return T_EOF == t.typ }
+func (t *_token) eof() bool { return T_EOF == t.typ }

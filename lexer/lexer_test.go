@@ -4,12 +4,14 @@ import (
 	"strings"
 	"testing"
 	"unicode/utf8"
+
+	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
 // Define tokens used in various tests
 //
 const (
-	T_INT TokenType = T_START + iota
+	T_INT token.Type = T_START + iota // Just for convenience since we use it a bunch here
 	T_CHAR
 	T_STRING
 )
@@ -114,7 +116,7 @@ func expectNextString(t *testing.T, l *Lexer, match string) {
 
 // expectMatchEmitString
 //
-func expectMatchEmitString(t *testing.T, l *Lexer, match string, emitType TokenType) {
+func expectMatchEmitString(t *testing.T, l *Lexer, match string, emitType token.Type) {
 	expectNextString(t, l, match)
 	if t.Failed() == false {
 		l.EmitToken(emitType)
@@ -139,7 +141,7 @@ func TestLexerFnSkippedWhenNoHasNext(t *testing.T) {
 	expectNexterHasNext(t, nexter, false)
 }
 
-// TestEmitTokenType
+// TestEmittoken.Ttype
 //
 func TestEmitEmptyType(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {

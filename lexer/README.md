@@ -29,31 +29,31 @@ Lexing is initiated through various `Lex*` methods, each accepting a different t
 ###### Input Type: `string`
 
 ```go
-func LexString(input string, start LexerFn) TokenNexter
+func LexString(input string, start LexerFn) token.Nexter
 ```
 
 ###### Input Type: `io.RuneReader`
 
 ```go
-func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter
+func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter
 ```
 
 ###### Input Type: `io.Reader`
 
 ```go
-func LexReader(input io.Reader, start LexerFn) TokenNexter
+func LexReader(input io.Reader, start LexerFn) token.Nexter
 ```
 
 ###### Input Type: `[]rune`
 
 ```go
-func LexRunes(input []rune, start LexerFn) TokenNexter
+func LexRunes(input []rune, start LexerFn) token.Nexter
 ```
 
 ###### Input Type: `[]byte`
 
 ```go
-func LexBytes(input []byte, start LexerFn) TokenNexter
+func LexBytes(input []byte, start LexerFn) token.Nexter
 ```
 
 #### Lexer Functions ( `lexer.LexerFn` )
@@ -170,21 +170,21 @@ The general method for this is `EmitToken()`:
 ```go
 // EmitToken emits a token of the specified type, along with all of the consumed runes.
 //
-func (l *Lexer) EmitToken(t TokenType)
+func (l *Lexer) EmitToken(t token.Type)
 ```
 
 **NOTE:** See the section of the document regarding `"Token Types"` for details on defining tokens for your lexer.
 
 ###### Emitting Token Type Only
 
-For some token types, the text value of the token isn't needed, and the `TokenType` carries enough context to fully describe the token (ex. `'+' -> T_PLUS`).
+For some token types, the text value of the token isn't needed, and the `token.Type` carries enough context to fully describe the token (ex. `'+' -> T_PLUS`).
 
 For these scenarios, you can use `EmitType` to emit just the token type, discarding the consumed runes:
 
 ```go
 // EmitType emits a token of the specified type, discarding consumed runes.
 //
-func (l *Lexer) EmitType(t TokenType)
+func (l *Lexer) EmitType(t token.Type)
 ```
 
 ##### Discarding Consumed Runes ( `DiscardToken()` )
@@ -269,22 +269,19 @@ You can shut down the main Lexer loop from within your `LexerFn` by simply retur
 
 All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `LexerFn` calls.
 
-#### Token Types ( `lexer.TokenType` )
+#### Token Types ( `token.Type` )
 
 ##### Built-Ins
 
-Lexer defines the `TokenType` type and a few pre-defined values:
+Lexer defines a few pre-defined token values:
 
 ```go
-// TokenType identifies the type of lex tokens.
-//
-type TokenType int
 
 const (
-    T_LEX_ERR TokenType = iota // Lexer error
-    T_UNKNOWN                  // Unknown rune(s)
-    T_EOF                      // EOF
-    T_START                    // Marker for user tokens ( use T_START + iota )
+    T_LEX_ERR token.Type = iota // Lexer error
+    T_UNKNOWN                   // Unknown rune(s)
+    T_EOF                       // EOF
+    T_START                     // Marker for user tokens ( use T_START + iota )
 )
 ```
 
@@ -299,14 +296,14 @@ const (
 )
 ```
 
-#### Retrieving Emitted Tokens ( `lexer.TokenNexter` )
+#### Retrieving Emitted Tokens ( `token.Nexter` )
 
-When called, the Lex* functions will return a `TokenNexter` which provides methods to retrieve tokens emitted from the lexer.
+When called, the Lex* functions will return a `token.Nexter` which provides methods to retrieve tokens emitted from the lexer.
 
-`TokenNexter` implements a basic iterator pattern:
+`token.Nexter` implements a basic iterator pattern:
 
 ```go
-type TokenNexter interface {
+type Nexter interface {
 
 	// HasNext confirms if there are tokens available.
 	// If it returns true, you can safely call Next() to retrieve the next token.
@@ -315,7 +312,7 @@ type TokenNexter interface {
 
 	// Next Retrieves the next token from the lexer.
 	//
-	Next() Token
+	Next() lexer.Token
 }
 ```
 
@@ -391,20 +388,20 @@ func main() {
 	//
 	for tokens.HasNext() {
 		t := tokens.Next()
-		chars += len(t.String)
+		chars += len(t.Value())
 
-		switch t.Type {
+		switch t.Type() {
 		case T_WORD:
 			words++
 			emptyLine = false
 
 		case T_NEWLINE:
 			lines++
-			spaces += len(t.String)
+			spaces += len(t.Value())
 			emptyLine = true
 
 		case T_SPACE:
-			spaces += len(t.String)
+			spaces += len(t.Value())
 			emptyLine = false
 
 		default:

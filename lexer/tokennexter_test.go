@@ -1,24 +1,28 @@
 package lexer
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/tekwizely/go-parsing/lexer/token"
+)
 
 // expectNexterHasNext
 //
-func expectNexterHasNext(t *testing.T, nexter TokenNexter, match bool) {
+func expectNexterHasNext(t *testing.T, nexter token.Nexter, match bool) {
 	if nexter.HasNext() != match {
-		t.Errorf("TokenNexter.HasNext() expecting '%t'", match)
+		t.Errorf("Nexter.HasNext() expecting '%t'", match)
 	}
 }
 
 // expectNexterNext
 //
-func expectNexterNext(t *testing.T, nexter TokenNexter, typ TokenType, value string) {
+func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value string) {
 	tok := nexter.Next()
 	if tok.Type() != typ {
-		t.Errorf("TokenNexter.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type())
+		t.Errorf("Nexter.Next() expecting Token.Type '%d', received '%d'", typ, tok.Type())
 	}
 	if tok.Value() != value {
-		t.Errorf("TokenNexter.Next() expecting Token.String '%s', received '%s'", value, tok.Value())
+		t.Errorf("Nexter.Next() expecting Token.String '%s', received '%s'", value, tok.Value())
 	}
 }
 
@@ -63,5 +67,5 @@ func TestTokensNextAfterEOF(t *testing.T) {
 	expectNexterHasNext(t, nexter, false)
 	assertPanic(t, func() {
 		nexter.Next()
-	}, "TokenNexter.Next: No token available")
+	}, "Nexter.Next: No token available")
 }

@@ -1,12 +1,16 @@
 package lexer
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/tekwizely/go-parsing/lexer/token"
+)
 
 // assertToken
 //
-func assertToken(t *testing.T, tok *token, typ TokenType, value string, eof bool) {
+func assertToken(t *testing.T, tok *_token, typ token.Type, value string, eof bool) {
 	if tok.typ != typ {
-		t.Errorf("token.typ expecting '%s', received '%s'", typ.String(), tok.typ.String())
+		t.Errorf("token.typ expecting '%d', received '%d'", typ, tok.typ)
 	}
 	if tok.value != value {
 		t.Errorf("token.value expecting '%s', received '%s'", value, tok.value)
@@ -43,36 +47,6 @@ func TestTokenEnums(t *testing.T) {
 	//
 	if t_end != 4 {
 		t.Error("t_end != 4, are there new tokens defined?")
-	}
-}
-
-// TestTokenNames
-//
-func TestTokenNames(t *testing.T) {
-	// T_LEX_ERR
-	//
-	if T_LEX_ERR.String() != "T_LEX_ERR" {
-		t.Error("T_LEX_ERR Name != 'T_LEX_ERR'")
-	}
-	// T_UNKNOWN
-	//
-	if T_UNKNOWN.String() != "T_UNKNOWN" {
-		t.Error("T_UNKNOWN Name != 'T_UNKNOWN'")
-	}
-	// T_EOF
-	//
-	if T_EOF.String() != "T_EOF" {
-		t.Error("T_EOF Name != 'T_EOF'")
-	}
-	// T_START
-	//
-	if T_START.String() != "token(3)" {
-		t.Error("T_START Name != 'token(3)'")
-	}
-	// t_end
-	//
-	if t_end.String() != "token(4)" {
-		t.Error("t_end Name != 'token(4)'")
 	}
 }
 

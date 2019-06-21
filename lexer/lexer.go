@@ -8,6 +8,8 @@ import (
 	"io"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
 // LexerFn are user functions that scan runes and emit tokens.
@@ -19,34 +21,34 @@ import (
 type LexerFn func(*Lexer) LexerFn
 
 // LexString initiates a lexer against the input string.
-// The returned TokenNexter can be used to retrieve emitted tokens.
+// The returned token.Nexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input string in an io.RuneReader, then calling LexRuneReader().
 //
-func LexString(input string, start LexerFn) TokenNexter {
+func LexString(input string, start LexerFn) token.Nexter {
 	return LexRuneReader(strings.NewReader(input), start)
 }
 
 // LexRuneReader initiates a lexer against the input io.RuneReader.
-// The returned TokenNexter can be used to retrieve emitted tokens.
+// The returned token.Nexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // LexRuneReader is the primary lexer entrypoint. All others are convenience methods that delegate to here.
 //
-func LexRuneReader(input io.RuneReader, start LexerFn) TokenNexter {
+func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter {
 	l := newLexer(input, start)
 	return &tokenNexter{lexer: l}
 }
 
 // LexReader initiates a lexer against the input io.Reader.
-// The returned TokenNexter can be used to retrieve emitted tokens.
+// The returned token.Nexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input io.Reader in an io.RuneReader, then calling LexRuneReader().
 // If the provided reader already implements io.RuneReader, it is used without wrapping.
 //
-func LexReader(input io.Reader, start LexerFn) TokenNexter {
+func LexReader(input io.Reader, start LexerFn) token.Nexter {
 	var runeReader io.RuneReader
 	if r, ok := input.(io.RuneReader); ok {
 		runeReader = r
@@ -57,22 +59,22 @@ func LexReader(input io.Reader, start LexerFn) TokenNexter {
 }
 
 // LexRunes initiates a lexer against the input []rune.
-// The returned TokenNexter can be used to retrieve emitted tokens.
+// The returned token.Nexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []rune in an io.RuneReader, then calling LexRuneReader().
 //
-func LexRunes(input []rune, start LexerFn) TokenNexter {
+func LexRunes(input []rune, start LexerFn) token.Nexter {
 	return LexRuneReader(strings.NewReader(string(input)), start)
 }
 
 // LexBytes initiates a lexer against the input []byte.
-// The returned TokenNexter can be used to retrieve emitted tokens.
+// The returned token.Nexter can be used to retrieve emitted tokens.
 // Invalid runes in the input will be silently ignored and will not be available within the lexer.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []byte in an io.RuneReader, then calling LexRuneReader().
 //
-func LexBytes(input []byte, start LexerFn) TokenNexter {
+func LexBytes(input []byte, start LexerFn) token.Nexter {
 	return LexRuneReader(bytes.NewReader(input), start)
 }
 
@@ -202,7 +204,7 @@ func (l *Lexer) PeekTokenRunes() []rune {
 // See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
 //
-func (l *Lexer) EmitToken(t TokenType) {
+func (l *Lexer) EmitToken(t token.Type) {
 	// Nothing can be emitted after EOF emitted
 	//
 	if l.eofOut {
@@ -218,7 +220,7 @@ func (l *Lexer) EmitToken(t TokenType) {
 // See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
 //
-func (l *Lexer) EmitType(t TokenType) {
+func (l *Lexer) EmitType(t token.Type) {
 	// Nothing can be emitted after EOF emitted
 	//
 	if l.eofOut {
@@ -377,10 +379,10 @@ func (l *Lexer) peekHead() *list.Element {
 }
 
 // emit Emits a Token, optionally including the matched text.
-// If TokenType is T_EOF, emitExt is ignored and treated as false.
+// If token.Type is T_EOF, emitExt is ignored and treated as false.
 // Panics if EOF already emitted.
 //
-func (l *Lexer) emit(t TokenType, emitText bool) {
+func (l *Lexer) emit(t token.Type, emitText bool) {
 	// TODO Current tests show this will never be called. Maybe uncomment this once in awhile to confirm :)
 	// // Nothing can be emitted after EOF
 	// // NOTE: This check is a fail-safe and will likely never hit as all public methods check/panic explicitly.

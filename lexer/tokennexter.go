@@ -1,45 +1,29 @@
 package lexer
 
-// TokenNexter is returned by the various Lex* functions and provides methods to retrieve tokens emitted from the lexer.
-// Implements a basic iterator pattern with HasNext() and Next() methods.
-//
-type TokenNexter interface {
+import "github.com/tekwizely/go-parsing/lexer/token"
 
-	// HasNext confirms if there are tokens available.
-	// If it returns true, you can safely call Next() to retrieve the next token.
-	// If it returns false, EOF has been reached and calling Next() will generate a panic.
-	//
-	HasNext() bool
-
-	// Next Retrieves the next token from the lexer.
-	// See HasNext() to determine if any tokens are available.
-	// Panics if HasNext() returns false.
-	//
-	Next() Token
-}
-
-// tokenNexter is the internal structure that backs the lexer's TokenNexter.
+// tokenNexter is the internal structure that backs the lexer's token.Nexter.
 //
 type tokenNexter struct {
 	lexer *Lexer
-	next  Token
+	next  token.Token
 	eof   bool
 }
 
-// Next implements TokenNexter.Next().
+// Next implements token.Nexter.Next().
 //
-func (t *tokenNexter) Next() Token {
+func (t *tokenNexter) Next() token.Token {
 	// We double check for saved next to maybe avoid the call
 	//
 	if t.next == nil && t.HasNext() == false {
-		panic("TokenNexter.Next: No token available")
+		panic("Nexter.Next: No token available")
 	}
 	tok := t.next
 	t.next = nil
 	return tok
 }
 
-// HasNext implements TokenNexter.HasNext().
+// HasNext implements token.Nexter.HasNext().
 // Initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
 //
 func (t *tokenNexter) HasNext() bool {
@@ -73,10 +57,10 @@ func (t *tokenNexter) HasNext() bool {
 	// Consume the token.
 	// We'll either cache it or discard it.
 	//
-	token := t.lexer.tokens.Remove(t.lexer.tokens.Front()).(*token)
+	tok := t.lexer.tokens.Remove(t.lexer.tokens.Front()).(*_token)
 	// Is the token EOF?
 	//
-	if token.eof() {
+	if tok.eof() {
 		// Mark EOF, discarding the token
 		//
 		t.eof = true
@@ -84,6 +68,6 @@ func (t *tokenNexter) HasNext() bool {
 	}
 	// Store the token for pickup
 	//
-	t.next = token
+	t.next = tok
 	return true
 }
