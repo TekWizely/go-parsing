@@ -43,22 +43,17 @@ type Type int
 ### token.Nexter
 
 ```go
-// Nexter provides methods to retrieve tokens emitted from the lexer.
-// Implements a basic iterator pattern with HasNext() and Next() methods.
+// Nexter provides a means of retrieving tokens (and errors) emitted from the lexer.
 //
 type Nexter interface {
 
-	// HasNext confirms if there are tokens available.
-	// If it returns true, you can safely call Next() to retrieve the next token.
-	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	// Next tries to fetch the next available token, returning an error if something goes wrong.
+	// Will return io.EOF to indicate end-of-file.
+	// An error other than io.EOF may be recoverable and does not necessarily indicate end-of-file.
+	// Even when an error is present, the returned token may still be valid and should be checked.
+	// Once io.EOF is returned, any further calls will continue to return io.EOF.
 	//
-	HasNext() bool
-
-	// Next Retrieves the next token from the lexer.
-	// See HasNext() to determine if any tokens are available.
-	// Panics if HasNext() returns false.
-	//
-	Next() Token
+	Next (Token, error)
 }
 ```
 
