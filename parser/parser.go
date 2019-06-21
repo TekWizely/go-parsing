@@ -3,7 +3,7 @@ package parser
 import (
 	"container/list"
 
-	"github.com/tekwizely/go-parsing/lexer"
+	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
 // ParserFn are user functions that scan tokens and emit ASTs.
@@ -14,29 +14,11 @@ import (
 //
 type ParserFn func(*Parser) ParserFn
 
-// TokenNexter matches the signature of lexer.TokenNexter to work toward removing direct dependency on the lexer pkg.
-// Implements a basic iterator pattern with HasNext() and Next() methods.
-//
-type TokenNexter interface {
-
-	// HasNext confirms if there are tokens available.
-	// If it returns true, you can safely call Next() to retrieve the next token.
-	// If it returns false, EOF has been reached and calling Next() will generate a panic.
-	//
-	HasNext() bool
-
-	// Next Retrieves the next token from the lexer.
-	// See HasNext() to determine if any tokens are available.
-	// Panics if HasNext() returns false.
-	//
-	Next() lexer.Token
-}
-
 // Parse initiates a parser against the input token stream.
 // The returned ASTNexter can be used to retrieve emitted ASTs.
 // The parser will auto-emit EOF before exiting it if has not already been emitted.
 //
-func Parse(tokens TokenNexter, start ParserFn) ASTNexter {
+func Parse(tokens token.Nexter, start ParserFn) ASTNexter {
 	p := newParser(tokens, start)
 	return &astNexter{parser: p}
 }
@@ -46,7 +28,7 @@ func Parse(tokens TokenNexter, start ParserFn) ASTNexter {
 // inspect/consume the next token in the input.
 //
 type Parser struct {
-	tokens    TokenNexter   // Source for lexer tokens
+	tokens    token.Nexter  // Source for lexer tokens
 	cache     *list.List    // Cache of fetched lexer tokens ready for pickup by the parser
 	matchTail *list.Element // Points to last element of consumed tokens, nil if no tokens consumed yet
 	matchLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
@@ -82,7 +64,7 @@ func (p *Parser) CanPeek(n int) bool {
 // Panics if nth token not available.
 // Panics if EOF already emitted.
 //
-func (p *Parser) Peek(n int) lexer.Token {
+func (p *Parser) Peek(n int) token.Token {
 	if n < 1 {
 		panic("Parser.Peek: range error")
 	}
@@ -100,7 +82,7 @@ func (p *Parser) Peek(n int) lexer.Token {
 	for ; n > 1; n-- {
 		e = e.Next()
 	}
-	return e.Value.(lexer.Token)
+	return e.Value.(token.Token)
 }
 
 // PeekType allows you to look ahead at token types without consuming them.
@@ -111,7 +93,7 @@ func (p *Parser) Peek(n int) lexer.Token {
 // Panics if EOF already emitted.
 // This is mostly a convenience method that calls Peek(n), returning the token type.
 //
-func (p *Parser) PeekType(n int) lexer.TokenType {
+func (p *Parser) PeekType(n int) token.Type {
 	return p.Peek(n).Type()
 }
 
@@ -130,7 +112,7 @@ func (p *Parser) HasNext() bool {
 // Panics if no token available.
 // Panics if EOF already emitted.
 //
-func (p *Parser) Next() lexer.Token {
+func (p *Parser) Next() token.Token {
 	// Nothing can be peeked after EOF
 	//
 	if p.eofOut {
@@ -144,7 +126,7 @@ func (p *Parser) Next() lexer.Token {
 	e := p.peekHead()
 	p.matchTail = e // Consume peek into token
 	p.matchLen++
-	return e.Value.(lexer.Token)
+	return e.Value.(token.Token)
 }
 
 // Emit emits an AST.
@@ -203,7 +185,7 @@ func (p *Parser) Discard() {
 
 // newParser
 //
-func newParser(tokens TokenNexter, start ParserFn) *Parser {
+func newParser(tokens token.Nexter, start ParserFn) *Parser {
 	return &Parser{
 		tokens:    tokens,
 		cache:     list.New(),

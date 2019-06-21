@@ -2,8 +2,6 @@ package parser
 
 import (
 	"testing"
-
-	"github.com/tekwizely/go-parsing/lexer"
 )
 
 // expectNexterHasNext
@@ -27,11 +25,11 @@ func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
 //
 func TestNexterHasNext1(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterHasNext(t, nexter, true)
 	expectNexterNext(t, nexter, "T_START")
@@ -42,11 +40,11 @@ func TestNexterHasNext1(t *testing.T) {
 //
 func TestNexterHasNext2(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterHasNext(t, nexter, true)
 	expectNexterHasNext(t, nexter, true) // Call again, should hit cached 'next' value

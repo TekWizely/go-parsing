@@ -2,8 +2,6 @@ package parser
 
 import (
 	"testing"
-
-	"github.com/tekwizely/go-parsing/lexer"
 )
 
 // expectCanReset
@@ -20,11 +18,11 @@ func TestMarkerUnused(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
 	expectNexterHasNext(t, nexter, false)
@@ -36,12 +34,12 @@ func TestMarkerCanReset(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		expectCanReset(t, p, m, false)
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
 	expectNexterHasNext(t, nexter, false)
@@ -57,12 +55,12 @@ func TestMarkerImmediateReset(t *testing.T) {
 		//
 		p.Reset(m)
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		expectCanReset(t, p, m, false)
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
 	expectNexterHasNext(t, nexter, false)
@@ -74,16 +72,16 @@ func TestMarkerReset(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		expectCanReset(t, p, m, true)
 		p.Reset(m)
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		expectCanReset(t, p, m, false)
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
 	expectNexterHasNext(t, nexter, false)
@@ -95,11 +93,11 @@ func TestMarkerResetInvalid(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		expectCanReset(t, p, m, true)
 		p.Reset(m)
 		expectCanReset(t, p, m, true)
-		expectNext(t, p, lexer.T_START, "")
+		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		expectCanReset(t, p, m, false)
 		// CanReset said no, but let's try anyway
@@ -107,7 +105,7 @@ func TestMarkerResetInvalid(t *testing.T) {
 		p.Reset(m)
 		return nil
 	}
-	tokens := mockLexer(lexer.T_START)
+	tokens := mockLexer(T_START)
 	assertPanic(t, func() {
 		Parse(tokens, fn).Next()
 	}, "Invalid marker")

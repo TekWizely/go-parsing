@@ -37,13 +37,14 @@ import (
 	"strconv"
 
 	"github.com/tekwizely/go-parsing/lexer"
+	"github.com/tekwizely/go-parsing/lexer/token"
 	"github.com/tekwizely/go-parsing/parser"
 )
 
 // We define our lexer tokens starting from the pre-defined EOF token
 //
 const (
-	T_ID lexer.TokenType = lexer.T_START + iota
+	T_ID token.Type = lexer.T_START + iota
 	T_NUMBER
 	T_PLUS
 	T_MINUS
@@ -62,7 +63,7 @@ var vars = map[string]float64{}
 //
 var singleChars = []byte{'+', '-', '*', '/', '=', '(', ')'}
 
-var singleTokens = []lexer.TokenType{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
+var singleTokens = []token.Type{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
 
 // Whitespace
 //
@@ -261,7 +262,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 		// Should be at end of input
 		//
 		if !p.HasNext() {
-			vars[tId.String] = value
+			vars[tId.Value()] = value
 		} else {
 			fmt.Println("Expecting Operator")
 		}
@@ -372,7 +373,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 	// ID
 	//
 	case T_ID:
-		var id = p.Next().String
+		var id = p.Next().Value()
 		var ok bool
 		if f, ok = vars[id]; !ok {
 			err = errors.New(fmt.Sprintf("id '%s' not defined", id))
@@ -381,7 +382,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 	// Number
 	//
 	case T_NUMBER:
-		n := p.Next().String
+		n := p.Next().Value()
 		if f, err = strconv.ParseFloat(n, 64); err != nil {
 			fmt.Printf("Error parsing number '%s': %s", n, err.Error())
 		}

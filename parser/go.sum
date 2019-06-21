@@ -1,2 +1,5 @@
-github.com/tekwizely/go-parsing/lexer v0.0.0-20190620203355-f59e82d2158e h1:1P9wysie4/7LD0h8qkBQJ0e4Cly2rnp7ZpAzc0evPxg=
-github.com/tekwizely/go-parsing/lexer v0.0.0-20190620203355-f59e82d2158e/go.mod h1:Mjs+wmBqKKq2EI9NVccHfwhC4yutIb39FIchryr+hoo=
+github.com/tekwizely/go-parsing/lexer v0.0.0-20190621065023-8ea7298baf63 h1:O33SIEqs6102SGUUWzTwS3ZMIohIY5x3VTNB45MF4qo=
+github.com/tekwizely/go-parsing/lexer v0.0.0-20190621065023-8ea7298baf63/go.mod h1:NCmskS/25ikYXuC91CclYuv6bw0wy8EhN+988txOZhk=
+github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190621000622-442f3491df4a/go.mod h1:hrGEp224LWZwYH1FrdvwQC2uMjZdX5MDsydAc5FnrXM=
+github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190621065023-8ea7298baf63 h1:iB3Ccc+Nr6AdxBSn7qypxKk2Kt6e2tPw3O6B9+6zmQQ=
+github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190621065023-8ea7298baf63/go.mod h1:hrGEp224LWZwYH1FrdvwQC2uMjZdX5MDsydAc5FnrXM=

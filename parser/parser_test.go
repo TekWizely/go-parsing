@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/tekwizely/go-parsing/lexer"
+	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
 // Define tokens used in various tests
 //
 const (
-	T_START lexer.TokenType = lexer.T_START + iota
+	T_START token.Type = 10 + iota // TODO Remove "10 +" after mocking lexer without needing actual lexer
 	T_ONE
 	T_TWO
 	T_THREE
@@ -17,7 +18,7 @@ const (
 
 // mockLexer
 //
-func mockLexer(tokens ...lexer.TokenType) TokenNexter {
+func mockLexer(tokens ...token.Type) token.Nexter {
 	i := 0
 	var fn lexer.LexerFn
 	fn = func(l *lexer.Lexer) lexer.LexerFn {
@@ -54,18 +55,18 @@ func expectCanPeek(t *testing.T, p *Parser, peek int, match bool) {
 
 // expectPeekType
 //
-func expectPeekType(t *testing.T, p *Parser, peek int, match lexer.TokenType) {
+func expectPeekType(t *testing.T, p *Parser, peek int, match token.Type) {
 	if typ := p.PeekType(peek); typ != match {
-		t.Errorf("Parser.PeekType(%d) expecting Token.Type '%s', received '%s'", peek, match, typ)
+		t.Errorf("Parser.PeekType(%d) expecting Token.Type '%d', received '%d'", peek, match, typ)
 	}
 }
 
 // expectPeek
 //
-func expectPeek(t *testing.T, p *Parser, peek int, typ lexer.TokenType, value string) {
+func expectPeek(t *testing.T, p *Parser, peek int, typ token.Type, value string) {
 	tok := p.Peek(peek)
 	if tok.Type() != typ {
-		t.Errorf("Parser.Peek(%d) expecting Token.Type '%s', received '%s'", peek, typ, tok.Type())
+		t.Errorf("Parser.Peek(%d) expecting Token.Type '%d', received '%d'", peek, typ, tok.Type())
 	}
 	if tok.Value() != value {
 		t.Errorf("Parser.Peek(%d) expecting Token.String '%s', received '%s'", peek, value, tok.Value())
@@ -82,10 +83,10 @@ func expectHasNext(t *testing.T, p *Parser, match bool) {
 
 // expectNext
 //
-func expectNext(t *testing.T, p *Parser, typ lexer.TokenType, value string) {
+func expectNext(t *testing.T, p *Parser, typ token.Type, value string) {
 	tok := p.Next()
 	if tok.Type() != typ {
-		t.Errorf("Parser.Next() expecting Token.Type '%s', received '%s'", typ, tok.Type())
+		t.Errorf("Parser.Next() expecting Token.Type '%d', received '%d'", typ, tok.Type())
 	}
 	if tok.Value() != value {
 		t.Errorf("Parser.Next() expecting Token.String '%s', received '%s'", value, tok.Value())

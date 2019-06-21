@@ -26,12 +26,12 @@ Parsing is initiated through the `Parse` method:
 ```go
 // Parse initiates a parser against the input token stream.
 //
-func Parse(tokens TokenNexter, start ParserFn) ASTNexter
+func Parse(tokens token.Nexter, start ParserFn) ASTNexter
 ```
 
 #### Parser Functions ( `parser.ParserFN` )
 
-In addition to the `TokenNexter`, the Parse function also accepts a function which serves as the starting point for your parser.
+In addition to the `token.Nexter`, the Parse function also accepts a function which serves as the starting point for your parser.
 
 The main Parser process will call into this `start` function to initiate parsing.
 
@@ -75,7 +75,7 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the tok
 // Peek allows you to look ahead at tokens without consuming them.
 // n is 1-based.
 //
-func (p *Parser) Peek(n int) lexer.Token
+func (p *Parser) Peek(n int) token.Token
 ```
 
 ##### Consuming Tokens ( `HasNext()` / `Next()` )
@@ -104,7 +104,7 @@ Once you confirm its safe to do so, `Next()` will consume the next token from th
 ```go
 // Next consumes and returns the next token in the input.
 //
-func (p *Parser) Next() lexer.Token
+func (p *Parser) Next() token.Token
 ```
 
 ##### Emitting ASTs ( `Emit()` )
@@ -264,13 +264,14 @@ import (
 	"strconv"
 
 	"github.com/tekwizely/go-parsing/lexer"
+	"github.com/tekwizely/go-parsing/lexer/token"
 	"github.com/tekwizely/go-parsing/parser"
 )
 
 // We define our lexer tokens starting from the pre-defined EOF token
 //
 const (
-	T_ID lexer.TokenType = lexer.T_START + iota
+	T_ID token.Type = lexer.T_START + iota
 	T_NUMBER
 	T_PLUS
 	T_MINUS
@@ -289,7 +290,7 @@ var vars = map[string]float64{}
 //
 var singleChars = []byte{'+', '-', '*', '/', '=', '(', ')'}
 
-var singleTokens = []lexer.TokenType{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
+var singleTokens = []token.Type{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
 
 // Whitespace
 //
@@ -488,7 +489,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 		// Should be at end of input
 		//
 		if !p.HasNext() {
-			vars[tId.String] = value
+			vars[tId.Value()] = value
 		} else {
 			fmt.Println("Expecting Operator")
 		}
@@ -599,7 +600,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 	// ID
 	//
 	case T_ID:
-		var id = p.Next().String
+		var id = p.Next().Value()
 		var ok bool
 		if f, ok = vars[id]; !ok {
 			err = errors.New(fmt.Sprintf("id '%s' not defined", id))
@@ -608,7 +609,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 	// Number
 	//
 	case T_NUMBER:
-		n := p.Next().String
+		n := p.Next().Value()
 		if f, err = strconv.ParseFloat(n, 64); err != nil {
 			fmt.Printf("Error parsing number '%s': %s", n, err.Error())
 		}
