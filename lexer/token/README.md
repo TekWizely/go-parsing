@@ -53,7 +53,7 @@ type Nexter interface {
 	// Even when an error is present, the returned token may still be valid and should be checked.
 	// Once io.EOF is returned, any further calls will continue to return io.EOF.
 	//
-	Next (Token, error)
+	Next(Token, error)
 }
 ```
 
