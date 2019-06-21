@@ -3,33 +3,51 @@ package parser
 import (
 	"testing"
 
-	"github.com/tekwizely/go-parsing/lexer"
 	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
 // Define tokens used in various tests
 //
 const (
-	T_START token.Type = 10 + iota // TODO Remove "10 +" after mocking lexer without needing actual lexer
+	T_START token.Type = iota
 	T_ONE
 	T_TWO
 	T_THREE
 )
 
+// mockToken creates a token.Token from a token.Type
+//
+type mockToken struct {
+	typ token.Type
+}
+
+func (t *mockToken) Type() token.Type {
+	return t.typ
+}
+func (t *mockToken) Value() string {
+	return ""
+}
+
+// mockNexter creates a token.Nexter from a list of token.Type
+//
+type mockNexter struct {
+	tokens []token.Type
+	i      int
+}
+
+func (n *mockNexter) HasNext() bool {
+	return n.i < cap(n.tokens)
+}
+func (n *mockNexter) Next() token.Token {
+	t := n.tokens[n.i]
+	n.i++
+	return &mockToken{typ: t}
+}
+
 // mockLexer
 //
 func mockLexer(tokens ...token.Type) token.Nexter {
-	i := 0
-	var fn lexer.LexerFn
-	fn = func(l *lexer.Lexer) lexer.LexerFn {
-		if i >= len(tokens) {
-			return nil
-		}
-		l.EmitType(tokens[i])
-		i++
-		return fn
-	}
-	return lexer.LexString(".", fn) // Input can't be empty or LexerFn will not be called
+	return &mockNexter{tokens: tokens}
 }
 
 // assertPanic
