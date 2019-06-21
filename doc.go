@@ -16,6 +16,7 @@ Exported Modules
 The following packages are currently exported:
 
  * github.com/tekwizely/go-parsing/lexer
+ * github.com/tekwizely/go-parsing/lexer/token
  * github.com/tekwizely/go-parsing/parser
 
 
@@ -31,6 +32,11 @@ Some Features of this Lexer:
  * Rune-Centric
  * Infinite Lookahead
  * Mark / Reset Functionality
+
+
+Lexer-Token
+
+Token-related types and interfaces used between the lexer and the parser.
 
 
 Parser

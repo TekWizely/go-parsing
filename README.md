@@ -19,6 +19,7 @@ The modules within this repo are intended to work together, but are allowed to e
 The following packages are currently exported:
 
 - [github.com/tekwizely/go-parsing/lexer](https://godoc.org/github.com/tekwizely/go-parsing/lexer)
+- [github.com/tekwizely/go-parsing/lexer/token](https://godoc.org/github.com/tekwizely/go-parsing/lexer/token)
 - [github.com/tekwizely/go-parsing/parser](https://godoc.org/github.com/tekwizely/go-parsing/parser)
 
 ## Modules
@@ -39,6 +40,10 @@ Some Features of this Lexer:
 #### Example
 
 See [go-parsing/lexer/examples/wordcount](https://github.com/TekWizely/go-parsing/tree/master/lexer/examples/wordcount) for an example program that utilizes the lexer.
+
+### lexer / token ( [github](https://github.com/TekWizely/go-parsing/tree/master/lexer/token) | [godoc](https://godoc.org/github.com/tekwizely/go-parsing/lexer))
+
+Token-related types and interfaces used between the lexer and the parser.
 
 ### parser ([github](https://github.com/TekWizely/go-parsing/tree/master/parser) | [godoc](https://godoc.org/github.com/tekwizely/go-parsing/parser))
 
