@@ -380,7 +380,7 @@ func main() {
 
 	// Process lexer-emitted tokens
 	//
-	for t, err := tokens.Next(); err == nil; t, err = tokens.Next() { // We only emit EOF so !nil should do it
+	for t, lexErr := tokens.Next(); lexErr == nil; t, lexErr = tokens.Next() { // We only emit EOF so !nil should do it
 		chars += len(t.Value())
 
 		switch t.Type() {
