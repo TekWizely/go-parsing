@@ -70,16 +70,6 @@ func expectPeekToken(t *testing.T, l *Lexer, match string) {
 	}
 }
 
-// expectPeekTokenRunes
-//
-func expectPeekTokenRunes(t *testing.T, l *Lexer, match string) {
-	r := l.PeekTokenRunes()
-	s := string(r)
-	if s != match {
-		t.Errorf("Lexer.PeekTokenRunes() expecting '%s', received '%s'", match, s)
-	}
-}
-
 // expectEOF
 //
 func expectEOF(t *testing.T, l *Lexer) {
@@ -111,7 +101,6 @@ func expectNextString(t *testing.T, l *Lexer, match string) {
 		expectNext(t, l, r[i])
 	}
 	expectPeekToken(t, l, match)
-	expectPeekTokenRunes(t, l, match)
 }
 
 // expectMatchEmitString

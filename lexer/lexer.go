@@ -189,14 +189,6 @@ func (l *Lexer) PeekToken() string {
 	return b.String()
 }
 
-// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune ).
-// Panics if EOF already emitted.
-// This is a convenience method and simply executes return []rune(l.PeekToken()).
-//
-func (l *Lexer) PeekTokenRunes() []rune {
-	return []rune(l.PeekToken())
-}
-
 // EmitToken emits a token of the specified type, along with all of the consumed runes.
 // It is safe to emit T_EOF via this method.
 // If the type is T_EOF, then the consumed runes are discarded and this is treated as EmitEOF().

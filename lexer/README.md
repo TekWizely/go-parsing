@@ -134,27 +134,17 @@ Once you confirm its safe to do so, `Next()` will consume the next rune from the
 func (l *Lexer) Next() rune
 ```
 
-##### Reviewing The Current Token String ( `PeekToken()` / `PeekTokenRunes()` )
+##### Reviewing The Current Token String ( `PeekToken()` )
 
 Once you've built up a token by consuming 1 or more runes, you may want to review it in its entirety before deciding what type of token it represents.
 
-For this we have the following PeekToken functions:
-
-###### Return Type: `string`
+For this we have `PeekToken()`:
 
 ```go
 // PeekToken allows you to inspect the currently matched rune sequence.
 // The value is returned as a string, same as EmitToken() would provide.
 //
 func (l *Lexer) PeekToken() string
-```
-
-###### Return Type: `[]rune`
-
-```go
-// PeekTokenRunes allows you to inspect the currently matched rune sequence as a rune array ( []rune ).
-//
-func (l *Lexer) PeekTokenRunes() []rune
 ```
 
 ##### Emitting Tokens ( `EmitToken()` / `EmitType()` )
