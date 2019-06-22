@@ -1,23 +1,58 @@
 package parser
 
 import (
+	"io"
 	"testing"
 )
 
-// expectNexterHasNext
+// expectNexterEOF confirms Next() == (nil, io.EOF)
 //
-func expectNexterHasNext(t *testing.T, nexter ASTNexter, match bool) {
-	if nexter.HasNext() != match {
-		t.Errorf("ASTNexter.HasNext() expecting '%t'", match)
+func expectNexterEOF(t *testing.T, nexter ASTNexter) {
+	ast, err := nexter.Next()
+	if err == nil {
+		if ast == nil {
+			t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, nil)")
+		} else {
+			t.Errorf("Nexter.Next() expecting (nil, EOF), received ('%v', nil)", ast)
+		}
+	} else if ast != nil {
+		t.Errorf("Nexter.Next() expecting (nil, EOF), received ('%v', '%s')'", ast, err.Error())
+	} else if err != io.EOF {
+		t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, '%s')", err.Error())
 	}
 }
 
-// expectNexterNext
+// expectNexterNext confirms Next() == ("$match", nil)
 //
 func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
-	str := nexter.Next().(string)
-	if str != match {
-		t.Errorf("ASTNexter.Next() expecting '%s', received '%s'", match, str)
+	ast, err := nexter.Next() // Assume ast, when non-nil, is of type string
+	if ast == nil {
+		if err == nil {
+			t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, nil)'", match)
+		} else {
+			t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, '%s')'", match, err.Error())
+		}
+	} else if err != nil {
+		t.Errorf("Nexter.Next() expecting ('%s', nil), received ('%v', '%s')'", match, ast, err.Error())
+	} else if ast.(string) != match {
+		t.Errorf("Nexter.Next() expecting ('%s', nil), received ('%v', nil)'", match, ast)
+	}
+}
+
+// expectNexterError confirms Next() == (nil, "$errMsg")
+//
+func expectNexterError(t *testing.T, nexter ASTNexter, errMsg string) {
+	ast, err := nexter.Next()
+	if err == nil {
+		if ast == nil {
+			t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
+		} else {
+			t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', nil)", errMsg, ast)
+		}
+	} else if ast != nil {
+		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', '%s')", errMsg, ast, err.Error())
+	} else if err.Error() != errMsg {
+		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, '%s')", errMsg, err.Error())
 	}
 }
 
@@ -31,9 +66,8 @@ func TestNexterHasNext1(t *testing.T) {
 	}
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
-	expectNexterHasNext(t, nexter, true)
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestNexterHasNext2
@@ -46,10 +80,8 @@ func TestNexterHasNext2(t *testing.T) {
 	}
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
-	expectNexterHasNext(t, nexter, true)
-	expectNexterHasNext(t, nexter, true) // Call again, should hit cached 'next' value
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestEmitEOF
@@ -57,7 +89,7 @@ func TestNexterHasNext2(t *testing.T) {
 func TestNexterEOF(t *testing.T) {
 	tokens := mockLexer()
 	nexter := Parse(tokens, nil)
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestNexterNextAfterEOF
@@ -65,8 +97,8 @@ func TestNexterEOF(t *testing.T) {
 func TestNexterNextAfterEOF(t *testing.T) {
 	tokens := mockLexer()
 	nexter := Parse(tokens, nil)
-	expectNexterHasNext(t, nexter, false)
-	assertPanic(t, func() {
-		nexter.Next()
-	}, "ASTNexter.Next: No AST available")
+	expectNexterEOF(t, nexter)
+	// Call again, should continue to return EOF
+	//
+	expectNexterEOF(t, nexter)
 }

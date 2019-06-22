@@ -92,8 +92,7 @@ func main() {
 
 			// Loop over parser emits
 			//
-			for values.HasNext() {
-				value := values.Next()
+			for value, parseErr := values.Next(); parseErr == nil; value, parseErr = values.Next() {
 				fmt.Printf("%v\n", value)
 			}
 		}

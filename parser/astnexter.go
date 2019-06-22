@@ -1,21 +1,18 @@
 package parser
 
-// ASTNexter is returned by the Parse function and provides methods to retrieve ASTs emitted from the parser.
-// Implements a basic iterator pattern with HasNext() and Next() methods.
+import "io"
+
+// ASTNexter is returned by the Parse function and provides a means of retrieving ASTs emitted from the parser.
 //
 type ASTNexter interface {
 
-	// HasNext confirms if there are ASTs available.
-	// If it returns true, you can safely call Next() to retrieve the next AST.
-	// If it returns false, EOF has been reached and calling Next() will generate a panic.
+	// Next tries to fetch the next available AST, returning an error if something goes wrong.
+	// Will return io.EOF to indicate end-of-file.
+	// An error other than io.EOF may be recoverable and does not necessarily indicate end-of-file.
+	// Even when an error is present, the returned AST may still be valid and should be checked.
+	// Once io.EOF is returned, any further calls will continue to return io.EOF.
 	//
-	HasNext() bool
-
-	// Next Retrieves the next AST from the parser.
-	// See HasNext() to determine if any ASTs are available.
-	// Panics if HasNext() returns false.
-	//
-	Next() interface{}
+	Next() (interface{}, error)
 }
 
 // astNexter is the internal structure that backs the parser's ASTNexter.
@@ -27,22 +24,20 @@ type astNexter struct {
 }
 
 // Next implements ASTNexter.Next().
+// We build on the previous HasNext/Next impl to keep changes minimal.
 //
-func (e *astNexter) Next() interface{} {
-	// We double check for saved next to maybe avoid the call
-	//
-	if e.next == nil && e.HasNext() == false {
-		panic("ASTNexter.Next: No AST available")
+func (e *astNexter) Next() (interface{}, error) {
+	if !e.hasNext() {
+		return nil, io.EOF
 	}
 	tok := e.next
 	e.next = nil
-	return tok
+	return tok, nil
 }
 
-// HasNext implements ASTNexter.HasNext().
-// Initiates calls to ParserFn functions and is the primary entry point for retrieving ASTs from the parser.
+// hasNext Initiates calls to ParserFn functions and is the primary entry point for retrieving ASTs from the parser.
 //
-func (e *astNexter) HasNext() bool {
+func (e *astNexter) hasNext() bool {
 	// If AST previously fetched, return now
 	//
 	if e.next != nil {
