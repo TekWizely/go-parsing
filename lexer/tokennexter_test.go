@@ -10,11 +10,15 @@ import (
 // expectNexterEOF confirms Next() == (nil, io.EOF)
 //
 func expectNexterEOF(t *testing.T, nexter token.Nexter) {
-	token, err := nexter.Next()
-	if token != nil {
-		t.Errorf("Nexter.Next() expecting (nil, EOF), received ({%d, '%s'}, '%s')", token.Type(), token.Value(), err.Error())
-	} else if err == nil {
-		t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, nil)")
+	tok, err := nexter.Next()
+	if err == nil {
+		if tok == nil {
+			t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, nil)")
+		} else {
+			t.Errorf("Nexter.Next() expecting (nil, EOF), received ({%d, '%s'}, nil)", tok.Type(), tok.Value())
+		}
+	} else if tok != nil {
+		t.Errorf("Nexter.Next() expecting (nil, EOF), received ({%d, '%s'}, '%s')'", tok.Type(), tok.Value(), err.Error())
 	} else if err != io.EOF {
 		t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, '%s')", err.Error())
 	}
@@ -23,24 +27,32 @@ func expectNexterEOF(t *testing.T, nexter token.Nexter) {
 // expectNexterNext confirms Next() == (Token{type, value}, nil)
 //
 func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value string) {
-	token, err := nexter.Next()
-	if err != nil {
-		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, '%s')'", typ, value, token.Type(), token.Value(), err.Error())
-	} else if token == nil {
-		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received (nil, nil)'", typ, value)
-	} else if token.Type() != typ || token.Value() != value {
-		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, nil)'", typ, value, token.Type(), token.Value())
+	tok, err := nexter.Next()
+	if tok == nil {
+		if err == nil {
+			t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received (nil, nil)'", typ, value)
+		} else {
+			t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received (nil, '%s')'", typ, value, err.Error())
+		}
+	} else if err != nil {
+		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, '%s')'", typ, value, tok.Type(), tok.Value(), err.Error())
+	} else if tok.Type() != typ || tok.Value() != value {
+		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, nil)'", typ, value, tok.Type(), tok.Value())
 	}
 }
 
 // expectNexterError confirms Next() == (nil, "$errMsg")
 //
 func expectNexterError(t *testing.T, nexter token.Nexter, errMsg string) {
-	token, err := nexter.Next()
-	if token != nil {
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ({%d, '%s'}, '%s')", errMsg, token.Type(), token.Value(), err.Error())
-	} else if err == nil {
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
+	tok, err := nexter.Next()
+	if err == nil {
+		if tok == nil {
+			t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
+		} else {
+			t.Errorf("Nexter.Next() expecting (nil, '%s'), received ({%d, '%s'}, nil)", errMsg, tok.Type(), tok.Value())
+		}
+	} else if tok != nil {
+		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ({%d, '%s'}, '%s')", errMsg, tok.Type(), tok.Value(), err.Error())
 	} else if err.Error() != errMsg {
 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, '%s')", errMsg, err.Error())
 	}
