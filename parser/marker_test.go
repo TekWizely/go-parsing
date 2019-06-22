@@ -25,7 +25,7 @@ func TestMarkerUnused(t *testing.T) {
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerCanReset
@@ -42,7 +42,7 @@ func TestMarkerCanReset(t *testing.T) {
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerImmediateReset
@@ -63,7 +63,7 @@ func TestMarkerImmediateReset(t *testing.T) {
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerReset
@@ -84,7 +84,7 @@ func TestMarkerReset(t *testing.T) {
 	tokens := mockLexer(T_START)
 	nexter := Parse(tokens, fn)
 	expectNexterNext(t, nexter, "T_START")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerResetInvalid
@@ -107,6 +107,6 @@ func TestMarkerResetInvalid(t *testing.T) {
 	}
 	tokens := mockLexer(T_START)
 	assertPanic(t, func() {
-		Parse(tokens, fn).Next()
+		_, _ = Parse(tokens, fn).Next()
 	}, "Invalid marker")
 }

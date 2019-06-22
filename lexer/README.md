@@ -298,21 +298,15 @@ const (
 
 #### Retrieving Emitted Tokens ( `token.Nexter` )
 
-When called, the Lex* functions will return a `token.Nexter` which provides methods to retrieve tokens emitted from the lexer.
-
-`token.Nexter` implements a basic iterator pattern:
+When called, the Lex* functions will return a `token.Nexter` which provides a means of retrieving tokens (and errors) emitted from the lexer:
 
 ```go
 type Nexter interface {
 
-	// HasNext confirms if there are tokens available.
-	// If it returns true, you can safely call Next() to retrieve the next token.
+	// Next tries to fetch the next available token, returning an error if something goes wrong.
+	// Will return io.EOF to indicate end-of-file.
 	//
-	HasNext() bool
-
-	// Next Retrieves the next token from the lexer.
-	//
-	Next() lexer.Token
+	Next() (Token, error)
 }
 ```
 
@@ -386,8 +380,7 @@ func main() {
 
 	// Process lexer-emitted tokens
 	//
-	for tokens.HasNext() {
-		t := tokens.Next()
+	for t, lexErr := tokens.Next(); lexErr == nil; t, lexErr = tokens.Next() { // We only emit EOF so !nil should do it
 		chars += len(t.Value())
 
 		switch t.Type() {

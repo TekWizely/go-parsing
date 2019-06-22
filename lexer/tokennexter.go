@@ -1,6 +1,11 @@
 package lexer
 
-import "github.com/tekwizely/go-parsing/lexer/token"
+import (
+	"errors"
+	"io"
+
+	"github.com/tekwizely/go-parsing/lexer/token"
+)
 
 // tokenNexter is the internal structure that backs the lexer's token.Nexter.
 //
@@ -11,22 +16,25 @@ type tokenNexter struct {
 }
 
 // Next implements token.Nexter.Next().
+// We build on the previous HasNext/Next impl to keep changes minimal.
 //
-func (t *tokenNexter) Next() token.Token {
-	// We double check for saved next to maybe avoid the call
-	//
-	if t.next == nil && t.HasNext() == false {
-		panic("Nexter.Next: No token available")
+func (t *tokenNexter) Next() (token.Token, error) {
+	if !t.hasNext() {
+		return nil, io.EOF
 	}
 	tok := t.next
 	t.next = nil
-	return tok
+	// Error?
+	//
+	if tok.Type() == T_LEX_ERR {
+		return nil, errors.New(tok.Value())
+	}
+	return tok, nil
 }
 
-// HasNext implements token.Nexter.HasNext().
-// Initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
+// hasNext Initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
 //
-func (t *tokenNexter) HasNext() bool {
+func (t *tokenNexter) hasNext() bool {
 	// If token previously fetched, return now
 	//
 	if t.next != nil {

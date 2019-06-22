@@ -126,20 +126,15 @@ you can use this pattern:
 
 Retrieving Emitted ASTs
 
-When called, the `Parse` function will return an `ASTNexter` which provides methods to retrieve ASTs emitted from the
-parser.
-
-`ASTNexter` implements a basic iterator pattern:
+When called, the `Parse` function will return an `ASTNexter` which provides a means of retrieving ASTs emitted from the
+parser:
 
 	type ASTNexter interface {
 
-		// HasNext confirms if there are ASTs available.
+		// Next tries to fetch the next available AST, returning an error if something goes wrong.
+		// Will return io.EOF to indicate end-of-file.
 		//
-		HasNext() bool
-
-		// Next Retrieves the next AST from the parser.
-		//
-		Next() interface{}
+		Next() (interface{}, error)
 	}
 
 

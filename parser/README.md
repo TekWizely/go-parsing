@@ -200,21 +200,15 @@ All previously emitted ASTs will still be available for pickup, but the parser w
 
 #### Retrieving Emitted ASTs ( `parser.ASTNexter` )
 
-When called, the Parse function will return an `ASTNexter` which provides methods to retrieve ASTs emitted from the parser.
-
-`ASTNexter` implements a basic iterator pattern:
+When called, the Parse function will return an `ASTNexter` which provides a means of retrieving ASTs emitted from the parser:
 
 ```go
 type ASTNexter interface {
 
-	// HasNext confirms if there are ASTs available.
-	// If it returns true, you can safely call Next() to retrieve the next AST.
+	// Next tries to fetch the next available AST, returning an error if something goes wrong.
+	// Will return io.EOF to indicate end-of-file.
 	//
-	HasNext() bool
-
-	// Next Retrieves the next AST from the parser.
-	//
-	Next() interface{}
+	Next() (interface{}, error)
 }
 ```
 
@@ -319,8 +313,7 @@ func main() {
 
 			// Loop over parser emits
 			//
-			for values.HasNext() {
-				value := values.Next()
+			for value, parseErr := values.Next(); parseErr == nil; value, parseErr = values.Next() {
 				fmt.Printf("%v\n", value)
 			}
 		}

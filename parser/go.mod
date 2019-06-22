@@ -13,5 +13,6 @@ require (
 
 // For Local testing against changes that aren't upstream
 //
-//replace github.com/tekwizely/go-parsing/lexer => ../lexer
-//replace github.com/tekwizely/go-parsing/lexer/token => ../lexer/token
+replace github.com/tekwizely/go-parsing/lexer => ../lexer
+
+replace github.com/tekwizely/go-parsing/lexer/token => ../lexer/token

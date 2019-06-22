@@ -2,6 +2,7 @@ package parser
 
 import (
 	"container/list"
+	"io"
 
 	"github.com/tekwizely/go-parsing/lexer/token"
 )
@@ -212,18 +213,34 @@ func (p *Parser) growPeek(n int) bool {
 		if p.eof {
 			return false
 		}
-		// If any tokens remaining?
+		// Fetch next token from input
 		//
-		if p.tokens.HasNext() {
-			// Fetch next token from input
-			//
-			token := p.tokens.Next()
+		token, err := p.tokens.Next()
+		// Process any returned token, regardless of er
+		//
+		if token != nil {
 			p.cache.PushBack(token)
 			peekLen++
-		} else {
-			// EOF
+		}
+		// If there was an error, process it now
+		//
+		if err != nil {
+			switch err {
+			// EOF Error
 			//
-			p.eof = true
+			case io.EOF:
+				p.eof = true
+
+			// NON-EOF Error
+			//
+			default:
+				// For lack of a better plan, treat as EOF for now
+				// TODO Think about how to handle non-EOF errors.
+				// TODO Log error.
+				// TODO Expose upstream?
+				//
+				p.eof = true
+			}
 		}
 	}
 	return true
