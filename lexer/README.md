@@ -107,7 +107,7 @@ func (l *Lexer) Peek(n int) rune
 
 ##### Consuming Runes ( `Next()` )
 
-Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next rune from the input, making it part of the current token.
+Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next rune from the input, making it part of the current token:
 
 ```go
 // Next consumes and returns the next rune in the input.
