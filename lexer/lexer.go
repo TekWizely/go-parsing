@@ -279,17 +279,6 @@ func (l *Lexer) DiscardToken() {
 	l.consume(false)
 }
 
-// TODO Remove this after API settles down.
-// DFARRELL - Not needed as Lexer ensures `HasNext()` before calling LexerFn and
-//            `HasNext()` / `CanPeek()` are better tools to use from within LexerFn.
-// // EOF returns true if the peek buffer is empty AND the input has reached EOF.
-// // This will return false if there are any runes remaining in the peek buffer.
-// // See CanPeek() / HasNext() to confirm if runes are available to peek / consume.
-// //
-// func (l *Lexer) EOF() bool {
-// 	return l.eof && l.runes.Len() == l.tokenLen
-// }
-
 // newLexer
 //
 func newLexer(reader io.RuneReader, start LexerFn) *Lexer {
