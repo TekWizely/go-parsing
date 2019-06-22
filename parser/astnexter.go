@@ -54,7 +54,7 @@ func (e *astNexter) hasNext() bool {
 		// Anyone to call?
 		// Any tokens to scan?
 		//
-		if e.parser.nextFn != nil && e.parser.HasNext() {
+		if e.parser.nextFn != nil && e.parser.CanPeek(1) {
 			e.parser.nextFn = e.parser.nextFn(e.parser)
 		} else {
 			// Parser Terminated, let's clean up.

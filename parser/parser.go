@@ -25,7 +25,7 @@ func Parse(tokens token.Nexter, start ParserFn) ASTNexter {
 }
 
 // Parser is passed into your ParserFn functions and provides methods to inspect tokens and emit ASTs.
-// When your ParserFn is called, the parser guarantees that 'HasNext == true` so your function can safely
+// When your ParserFn is called, the parser guarantees that 'CanPeek(1) == true` so your function can safely
 // inspect/consume the next token in the input.
 //
 type Parser struct {
@@ -96,15 +96,6 @@ func (p *Parser) Peek(n int) token.Token {
 //
 func (p *Parser) PeekType(n int) token.Type {
 	return p.Peek(n).Type()
-}
-
-// HasNext confirms if a token is available to consume.
-// If HasNext returns true, you can safely call Next to consume and return the token.
-// Returns false if EOF already emitted.
-// This is a convenience method and simply calls CanPeek(1).
-//
-func (p *Parser) HasNext() bool {
-	return p.CanPeek(1)
 }
 
 // Next consumes and returns the next token in the input.

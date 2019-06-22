@@ -260,7 +260,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
-		if !p.HasNext() {
+		if !p.CanPeek(1) {
 			vars[tId.Value()] = value
 		} else {
 			fmt.Println("Expecting Operator")
@@ -277,7 +277,7 @@ func parseEvaluation(p *parser.Parser) parser.ParserFn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
-		if !p.HasNext() {
+		if !p.CanPeek(1) {
 			p.Emit(value)
 		} else {
 			fmt.Println("Expecting Operator")

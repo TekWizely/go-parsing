@@ -53,7 +53,7 @@ When called, your parser function will receive a `Parser` object which provides 
 
 ###### Before Peeking, Ensure That You Can
 
-A well-behaved parser will first confirm if there are any tokens to review before trying to peek at them.
+A well-behaved parser will first confirm if there are any tokens to review before trying to peek at or consume them.
 
 For this, we have `CanPeek()`:
 
@@ -78,34 +78,17 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the tok
 func (p *Parser) Peek(n int) token.Token
 ```
 
-##### Consuming Tokens ( `HasNext()` / `Next()` )
+##### Consuming Tokens ( `Next()` )
 
-###### Before Consuming, Ensure That You Can
-
-A well-behaved parser will first confirm if there are any tokens available before trying to consume them.
-
-For this, we have `HasNext()`:
-
-```go
-// HasNext confirms if a token is available to consume.
-// If HasNext returns true, you can safely call Next to consume and return the token.
-//
-func (p *Parser) HasNext() bool
-```
-
-**NOTE:** When the Parser calls your parser function, it guarantees that `HasNext() == true`, allowing you to consume that first token without having to confirm its availability.
-
-**NOTE:** `HasNext()` is functionally equivalent to `CanPeek(1)` - So if you've already confirmed `CanPeek(n >= 1)` then you can safely forgo the `HasNext()` check.
-
-###### Consume The Token
-
-Once you confirm its safe to do so, `Next()` will consume the next token from the input.
+Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next token from the input:
 
 ```go
 // Next consumes and returns the next token in the input.
 //
 func (p *Parser) Next() token.Token
 ```
+
+**NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, allowing you to consume that first token without having to confirm its availability.
 
 ##### Emitting ASTs ( `Emit()` )
 
@@ -481,7 +464,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
-		if !p.HasNext() {
+		if !p.CanPeek(1) {
 			vars[tId.Value()] = value
 		} else {
 			fmt.Println("Expecting Operator")
@@ -498,7 +481,7 @@ func parseEvaluation(p *parser.Parser) parser.ParserFn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
-		if !p.HasNext() {
+		if !p.CanPeek(1) {
 			p.Emit(value)
 		} else {
 			fmt.Println("Expecting Operator")

@@ -65,10 +65,6 @@ Your Parser function receives a `*Parser` when called and can use the following 
 	//
 	func (p *Parser) Peek(n int) token.Token
 
-	// HasNext confirms if a token is available to consume.
-	//
-	func (p *Parser) HasNext() bool
-
 	// Next consumes and returns the next token in the input.
 	//
 	func (p *Parser) Next() token.Token

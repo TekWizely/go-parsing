@@ -92,14 +92,6 @@ func expectPeek(t *testing.T, p *Parser, peek int, typ token.Type, value string)
 	}
 }
 
-// expectHasNext
-//
-func expectHasNext(t *testing.T, p *Parser, match bool) {
-	if p.HasNext() != match {
-		t.Errorf("Parser.HasNext() expecting '%t'", match)
-	}
-}
-
 // expectNext
 //
 func expectNext(t *testing.T, p *Parser, typ token.Type, value string) {
@@ -129,15 +121,14 @@ func TestNilFn(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-func TestParserFnSkipedWhenNoHasNext(t *testing.T) {
+func TestParserFnSkipedWhenNoCanPeek(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
-		t.Error("Parser should not call ParserFn when HasNext() == false")
+		t.Error("Parser should not call ParserFn when CanPeek(1) == false")
 		return nil
 	}
 	tokens := mockLexer()
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
-
 }
 
 // TestEmit
@@ -281,30 +272,6 @@ func TestPeekRangeError(t *testing.T) {
 		assertPanic(t, func() {
 			p.Peek(0)
 		}, "Parser.Peek: range error")
-		return nil
-	}
-	tokens := mockLexer()
-	nexter := Parse(tokens, fn)
-	expectNexterEOF(t, nexter)
-}
-
-// TestHasNextTrue
-//
-func TestHasNextTrue(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
-		expectHasNext(t, p, true)
-		return nil
-	}
-	tokens := mockLexer(T_ONE)
-	nexter := Parse(tokens, fn)
-	expectNexterEOF(t, nexter)
-}
-
-// TestHasNextFalse
-//
-func TestHasNextFalse(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
-		expectHasNext(t, p, false)
 		return nil
 	}
 	tokens := mockLexer()
@@ -517,20 +484,6 @@ func TestPeekAfterEOF(t *testing.T) {
 		assertPanic(t, func() {
 			p.Peek(1)
 		}, "Parser.Peek: No tokens can be peeked after EOF is emitted")
-		return nil
-	}
-	tokens := mockLexer(T_ONE)
-	nexter := Parse(tokens, fn)
-	expectNexterEOF(t, nexter)
-}
-
-// TestHesNextAfterEOF
-//
-func TestHasNextAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
-		p.EmitEOF()
-		expectEOF(t, p)
-		expectHasNext(t, p, false)
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
