@@ -180,20 +180,15 @@ You define your own token types starting from T_START:
 
 Retrieving Emitted Tokens
 
-When called, the `Lex*` functions will return a `token.Nexter` which provides methods to retrieve tokens emitted from the
-lexer.
-
-`token.Nexter` implements a basic iterator pattern:
+When called, the `Lex*` functions will return a `token.Nexter` which provides means of retrieving tokens (and errors)
+emitted from the lexer:
 
 	type Nexter interface {
 
-		// HasNext confirms if there are tokens available.
+		// Next tries to fetch the next available token, returning an error if something goes wrong.
+		// Will return io.EOF to indicate end-of-file.
 		//
-		HasNext() bool
-
-		// Next Retrieves the next token from the lexer.
-		//
-		Next() token.Token
+		Next() (token.Token, error)
 	}
 
 

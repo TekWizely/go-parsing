@@ -23,7 +23,7 @@ func TestMarkerUnused(t *testing.T) {
 	}
 	nexter := LexString("123ABC", fn)
 	expectNexterNext(t, nexter, T_STRING, "123ABC")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerCanReset
@@ -39,7 +39,7 @@ func TestMarkerCanReset(t *testing.T) {
 	}
 	nexter := LexString("123ABC", fn)
 	expectNexterNext(t, nexter, T_STRING, "123ABC")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerImmediateReset
@@ -57,7 +57,7 @@ func TestMarkerImmediateReset(t *testing.T) {
 	}
 	nexter := LexString("123ABC", fn)
 	expectNexterNext(t, nexter, T_STRING, "123ABC")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerReset
@@ -76,7 +76,7 @@ func TestMarkerReset(t *testing.T) {
 	}
 	nexter := LexString("123ABC", fn)
 	expectNexterNext(t, nexter, T_STRING, "123ABC")
-	expectNexterHasNext(t, nexter, false)
+	expectNexterEOF(t, nexter)
 }
 
 // TestMarkerResetInvalid
@@ -96,6 +96,6 @@ func TestMarkerResetInvalid(t *testing.T) {
 		return nil
 	}
 	assertPanic(t, func() {
-		LexString("123ABC", fn).Next()
+		_, _ = LexString("123ABC", fn).Next()
 	}, "Invalid marker")
 }
