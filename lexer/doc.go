@@ -180,7 +180,7 @@ You define your own token types starting from T_START:
 
 Retrieving Emitted Tokens
 
-When called, the `Lex*` functions will return a `token.Nexter` which provides means of retrieving tokens (and errors)
+When called, the `Lex*` functions will return a `token.Nexter` which provides a means of retrieving tokens (and errors)
 emitted from the lexer:
 
 	type Nexter interface {

@@ -298,7 +298,7 @@ const (
 
 #### Retrieving Emitted Tokens ( `token.Nexter` )
 
-When called, the Lex* functions will return a `token.Nexter` which provides a means of retrieving tokens (and errors) emitted from the lexer.
+When called, the Lex* functions will return a `token.Nexter` which provides a means of retrieving tokens (and errors) emitted from the lexer:
 
 ```go
 type Nexter interface {
