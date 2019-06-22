@@ -51,7 +51,7 @@ func (t *tokenNexter) hasNext() bool {
 		// Anyone to call?
 		// Anything to scan?
 		//
-		if t.lexer.nextFn != nil && t.lexer.HasNext() {
+		if t.lexer.nextFn != nil && t.lexer.CanPeek(1) {
 			t.lexer.nextFn = t.lexer.nextFn(t.lexer)
 		} else {
 			// Lexer Terminated or input at EOF, let's clean up.

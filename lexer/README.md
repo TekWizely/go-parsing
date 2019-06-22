@@ -80,7 +80,7 @@ When called, your lexer function will receive a `Lexer` object which provides me
 
 ###### Before Peeking, Ensure That You Can
 
-A well-behaved lexer will first confirm if there are any runes to review before trying to peek at them.
+A well-behaved lexer will first confirm if there are any runes to review before trying to peek at or consume them.
 
 For this, we have `CanPeek()`:
 
@@ -105,34 +105,17 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the run
 func (l *Lexer) Peek(n int) rune
 ```
 
-##### Consuming Runes ( `HasNext()` / `Next()` )
+##### Consuming Runes ( `Next()` )
 
-###### Before Consuming, Ensure That You Can
-
-A well-behaved lexer will first confirm if there are any runes available before trying to consume them.
-
-For this, we have `HasNext()`:
-
-```go
-// HasNext confirms if a rune is available to consume.
-// If HasNext returns true, you can safely call Next to consume and return the rune.
-//
-func (l *Lexer) HasNext() bool
-```
-
-**NOTE:** When the Lexer calls your lexer function, it guarantees that `HasNext() == true`, allowing you to consume that first rune without having to confirm its availability.
-
-**NOTE:** `HasNext()` is functionally equivalent to `CanPeek(1)` - So if you've already confirmed `CanPeek(n >= 1)` then you can safely forgo the `HasNext()` check.
-
-###### Consume The Rune
-
-Once you confirm its safe to do so, `Next()` will consume the next rune from the input, making it part of the current token.
+Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next rune from the input, making it part of the current token.
 
 ```go
 // Next consumes and returns the next rune in the input.
 //
 func (l *Lexer) Next() rune
 ```
+
+**NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, allowing you to consume that first rune without having to confirm its availability.
 
 ##### Reviewing The Current Token String ( `PeekToken()` )
 

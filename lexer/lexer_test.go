@@ -45,14 +45,6 @@ func expectPeek(t *testing.T, l *Lexer, peek int, match rune) {
 	}
 }
 
-// expectHasNext
-//
-func expectHasNext(t *testing.T, l *Lexer, match bool) {
-	if l.HasNext() != match {
-		t.Errorf("Lexer.HasNext() expecting '%t'", match)
-	}
-}
-
 // expectNext
 //
 func expectNext(t *testing.T, l *Lexer, match rune) {
@@ -97,7 +89,6 @@ func expectNextString(t *testing.T, l *Lexer, match string) {
 	for i := 0; i < len(r); i++ {
 		expectCanPeek(t, l, 1, true)
 		expectPeek(t, l, 1, r[i])
-		expectHasNext(t, l, true)
 		expectNext(t, l, r[i])
 	}
 	expectPeekToken(t, l, match)
@@ -119,11 +110,11 @@ func TestNilFn(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestLexerFnSkippedWhenNoHasNext
+// TestLexerFnSkippedWhenNoCanPeek
 //
-func TestLexerFnSkippedWhenNoHasNext(t *testing.T) {
+func TestLexerFnSkippedWhenNoCanPeek(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
-		t.Error("Lexer should not call LexerFn when HasNext() == false")
+		t.Error("Lexer should not call LexerFn when CanPeek(1) == false")
 		return nil
 	}
 	nexter := LexString("", fn)
@@ -280,32 +271,6 @@ func TestPeekRangeError(t *testing.T) {
 	}
 	nexter := LexString(".", fn)
 	expectNexterEOF(t, nexter)
-}
-
-// TestHasNextTrue
-//
-func TestHasNextTrue(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
-		expectHasNext(t, l, true)
-		return nil
-	}
-	nexter := LexString("1", fn)
-	expectNexterEOF(t, nexter)
-
-}
-
-// TestHasNextFalse
-//
-func TestHasNextFalse(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
-		expectHasNext(t, l, true)
-		expectNext(t, l, '.')
-		expectHasNext(t, l, false)
-		return nil
-	}
-	nexter := LexString(".", fn)
-	expectNexterEOF(t, nexter)
-
 }
 
 // TestNext1
@@ -631,19 +596,6 @@ func TestPeekAfterEOF(t *testing.T) {
 		assertPanic(t, func() {
 			l.Peek(1)
 		}, "Lexer.Peek: No runes can be peeked after EOF is emitted")
-		return nil
-	}
-	nexter := LexString("123", fn)
-	expectNexterEOF(t, nexter)
-}
-
-// TestHasNextAfterEOF
-//
-func TestHasNextAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
-		l.EmitEOF()
-		expectEOF(t, l)
-		expectHasNext(t, l, false)
 		return nil
 	}
 	nexter := LexString("123", fn)

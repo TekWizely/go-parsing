@@ -90,10 +90,6 @@ Your Lexer function receives a `*Lexer` when called and can use the following me
 	//
 	func (l *Lexer) Peek(n int) rune
 
-	// HasNext confirms if a rune is available to consume.
-	//
-	func (l *Lexer) HasNext() bool
-
 	// Next consumes and returns the next rune in the input.
 	//
 	func (l *Lexer) Next() rune

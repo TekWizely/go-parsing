@@ -79,7 +79,7 @@ func LexBytes(input []byte, start LexerFn) token.Nexter {
 }
 
 // Lexer is passed into your LexerFn functions and provides methods to inspect runes and match them to tokens.
-// When your LexerFn is called, the lexer guarantees that `HasNext() == true` so your function can safely
+// When your LexerFn is called, the lexer guarantees that `CanPeek(1) == true` so your function can safely
 // inspect/consume the next rune in the input.
 //
 type Lexer struct {
@@ -140,17 +140,8 @@ func (l *Lexer) Peek(n int) rune {
 	return e.Value.(rune)
 }
 
-// HasNext confirms if a rune is available to consume.
-// If HasNext returns true, you can safely call Next to consume and return the rune.
-// Returns false if EOF already emitted.
-// This is a convenience method and simply calls CanPeek(1).
-//
-func (l *Lexer) HasNext() bool {
-	return l.CanPeek(1)
-}
-
 // Next consumes and returns the next rune in the input.
-// See CanPeek(1) or HasNext() to confirm if a rune is available.
+// See CanPeek(1) to confirm if a rune is available.
 // See Peek(1) to review the rune before consuming it.
 // Panics if no rune available.
 // Panics if EOF already emitted.
