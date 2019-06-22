@@ -173,17 +173,6 @@ func (p *Parser) Discard() {
 	p.consume()
 }
 
-// TODO Remove this after API settles down
-// DFARRELL - Not needed as Parser ensure `HasNext()` before calling ParserFn and
-//            `HasNext()` / `CanPeek()` are better tools to use from withing ParserFn.
-// // EOF returns true if the peek buffer is empty AND the input has reached EOF.
-// // This will return false if there are any tokens remaining in the peek buffer.
-// // See CanPeek() / HasNext() to confirm if tokens are available to peek / consume.
-// //
-// func (p *Parser) EOF() bool {
-// 	return p.eof && p.cache.Len() == p.matchLen
-// }
-
 // newParser
 //
 func newParser(tokens token.Nexter, start ParserFn) *Parser {
