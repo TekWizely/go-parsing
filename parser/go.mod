@@ -7,12 +7,12 @@ require (
 	//
 	// $ go get github.com/tekwizely/go-parsing/lexer@master
 	//
-	github.com/tekwizely/go-parsing/lexer v0.0.0-20190621065023-8ea7298baf63
-	github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190621065023-8ea7298baf63
+	github.com/tekwizely/go-parsing/lexer v0.0.0-20190622183031-974f82a44df9
+	github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190622183031-974f82a44df9
 )
 
 // For Local testing against changes that aren't upstream
 //
-replace github.com/tekwizely/go-parsing/lexer => ../lexer
+//replace github.com/tekwizely/go-parsing/lexer => ../lexer
 
-replace github.com/tekwizely/go-parsing/lexer/token => ../lexer/token
+//replace github.com/tekwizely/go-parsing/lexer/token => ../lexer/token
