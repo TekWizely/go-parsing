@@ -112,7 +112,7 @@ func lex(l *lexer.Lexer) lexer.LexerFn {
 	// Skip whitespace
 	//
 	case tryMatchWhitespace(l):
-		l.DiscardToken()
+		l.Clear()
 
 	// Number
 	//
@@ -128,7 +128,7 @@ func lex(l *lexer.Lexer) lexer.LexerFn {
 	//
 	default:
 		r := l.Next()
-		l.DiscardToken()
+		l.Clear()
 		fmt.Printf("Unknown Character: '%c'\n", r)
 	}
 
