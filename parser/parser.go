@@ -29,15 +29,15 @@ func Parse(tokens token.Nexter, start ParserFn) ASTNexter {
 // inspect/consume the next token in the input.
 //
 type Parser struct {
-	tokens    token.Nexter  // Source for lexer tokens
-	cache     *list.List    // Cache of fetched lexer tokens ready for pickup by the parser
-	matchTail *list.Element // Points to last element of consumed tokens, nil if no tokens consumed yet
+	input     token.Nexter  // Source of lexer tokens
+	cache     *list.List    // Cache of fetched lexer tokens, including matched & peeked
+	matchTail *list.Element // Points to last matched element in the cache, nil if no tokens matched yet
 	matchLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
 	nextFn    ParserFn      // the next parsing function to enter
-	emits     *list.List    // Cache of emitted ASTs ready for pickup
+	output    *list.List    // Cache of emitted ASTs ready for pickup
 	eof       bool          // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
-	markerId  int           // Incremented after each emit/discard - used to validate markers
+	markerID  int           // Incremented after each emit/discard - used to validate markers
 }
 
 // CanPeek confirms if the requested number of tokens are available in the peek buffer.
@@ -168,15 +168,15 @@ func (p *Parser) Discard() {
 //
 func newParser(tokens token.Nexter, start ParserFn) *Parser {
 	return &Parser{
-		tokens:    tokens,
+		input:     tokens,
 		cache:     list.New(),
 		matchTail: nil,
 		matchLen:  0,
 		nextFn:    start,
-		emits:     list.New(),
+		output:    list.New(),
 		eof:       false,
 		eofOut:    false,
-		markerId:  0,
+		markerID:  0,
 	}
 }
 
@@ -195,7 +195,7 @@ func (p *Parser) growPeek(n int) bool {
 		}
 		// Fetch next token from input
 		//
-		token, err := p.tokens.Next()
+		token, err := p.input.Next()
 		// Process any returned token, regardless of er
 		//
 		if token != nil {
@@ -263,18 +263,18 @@ func (p *Parser) emit(ast interface{}) {
 		// Invalidate outstanding markers manually,
 		// avoiding otherwise redundant call to consume()
 		//
-		p.markerId++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
+		p.markerID++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
 		// Mark EOF
 		//
 		p.eof = true
 		p.eofOut = true
 		// Emit EOF marker
 		//
-		p.emits.PushBack(nil)
+		p.output.PushBack(nil)
 	} else {
 		p.consume()
 
-		p.emits.PushBack(ast)
+		p.output.PushBack(ast)
 	}
 }
 
@@ -290,5 +290,5 @@ func (p *Parser) consume() {
 	}
 	// Invalidate outstanding markers
 	//
-	p.markerId++ // Invalidate outstanding markers
+	p.markerID++ // Invalidate outstanding markers
 }

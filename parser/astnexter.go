@@ -50,7 +50,7 @@ func (e *astNexter) hasNext() bool {
 	}
 	// If no ASTs available, try to fetch some.
 	//
-	for e.parser.emits.Len() == 0 {
+	for e.parser.output.Len() == 0 {
 		// Anyone to call?
 		// Any tokens to scan?
 		//
@@ -68,7 +68,7 @@ func (e *astNexter) hasNext() bool {
 	// Consume the AST.
 	// We'll either cache it or discard it.
 	//
-	emit := e.parser.emits.Remove(e.parser.emits.Front())
+	emit := e.parser.output.Remove(e.parser.output.Front())
 	// Is if EOF?
 	//
 	if emit == nil {

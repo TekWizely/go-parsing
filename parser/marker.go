@@ -11,7 +11,7 @@ import "container/list"
 //  - Parser.Reset()
 //
 type Marker struct {
-	markerId  int
+	markerID  int
 	matchTail *list.Element
 	matchLen  int
 	nextFn    ParserFn
@@ -23,7 +23,7 @@ type Marker struct {
 // Use Reset() to reset the parser state to the marker position.
 //
 func (p *Parser) Marker() *Marker {
-	return &Marker{markerId: p.markerId, matchTail: p.matchTail, matchLen: p.matchLen, nextFn: p.nextFn}
+	return &Marker{markerID: p.markerID, matchTail: p.matchTail, matchLen: p.matchLen, nextFn: p.nextFn}
 }
 
 // CanReset confirms if the marker is still valid.
@@ -32,7 +32,7 @@ func (p *Parser) Marker() *Marker {
 func (p *Parser) CanReset(m *Marker) bool {
 	// ALL markers invalid once EOF emitted
 	//
-	return !p.eofOut && m.markerId == p.markerId
+	return !p.eofOut && m.markerID == p.markerID
 }
 
 // Reset resets the parser state to the marker position.
