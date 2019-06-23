@@ -499,7 +499,7 @@ func TestNextAfterEOF(t *testing.T) {
 		expectEOF(t, p)
 		assertPanic(t, func() {
 			p.Next()
-		}, "Parser.Next: No tokens can be consumed after EOF is emitted")
+		}, "Parser.Next: No tokens can be matched after EOF is emitted")
 		return nil
 	}
 	tokens := mockLexer(T_ONE)

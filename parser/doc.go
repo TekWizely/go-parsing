@@ -55,7 +55,7 @@ calls.
 
 Scanning Tokens
 
-Your Parser function receives a `*Parser` when called and can use the following methods to inspect and consume tokens:
+Your Parser function receives a `*Parser` when called and can use the following methods to inspect and match tokens:
 
 	// CanPeek confirms if the requested number of tokens are available in the peek buffer.
 	//
@@ -65,7 +65,7 @@ Your Parser function receives a `*Parser` when called and can use the following 
 	//
 	func (p *Parser) Peek(n int) token.Token
 
-	// Next consumes and returns the next token in the input.
+	// Next matches and returns the next token in the input.
 	//
 	func (p *Parser) Next() token.Token
 
@@ -84,7 +84,7 @@ Discarding Matched Tokens
 
 Sometimes, you may match a series of tokens that you simply wish to discard:
 
-	// Discard discards the consumed tokens without emitting any ASTs.
+	// Discard discards all previously-matched tokens without emitting any ASTs.
 	//
 	func (p *Parser) Discard()
 

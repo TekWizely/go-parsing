@@ -25,8 +25,8 @@ func Parse(tokens token.Nexter, start ParserFn) ASTNexter {
 }
 
 // Parser is passed into your ParserFn functions and provides methods to inspect tokens and emit ASTs.
-// When your ParserFn is called, the parser guarantees that 'CanPeek(1) == true` so your function can safely
-// inspect/consume the next token in the input.
+// When your ParserFn is called, the parser guarantees that 'CanPeek(1) == true`, ensuring there is at least one token
+// to review/match.
 //
 type Parser struct {
 	input     token.Nexter  // Source of lexer tokens
@@ -98,7 +98,7 @@ func (p *Parser) PeekType(n int) token.Type {
 	return p.Peek(n).Type()
 }
 
-// Next consumes and returns the next token in the input.
+// Next matches and returns the next token in the input.
 // See CanPeek(1) to confirm if a token is available.
 // See Peek(1) and PeekType(1) to review the token before consuming it.
 // Panics if no token available.
@@ -108,7 +108,7 @@ func (p *Parser) Next() token.Token {
 	// Nothing can be peeked after EOF
 	//
 	if p.eofOut {
-		panic("Parser.Next: No tokens can be consumed after EOF is emitted")
+		panic("Parser.Next: No tokens can be matched after EOF is emitted")
 	}
 	if !p.growPeek(1) { // Cache next emit. 1-based
 		panic("Parser.Next: No token available")
@@ -116,13 +116,13 @@ func (p *Parser) Next() token.Token {
 	// Element guaranteed to exist
 	//
 	e := p.peekHead()
-	p.matchTail = e // Consume peek into token
+	p.matchTail = e // Match peek into token
 	p.matchLen++
 	return e.Value.(token.Token)
 }
 
 // Emit emits an AST.
-// Consumed tokens are discarded.
+// All previously-matched tokens are discarded.
 // It is safe to emit nil via this method.
 // If the emit value is nil, then this is treated as EmitEOF().
 // All outstanding markers are invalidated after this call.
@@ -138,11 +138,11 @@ func (p *Parser) Emit(ast interface{}) {
 	p.emit(ast)
 }
 
-// EmitEOF emits a nil, discarding consumed tokens.
+// EmitEOF emits a nil, discarding previously-matched tokens.
 // You will likely never need to call this directly, as Parse will auto-emit EOF (nil) before exiting,
 // if not already emitted.
 // No more reads to the underlying Lexer will happen once EOF is emitted.
-// No more tokens can be consumed once EOF is emitted.
+// No more tokens can be matched once EOF is emitted.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 // This is a convenience method that simply calls Emit(nil).
@@ -151,7 +151,7 @@ func (p *Parser) EmitEOF() {
 	p.Emit(nil)
 }
 
-// Discard discards the consumed tokens without emitting any ASTs.
+// Discard discards all previously-matched tokens without emitting any ASTs.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //
@@ -229,10 +229,10 @@ func (p *Parser) growPeek(n int) bool {
 // peekHead computes the peek buffer head as a function of the matchTail.
 //
 func (p *Parser) peekHead() *list.Element {
-	// If any consumed tokens
+	// If any matched tokens
 	//
 	if p.matchLen > 0 {
-		// Peek buffer starts after consumed tokens
+		// Peek buffer starts after matched tokens
 		//
 		// assert(p.matchTail != nil)
 		return p.matchTail.Next()
@@ -255,7 +255,7 @@ func (p *Parser) emit(ast interface{}) {
 	// If emitting EOF
 	//
 	if ast == nil {
-		// Clear the peek buffer, discarding consumed tokens
+		// Clear the peek buffer, discarding matched tokens
 		//
 		p.matchTail = nil
 		p.matchLen = 0

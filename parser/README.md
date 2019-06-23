@@ -53,7 +53,7 @@ When called, your parser function will receive a `Parser` object which provides 
 
 ###### Before Peeking, Ensure That You Can
 
-A well-behaved parser will first confirm if there are any tokens to review before trying to peek at or consume them.
+A well-behaved parser will first confirm if there are any tokens to review before trying to peek at or match them.
 
 For this, we have `CanPeek()`:
 
@@ -65,7 +65,7 @@ For this, we have `CanPeek()`:
 func (p *Parser) CanPeek(n int) bool
 ```
 
-**NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, allowing you to review that first token without having to confirm its availability.
+**NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one token to review/match.
 
 ###### Taking A Peek
 
@@ -80,15 +80,15 @@ func (p *Parser) Peek(n int) token.Token
 
 ##### Consuming Tokens ( `Next()` )
 
-Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next token from the input:
+Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will match the next token from the input:
 
 ```go
-// Next consumes and returns the next token in the input.
+// Next matches and returns the next token in the input.
 //
 func (p *Parser) Next() token.Token
 ```
 
-**NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, allowing you to consume that first token without having to confirm its availability.
+**NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one token to review/match.
 
 ##### Emitting ASTs ( `Emit()` )
 
@@ -98,19 +98,19 @@ For this, we have `Emit()`:
 
 ```go
 // Emit emits an AST.
-// Consumed tokens are discarded.
+// All previously-matched tokens are discarded.
 //
 func (p * Parser) Emit(ast interface{})
 ```
 
-##### Discarding Consumed Tokens ( `Discard()` )
+##### Discarding Matched Tokens ( `Discard()` )
 
 Sometimes, you may match a series of tokens that you simply wish to discard.
 
-To discard consumed tokens without emitting an AST, use the `Discard()` method:
+To discard matched tokens without emitting an AST, use the `Discard()` method:
 
 ```go
-// Discard discards the consumed tokens without emitting any ASTs.
+// Discard discards all previously-matched tokens without emitting any ASTs.
 //
 func (p *Parser) Discard()
 ```
@@ -310,8 +310,8 @@ func lex(l *lexer.Lexer) lexer.LexerFn {
 	// Single-char token?
 	//
 	if i := bytes.IndexRune(singleChars, l.Peek(1)); i >= 0 {
-		l.Next()                    // Consuming the character
-		l.EmitType(singleTokens[i]) // Emit just the type, discarding the consumed character
+		l.Next()                    // Match the rune
+		l.EmitType(singleTokens[i]) // Emit just the type, discarding the matched rune
 		return lex
 	}
 

@@ -106,8 +106,8 @@ func lex(l *lexer.Lexer) lexer.LexerFn {
 	// Single-char token?
 	//
 	if i := bytes.IndexRune(singleChars, l.Peek(1)); i >= 0 {
-		l.Next()                    // Consuming the character
-		l.EmitType(singleTokens[i]) // Emit just the type, discarding the consumed character
+		l.Next()                    // Match the rune
+		l.EmitType(singleTokens[i]) // Emit just the type, discarding the matched rune
 		return lex
 	}
 
