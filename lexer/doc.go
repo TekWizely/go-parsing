@@ -80,7 +80,7 @@ calls.
 
 Scanning Runes
 
-Your Lexer function receives a `*Lexer` when called and can use the following methods to inspect and consume runes:
+Your Lexer function receives a `*Lexer` when called and can use the following methods to inspect and match runes:
 
 	// CanPeek confirms if the requested number of runes are available in the peek buffer.
 	//
@@ -90,7 +90,7 @@ Your Lexer function receives a `*Lexer` when called and can use the following me
 	//
 	func (l *Lexer) Peek(n int) rune
 
-	// Next consumes and returns the next rune in the input.
+	// Next matches and returns the next rune in the input.
 	//
 	func (l *Lexer) Next() rune
 
@@ -101,14 +101,14 @@ Your Lexer function receives a `*Lexer` when called and can use the following me
 
 Emitting Tokens
 
-Once you've determined what the consumed rune(s) represent, you can emit a token for further processing
+Once you've determined what the matched rune(s) represent, you can emit a token for further processing
 (for example, by a parser):
 
-	// EmitToken emits a token of the specified type, along with all of the consumed runes.
+	// EmitToken emits a token of the specified type, along with all of the matched runes.
 	//
 	func (l *Lexer) EmitToken(t token.Type)
 
-	// EmitType emits a token of the specified type, discarding consumed runes.
+	// EmitType emits a token of the specified type, discarding all previously-matched runes.
 	//
 	func (l *Lexer) EmitType(t token.Type)
 
@@ -119,7 +119,7 @@ Discarding Matched Runes
 
 Sometimes, you may match a series of runes that you simply wish to discard:
 
-	// DiscardToken discards the consumed runes without emitting any tokens.
+	// DiscardToken discards all previously-matched runes without emitting any tokens.
 	//
 	func (l *Lexer) DiscardToken()
 

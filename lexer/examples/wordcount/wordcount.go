@@ -119,10 +119,10 @@ func lexerFn(l *lexer.Lexer) lexer.LexerFn {
 	//
 	default:
 		isSpace := unicode.IsSpace(r)
-		// Consume verified rune to avoid re-check
+		// Match verified rune to avoid re-check
 		//
 		l.Next()
-		// Consume further consecutive runes of same type
+		// Match further consecutive runes of same type
 		//
 		for l.CanPeek(1) && unicode.IsSpace(l.Peek(1)) == isSpace {
 			l.Next()

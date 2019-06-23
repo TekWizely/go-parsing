@@ -610,7 +610,7 @@ func TestNextAfterEOF(t *testing.T) {
 		expectEOF(t, l)
 		assertPanic(t, func() {
 			l.Next()
-		}, "Lexer.Next: No runes can be consumed after EOF is emitted")
+		}, "Lexer.Next: No runes can be matched after EOF is emitted")
 		return nil
 	}
 	nexter := LexString("123", fn)

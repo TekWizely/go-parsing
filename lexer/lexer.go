@@ -79,8 +79,8 @@ func LexBytes(input []byte, start LexerFn) token.Nexter {
 }
 
 // Lexer is passed into your LexerFn functions and provides methods to inspect runes and match them to tokens.
-// When your LexerFn is called, the lexer guarantees that `CanPeek(1) == true` so your function can safely
-// inspect/consume the next rune in the input.
+// When your LexerFn is called, the lexer guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to
+// review/match.
 //
 type Lexer struct {
 	input     io.RuneReader // Source of runes
@@ -140,7 +140,7 @@ func (l *Lexer) Peek(n int) rune {
 	return e.Value.(rune)
 }
 
-// Next consumes and returns the next rune in the input.
+// Next matches and returns the next rune in the input.
 // See CanPeek(1) to confirm if a rune is available.
 // See Peek(1) to review the rune before consuming it.
 // Panics if no rune available.
@@ -150,7 +150,7 @@ func (l *Lexer) Next() rune {
 	// Nothing can be returned after EOF emitted
 	//
 	if l.eofOut {
-		panic("Lexer.Next: No runes can be consumed after EOF is emitted")
+		panic("Lexer.Next: No runes can be matched after EOF is emitted")
 	}
 	if !l.growPeek(1) {
 		panic("Lexer.Next: No rune available")
@@ -158,7 +158,7 @@ func (l *Lexer) Next() rune {
 	// Element guaranteed to exist
 	//
 	e := l.peekHead()
-	l.matchTail = e // Consume next rune into token
+	l.matchTail = e // Match next rune into token
 	l.matchLen++
 	return e.Value.(rune)
 }
@@ -180,9 +180,9 @@ func (l *Lexer) PeekToken() string {
 	return b.String()
 }
 
-// EmitToken emits a token of the specified type, along with all of the consumed runes.
+// EmitToken emits a token of the specified type, along with all of the matched runes.
 // It is safe to emit T_EOF via this method.
-// If the type is T_EOF, then the consumed runes are discarded and this is treated as EmitEOF().
+// If the type is T_EOF, then all previously-matched runes are discarded and this is treated as EmitEOF().
 // All outstanding markers are invalidated after this call.
 // See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
@@ -196,7 +196,7 @@ func (l *Lexer) EmitToken(t token.Type) {
 	l.emit(t, true)
 }
 
-// EmitType emits a token of the specified type, discarding consumed runes.
+// EmitType emits a token of the specified type, discarding all previously-matched runes.
 // The emitted token will have a Text() value of "".
 // It is safe to emit T_EOF via this method.
 // All outstanding markers are invalidated after this call.
@@ -236,11 +236,11 @@ func (l *Lexer) EmitErrorf(format string, args ...interface{}) {
 	l.EmitError(fmt.Sprintf(format, args...))
 }
 
-// EmitEOF emits a token of type TokenEOF, discarding consumed runes.
+// EmitEOF emits a token of type TokenEOF, discarding all previously-matched runes.
 // You will likely never need to call this directly, as Lex will auto-emit EOF (T_EOF) before exiting,
 // if not already emitted.
 // No more reads to the underlying RuneReader will happen once EOF is emitted.
-// No more runes can be consumed once EOF is emitted.
+// No more runes can be matched once EOF is emitted.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 // This is a convenience method that simply calls EmitType(T_EOF).
@@ -249,7 +249,7 @@ func (l *Lexer) EmitEOF() {
 	l.EmitType(T_EOF)
 }
 
-// DiscardToken discards the consumed runes without emitting any tokens.
+// DiscardToken discards all previously-matched runes without emitting any tokens.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //
@@ -337,7 +337,7 @@ func (l *Lexer) growPeek(n int) bool {
 // peekHead computes the peek buffer head as a function of the matchTail.
 //
 func (l *Lexer) peekHead() *list.Element {
-	// If any consumed runes
+	// If any matched runes
 	//
 	if l.matchLen > 0 {
 		// Peek buffer starts after token
@@ -366,7 +366,7 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 	// If emitting EOF
 	//
 	if T_EOF == t {
-		// Clear the peek buffer, discarding consumed runes
+		// Clear the peek buffer, discarding matched runes
 		//
 		l.matchTail = nil
 		l.matchLen = 0

@@ -80,7 +80,7 @@ When called, your lexer function will receive a `Lexer` object which provides me
 
 ###### Before Peeking, Ensure That You Can
 
-A well-behaved lexer will first confirm if there are any runes to review before trying to peek at or consume them.
+A well-behaved lexer will first confirm if there are any runes to review before trying to peek at or match them.
 
 For this, we have `CanPeek()`:
 
@@ -92,7 +92,7 @@ For this, we have `CanPeek()`:
 func (l *Lexer) CanPeek(n int) bool
 ```
 
-**NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, allowing you to review that first rune without having to confirm its availability.
+**NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to review/match.
 
 ###### Taking A Peek
 
@@ -107,15 +107,15 @@ func (l *Lexer) Peek(n int) rune
 
 ##### Consuming Runes ( `Next()` )
 
-Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will consume the next rune from the input, making it part of the current token:
+Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will match the next rune from the input, making it part of the current token:
 
 ```go
-// Next consumes and returns the next rune in the input.
+// Next matches and returns the next rune in the input.
 //
 func (l *Lexer) Next() rune
 ```
 
-**NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, allowing you to consume that first rune without having to confirm its availability.
+**NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to review/match.
 
 ##### Reviewing The Current Token String ( `PeekToken()` )
 
@@ -132,16 +132,16 @@ func (l *Lexer) PeekToken() string
 
 ##### Emitting Tokens ( `EmitToken()` / `EmitType()` )
 
-Once you've determined what the consumed rune(s) represent, you can emit a token for further processing (for example, by a parser).
+Once you've determined what the matched rune(s) represent, you can emit a token for further processing (for example, by a parser).
 
-###### Emitting Token With Consumed Runes
+###### Emitting Token With Matched Runes
 
 Along with the token text, we need to specify the token Type.
 
 The general method for this is `EmitToken()`:
 
 ```go
-// EmitToken emits a token of the specified type, along with all of the consumed runes.
+// EmitToken emits a token of the specified type, along with all of the matched runes.
 //
 func (l *Lexer) EmitToken(t token.Type)
 ```
@@ -152,22 +152,22 @@ func (l *Lexer) EmitToken(t token.Type)
 
 For some token types, the text value of the token isn't needed, and the `token.Type` carries enough context to fully describe the token (ex. `'+' -> T_PLUS`).
 
-For these scenarios, you can use `EmitType` to emit just the token type, discarding the consumed runes:
+For these scenarios, you can use `EmitType` to emit just the token type, discarding the previously-matched runes:
 
 ```go
-// EmitType emits a token of the specified type, discarding consumed runes.
+// EmitType emits a token of the specified type, discarding all previously-matched runes.
 //
 func (l *Lexer) EmitType(t token.Type)
 ```
 
-##### Discarding Consumed Runes ( `DiscardToken()` )
+##### Discarding Matched Runes ( `DiscardToken()` )
 
 Sometimes, you may match a series of runes that you simply wish to discard. For example, in certain contexts, whitespace characters may be ignorable.
 
-To discard consumed runes without emitting any tokens, use the `DiscardToken()` method:
+To discard previously-matched runes without emitting any tokens, use the `DiscardToken()` method:
 
 ```go
-// DiscardToken discards the consumed runes without emitting any tokens.
+// DiscardToken discards all previously-matched runes without emitting any tokens.
 //
 func (l *Lexer) DiscardToken()
 ```
@@ -411,10 +411,10 @@ func lexerFn(l *lexer.Lexer) lexer.LexerFn {
 	//
 	default:
 		isSpace := unicode.IsSpace(r)
-		// Consume verified rune to avoid re-check
+		// Match verified rune to avoid re-check
 		//
 		l.Next()
-		// Consume further consecutive runes of same type
+		// Match further consecutive runes of same type
 		//
 		for l.CanPeek(1) && unicode.IsSpace(l.Peek(1)) == isSpace {
 			l.Next()
