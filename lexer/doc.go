@@ -119,9 +119,9 @@ Discarding Matched Runes
 
 Sometimes, you may match a series of runes that you simply wish to discard:
 
-	// DiscardToken discards all previously-matched runes without emitting any tokens.
+	// Clear discards all previously-matched runes without emitting any tokens.
 	//
-	func (l *Lexer) DiscardToken()
+	func (l *Lexer) Clear()
 
 
 Creating Save Points
@@ -133,7 +133,7 @@ different context:
 	//
 	func (l *Lexer) Marker() *Marker
 
-A marker is good up until the next `Emit()` or `Discard()` action.
+A marker is good up until the next `Emit()` or `Clear()` action.
 
 Before using a marker, confirm it is still valid:
 

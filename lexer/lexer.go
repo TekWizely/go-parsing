@@ -91,7 +91,7 @@ type Lexer struct {
 	output    *list.List    // Cache of emitted tokens ready for pickup by a parser
 	eof       bool          // Has EOF been reached on the input reader? NOTE Peek buffer may still have runes in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
-	markerID  int           // Incremented after each emit/discard - used to validate markers
+	markerID  int           // Incremented after each emit/clear - used to validate markers
 }
 
 // CanPeek confirms if the requested number of runes are available in the peek buffer.
@@ -222,7 +222,7 @@ func (l *Lexer) EmitError(err string) {
 	if l.eofOut {
 		panic("Lexer.EmitError: No further emits allowed after EOF is emitted")
 	}
-	l.consume(false)
+	l.clear(false)
 	// TODO This is a tad kludgie - Think of a better way to inject a string into the standard emit flow.
 	l.output.PushBack(newToken(T_LEX_ERR, err))
 }
@@ -249,17 +249,17 @@ func (l *Lexer) EmitEOF() {
 	l.EmitType(T_EOF)
 }
 
-// DiscardToken discards all previously-matched runes without emitting any tokens.
+// Clear discards all previously-matched runes without emitting any tokens.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //
-func (l *Lexer) DiscardToken() {
-	// Nothing can be discarded after EOF emitted
+func (l *Lexer) Clear() {
+	// Nothing can be cleared after EOF emitted
 	//
 	if l.eofOut {
-		panic("Lexer.Discard: No discards allowed after EOF is emitted")
+		panic("Lexer.Clear: No clears allowed after EOF is emitted")
 	}
-	l.consume(false)
+	l.clear(false)
 }
 
 // newLexer
@@ -351,7 +351,7 @@ func (l *Lexer) peekHead() *list.Element {
 }
 
 // emit Emits a Token, optionally including the matched text.
-// If token.Type is T_EOF, emitExt is ignored and treated as false.
+// If token.Type is T_EOF, emitText is ignored and treated as false.
 // Panics if EOF already emitted.
 //
 func (l *Lexer) emit(t token.Type, emitText bool) {
@@ -372,7 +372,7 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 		l.matchLen = 0
 		l.cache.Init()
 		// Invalidate outstanding markers manually,
-		// avoiding otherwise redundant call to consume()
+		// avoiding otherwise redundant call to clear()
 		//
 		l.markerID++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
 		// Mark EOF
@@ -383,16 +383,17 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 		//
 		l.output.PushBack(newToken(T_EOF, ""))
 	} else {
-		s := l.consume(emitText)
+		s := l.clear(emitText)
 
 		l.output.PushBack(newToken(t, s))
 	}
 }
 
-// consume consumes the matched token, optionally returning the token text.
+// clear discards the previously-matched runes, optionally returning them as a
+// string.
 // All outstanding markers are invalidated after this call.
 //
-func (l *Lexer) consume(returnText bool) string {
+func (l *Lexer) clear(returnText bool) string {
 	var s string
 	if returnText {
 		// Build the token into a string

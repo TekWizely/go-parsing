@@ -160,16 +160,16 @@ For these scenarios, you can use `EmitType` to emit just the token type, discard
 func (l *Lexer) EmitType(t token.Type)
 ```
 
-##### Discarding Matched Runes ( `DiscardToken()` )
+##### Discarding Matched Runes ( `Clear()` )
 
 Sometimes, you may match a series of runes that you simply wish to discard. For example, in certain contexts, whitespace characters may be ignorable.
 
-To discard previously-matched runes without emitting any tokens, use the `DiscardToken()` method:
+To discard previously-matched runes without emitting any tokens, use the `Clear()` method:
 
 ```go
-// DiscardToken discards all previously-matched runes without emitting any tokens.
+// Clear discards all previously-matched runes without emitting any tokens.
 //
-func (l *Lexer) DiscardToken()
+func (l *Lexer) Clear()
 ```
 
 ##### Creating Save Points ( `Marker()` / `CanReset()` / `Reset()` )
@@ -188,7 +188,7 @@ func (l *Lexer) Marker() *Marker
 
 ###### Before Using A Marker, Ensure That You Can
 
-A marker is good up until the next `Emit()` or `Discard()` action.
+A marker is good up until the next `Emit()` or `Clear()` action.
 
 A well-behaved lexer will first ensure that a marker is valid before trying to use it.
 

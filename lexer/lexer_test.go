@@ -419,25 +419,25 @@ func TestMatchReader(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscardToken1
+// TestClear1
 //
-func TestDiscardToken1(t *testing.T) {
+func TestClear1(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		expectNextString(t, l, "123ABC")
-		l.DiscardToken()
+		l.Clear()
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscardToken2
+// TestClear2
 //
-func TestDiscardToken2(t *testing.T) {
+func TestClear2(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		expectMatchEmitString(t, l, "123", T_INT)
 		expectNextString(t, l, "ABC")
-		l.DiscardToken()
+		l.Clear()
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
@@ -445,12 +445,12 @@ func TestDiscardToken2(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscardToken3
+// TestClear3
 //
-func TestDiscardToken3(t *testing.T) {
+func TestClear3(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		expectNextString(t, l, "123")
-		l.DiscardToken()
+		l.Clear()
 		expectMatchEmitString(t, l, "ABC", T_STRING)
 		return nil
 	}
@@ -647,17 +647,17 @@ func TestEmitErrorAfterEOF(t *testing.T) {
 	}, "Lexer.EmitError: No further emits allowed after EOF is emitted")
 }
 
-// TestDiscardAfterEOF
+// TestClearAfterEOF
 //
-func TestDiscardAfterEOF(t *testing.T) {
+func TestClearAfterEOF(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)
-		l.DiscardToken()
+		l.Clear()
 		return nil
 	}
 	assertPanic(t, func() {
 		_, _ = LexString("123", fn).Next()
-	}, "Lexer.Discard: No discards allowed after EOF is emitted")
+	}, "Lexer.Clear: No clears allowed after EOF is emitted")
 }
