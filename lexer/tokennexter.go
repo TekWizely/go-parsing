@@ -47,7 +47,7 @@ func (t *tokenNexter) hasNext() bool {
 	}
 	// If no tokens available, try to fetch some.
 	//
-	for t.lexer.tokens.Len() == 0 {
+	for t.lexer.output.Len() == 0 {
 		// Anyone to call?
 		// Anything to scan?
 		//
@@ -65,7 +65,7 @@ func (t *tokenNexter) hasNext() bool {
 	// Consume the token.
 	// We'll either cache it or discard it.
 	//
-	tok := t.lexer.tokens.Remove(t.lexer.tokens.Front()).(*_token)
+	tok := t.lexer.output.Remove(t.lexer.output.Front()).(*_token)
 	// Is the token EOF?
 	//
 	if tok.eof() {

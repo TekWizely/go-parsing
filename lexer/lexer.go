@@ -83,15 +83,15 @@ func LexBytes(input []byte, start LexerFn) token.Nexter {
 // inspect/consume the next rune in the input.
 //
 type Lexer struct {
-	reader    io.RuneReader // reader
-	runes     *list.List    // working runes (token + look-ahead)
-	tokenTail *list.Element // Points to last element of token, nil if token is empty
-	tokenLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
+	input     io.RuneReader // Source of runes
+	cache     *list.List    // Cache of fetched runes, including matched & peeked
+	matchTail *list.Element // Points to last matched element in the cache, nil if no runes matched yet
+	matchLen  int           // Len of match buffer.  Makes growPeek faster when no growth needed
 	nextFn    LexerFn       // the next lexing function to enter
-	tokens    *list.List    // Cache of emitted tokens ready for pickup by a parser
+	output    *list.List    // Cache of emitted tokens ready for pickup by a parser
 	eof       bool          // Has EOF been reached on the input reader? NOTE Peek buffer may still have runes in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
-	markerId  int           // Incremented after each emit/discard - used to validate markers
+	markerID  int           // Incremented after each emit/discard - used to validate markers
 }
 
 // CanPeek confirms if the requested number of runes are available in the peek buffer.
@@ -158,8 +158,8 @@ func (l *Lexer) Next() rune {
 	// Element guaranteed to exist
 	//
 	e := l.peekHead()
-	l.tokenTail = e // Consume next rune into token
-	l.tokenLen++
+	l.matchTail = e // Consume next rune into token
+	l.matchLen++
 	return e.Value.(rune)
 }
 
@@ -174,7 +174,7 @@ func (l *Lexer) PeekToken() string {
 		panic("Lexer.PeekToken: No token peeks allowed after EOF is emitted")
 	}
 	b := &strings.Builder{}
-	for n, e := 0, l.runes.Front(); n < l.tokenLen; n, e = n+1, e.Next() {
+	for n, e := 0, l.cache.Front(); n < l.matchLen; n, e = n+1, e.Next() {
 		b.WriteRune(e.Value.(rune))
 	}
 	return b.String()
@@ -224,7 +224,7 @@ func (l *Lexer) EmitError(err string) {
 	}
 	l.consume(false)
 	// TODO This is a tad kludgie - Think of a better way to inject a string into the standard emit flow.
-	l.tokens.PushBack(newToken(T_LEX_ERR, err))
+	l.output.PushBack(newToken(T_LEX_ERR, err))
 }
 
 // EmitErrorf Emits a token of type T_LEX_ERR with the formatted err string as the token text.
@@ -266,15 +266,15 @@ func (l *Lexer) DiscardToken() {
 //
 func newLexer(reader io.RuneReader, start LexerFn) *Lexer {
 	l := &Lexer{
-		reader:    reader,
-		runes:     list.New(),
-		tokenTail: nil,
-		tokenLen:  0,
+		input:     reader,
+		cache:     list.New(),
+		matchTail: nil,
+		matchLen:  0,
 		nextFn:    start,
-		tokens:    list.New(),
+		output:    list.New(),
 		eof:       false,
 		eofOut:    false,
-		markerId:  0,
+		markerID:  0,
 	}
 	return l
 }
@@ -285,7 +285,7 @@ func newLexer(reader io.RuneReader, start LexerFn) *Lexer {
 func (l *Lexer) growPeek(n int) bool {
 	// Grow to n
 	//
-	peekLen := l.runes.Len() - l.tokenLen
+	peekLen := l.cache.Len() - l.matchLen
 	for peekLen < n {
 		// Nothing to do if EOF reached already
 		//
@@ -294,7 +294,7 @@ func (l *Lexer) growPeek(n int) bool {
 		}
 		// Fetch next rune from input
 		//
-		r, size, err := l.reader.ReadRune()
+		r, size, err := l.input.ReadRune()
 		// Process any returned rune, regardless of err
 		//
 		if size > 0 {
@@ -304,7 +304,7 @@ func (l *Lexer) growPeek(n int) bool {
 			if r != utf8.RuneError {
 				// Add rune to peek buffer
 				//
-				l.runes.PushBack(r)
+				l.cache.PushBack(r)
 				peekLen++
 			}
 		}
@@ -334,20 +334,20 @@ func (l *Lexer) growPeek(n int) bool {
 	return true
 }
 
-// peekHead computes the peek buffer head as a function of the tokenTail.
+// peekHead computes the peek buffer head as a function of the matchTail.
 //
 func (l *Lexer) peekHead() *list.Element {
 	// If any consumed runes
 	//
-	if l.tokenLen > 0 {
+	if l.matchLen > 0 {
 		// Peek buffer starts after token
 		//
-		// assert(l.tokenTail != nil)
-		return l.tokenTail.Next()
+		// assert(l.matchTail != nil)
+		return l.matchTail.Next()
 	}
 	// Its ALL the peek buffer
 	//
-	return l.runes.Front()
+	return l.cache.Front()
 }
 
 // emit Emits a Token, optionally including the matched text.
@@ -368,24 +368,24 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 	if T_EOF == t {
 		// Clear the peek buffer, discarding consumed runes
 		//
-		l.tokenTail = nil
-		l.tokenLen = 0
-		l.runes.Init()
+		l.matchTail = nil
+		l.matchLen = 0
+		l.cache.Init()
 		// Invalidate outstanding markers manually,
 		// avoiding otherwise redundant call to consume()
 		//
-		l.markerId++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
+		l.markerID++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
 		// Mark EOF
 		//
 		l.eof = true
 		l.eofOut = true
 		// Emit EOF token
 		//
-		l.tokens.PushBack(newToken(T_EOF, ""))
+		l.output.PushBack(newToken(T_EOF, ""))
 	} else {
 		s := l.consume(emitText)
 
-		l.tokens.PushBack(newToken(t, s))
+		l.output.PushBack(newToken(t, s))
 	}
 }
 
@@ -398,23 +398,23 @@ func (l *Lexer) consume(returnText bool) string {
 		// Build the token into a string
 		//
 		b := &strings.Builder{}
-		for l.tokenLen > 0 {
-			e := l.runes.Front()
+		for l.matchLen > 0 {
+			e := l.cache.Front()
 			b.WriteRune(e.Value.(rune))
-			l.runes.Remove(e)
-			l.tokenLen--
+			l.cache.Remove(e)
+			l.matchLen--
 		}
 		s = b.String()
 	} else {
 		// Discard runes
 		//
-		for l.tokenLen > 0 {
-			l.runes.Remove(l.runes.Front())
-			l.tokenLen--
+		for l.matchLen > 0 {
+			l.cache.Remove(l.cache.Front())
+			l.matchLen--
 		}
 		s = ""
 	}
-	l.markerId++ // Invalidate outstanding markers
+	l.markerID++ // Invalidate outstanding markers
 
 	return s
 }

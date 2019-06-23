@@ -65,7 +65,7 @@ func expectPeekToken(t *testing.T, l *Lexer, match string) {
 // expectEOF
 //
 func expectEOF(t *testing.T, l *Lexer) {
-	eof := l.eof && l.runes.Len() == l.tokenLen
+	eof := l.eof && l.cache.Len() == l.matchLen
 	if !eof {
 		t.Error("Lexer expecting to be at EOF")
 	}

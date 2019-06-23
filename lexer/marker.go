@@ -11,9 +11,9 @@ import "container/list"
 //  - Lexer.Reset()
 //
 type Marker struct {
-	markerId  int
-	tokenTail *list.Element
-	tokenLen  int
+	markerID  int
+	matchTail *list.Element
+	matchLen  int
 	nextFn    LexerFn
 }
 
@@ -23,7 +23,7 @@ type Marker struct {
 // Use Reset() to reset the lexer state to the marker position.
 //
 func (l *Lexer) Marker() *Marker {
-	return &Marker{markerId: l.markerId, tokenTail: l.tokenTail, tokenLen: l.tokenLen, nextFn: l.nextFn}
+	return &Marker{markerID: l.markerID, matchTail: l.matchTail, matchLen: l.matchLen, nextFn: l.nextFn}
 }
 
 // CanReset confirms if the marker is still valid.
@@ -32,7 +32,7 @@ func (l *Lexer) Marker() *Marker {
 func (l *Lexer) CanReset(m *Marker) bool {
 	// ALL markers invalid once EOF emitted
 	//
-	return !l.eofOut && m.markerId == l.markerId
+	return !l.eofOut && m.markerID == l.markerID
 }
 
 // Reset resets the lexer state to the marker position.
@@ -46,7 +46,7 @@ func (l *Lexer) Reset(m *Marker) LexerFn {
 	if l.CanReset(m) == false {
 		panic("Invalid marker")
 	}
-	l.tokenTail = m.tokenTail
-	l.tokenLen = m.tokenLen
+	l.matchTail = m.matchTail
+	l.matchLen = m.matchLen
 	return l.nextFn
 }
