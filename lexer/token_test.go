@@ -43,10 +43,10 @@ func TestTokenEnums(t *testing.T) {
 	if T_START != 3 {
 		t.Error("T_START != 3")
 	}
-	// t_end
+	// tEnd
 	//
-	if t_end != 4 {
-		t.Error("t_end != 4, are there new tokens defined?")
+	if tEnd != 4 {
+		t.Error("tEnd != 4, are there new tokens defined?")
 	}
 }
 

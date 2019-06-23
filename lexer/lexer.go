@@ -212,7 +212,7 @@ func (l *Lexer) EmitType(t token.Type) {
 	l.emit(t, false)
 }
 
-// EmitErrorf Emits a token of type T_LEX_ERR with the specified err string as the token text.
+// EmitError Emits a token of type T_LEX_ERR with the specified err string as the token text.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //

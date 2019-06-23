@@ -3,11 +3,21 @@ package lexer
 import "github.com/tekwizely/go-parsing/lexer/token"
 
 const (
-	T_LEX_ERR token.Type = iota // Lexer error
-	T_UNKNOWN                   // Unknown rune(s)
-	T_EOF                       // EOF
-	T_START                     // Marker for user tokens ( use T_START + iota )
-	t_end                       // internal marker
+	// T_LEX_ERR represents a Lexer error
+	//
+	T_LEX_ERR token.Type = iota
+	// T_UNKNOWN represents Unknown rune(s)
+	//
+	T_UNKNOWN
+	// T_EOF represents end of file
+	//
+	T_EOF
+	// T_START is a marker for user tokens ( use T_START + iota )
+	//
+	T_START
+	// tEnd is an internal marker
+	//
+	tEnd
 )
 
 // token is the internal structure that backs the lexer's Token.

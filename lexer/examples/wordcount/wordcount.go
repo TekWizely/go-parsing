@@ -46,16 +46,18 @@ func main() {
 		panic(err)
 	}
 
+	// int inits to 0
+	//
 	var (
-		chars  int = 0
-		words  int = 0
-		spaces int = 0
-		lines  int = 0
+		chars  int
+		words  int
+		spaces int
+		lines  int
 	)
 
 	// To help us track last line in file (which may not have a newline)
 	//
-	var emptyLine bool = true
+	var emptyLine = true
 
 	tokens := lexer.LexReader(file, lexerFn)
 
