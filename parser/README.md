@@ -269,10 +269,6 @@ var singleChars = []byte{'+', '-', '*', '/', '=', '(', ')'}
 
 var singleTokens = []token.Type{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
 
-// Whitespace
-//
-var bytesWhitespace = []byte{' ', '\t'}
-
 // main
 //
 func main() {
@@ -329,7 +325,7 @@ func lex(l *lexer.Lexer) lexer.LexerFn {
 
 	// ID
 	//
-	case tryMatchId(l):
+	case tryMatchID(l):
 		l.EmitToken(T_ID)
 
 	// Unknown
@@ -423,9 +419,9 @@ func tryMatchNumber(l *lexer.Lexer) bool {
 	return false
 }
 
-// tryMatchId [a-zA-Z] [0-9a-zA-Z]*
+// tryMatchID [a-zA-Z] [0-9a-zA-Z]*
 //
-func tryMatchId(l *lexer.Lexer) bool {
+func tryMatchID(l *lexer.Lexer) bool {
 	if tryMatchAlpha(l) {
 		for tryMatchAlphaNum(l) {
 			// Nothing to do
@@ -459,13 +455,13 @@ func parse(p *parser.Parser) parser.ParserFn {
 // Assumes "ID '='" has been peek-matched by root parser.
 //
 func parseAssignment(p *parser.Parser) parser.ParserFn {
-	tId := p.Next()
+	tID := p.Next()
 	p.Next() // Skip '='
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
 		if !p.CanPeek(1) {
-			vars[tId.Value()] = value
+			vars[tID.Value()] = value
 		} else {
 			fmt.Println("Expecting Operator")
 		}
@@ -579,7 +575,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 		var id = p.Next().Value()
 		var ok bool
 		if f, ok = vars[id]; !ok {
-			err = errors.New(fmt.Sprintf("id '%s' not defined", id))
+			err = fmt.Errorf("id '%s' not defined", id)
 		}
 
 	// Number
