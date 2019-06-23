@@ -37,7 +37,7 @@ type Parser struct {
 	output    *list.List    // Cache of emitted ASTs ready for pickup
 	eof       bool          // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
-	markerID  int           // Incremented after each emit/discard - used to validate markers
+	markerID  int           // Incremented after each emit/clear - used to validate markers
 }
 
 // CanPeek confirms if the requested number of tokens are available in the peek buffer.
@@ -151,17 +151,17 @@ func (p *Parser) EmitEOF() {
 	p.Emit(nil)
 }
 
-// Discard discards all previously-matched tokens without emitting any ASTs.
+// Clear discards all previously-matched tokens without emitting any ASTs.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //
-func (p *Parser) Discard() {
-	// Nothing can be discarded after EOF emitted
+func (p *Parser) Clear() {
+	// Nothing can be cleared after EOF emitted
 	//
 	if p.eofOut {
-		panic("Parser.Discard: No discards allowed after EOF is emitted")
+		panic("Parser.Clear: No clears allowed after EOF is emitted")
 	}
-	p.consume()
+	p.clear()
 }
 
 // newParser
@@ -261,7 +261,7 @@ func (p *Parser) emit(ast interface{}) {
 		p.matchLen = 0
 		p.cache.Init()
 		// Invalidate outstanding markers manually,
-		// avoiding otherwise redundant call to consume()
+		// avoiding otherwise redundant call to clear()
 		//
 		p.markerID++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
 		// Mark EOF
@@ -272,16 +272,16 @@ func (p *Parser) emit(ast interface{}) {
 		//
 		p.output.PushBack(nil)
 	} else {
-		p.consume()
+		p.clear()
 
 		p.output.PushBack(ast)
 	}
 }
 
-// consume consumes the matched tokens.
+// clear consumes the matched tokens.
 // All outstanding markers are invalidated after this call.
 //
-func (p *Parser) consume() {
+func (p *Parser) clear() {
 	// Discard tokens
 	//
 	for p.matchLen > 0 {

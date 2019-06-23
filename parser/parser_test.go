@@ -355,13 +355,13 @@ func TestNextEmit2(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscard1
+// TestClear1
 //
-func TestDiscard1(t *testing.T) {
+func TestClear1(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
-		p.Discard()
+		p.Clear()
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
@@ -369,16 +369,16 @@ func TestDiscard1(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscard2
+// TestClear2
 //
-func TestDiscard2(t *testing.T) {
+func TestClear2(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Emit("T_ONE")
 		expectPeek(t, p, 1, T_TWO, "")
 		expectNext(t, p, T_TWO, "")
-		p.Discard()
+		p.Clear()
 		return nil
 	}
 	tokens := mockLexer(T_ONE, T_TWO)
@@ -387,13 +387,13 @@ func TestDiscard2(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscard3
+// TestClear3
 //
-func TestDiscard3(t *testing.T) {
+func TestClear3(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
-		p.Discard()
+		p.Clear()
 		expectPeek(t, p, 1, T_TWO, "")
 		expectNext(t, p, T_TWO, "")
 		p.Emit("T_TWO")
@@ -507,18 +507,18 @@ func TestNextAfterEOF(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestDiscardAfterEOF
+// TestClearAfterEOF
 //
-func TestDiscardAfterEOF(t *testing.T) {
+func TestClearAfterEOF(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		expectNext(t, p, T_ONE, "")
 		p.EmitEOF()
 		expectEOF(t, p)
-		p.Discard()
+		p.Clear()
 		return nil
 	}
 	tokens := mockLexer(T_ONE)
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
-	}, "Parser.Discard: No discards allowed after EOF is emitted")
+	}, "Parser.Clear: No clears allowed after EOF is emitted")
 }

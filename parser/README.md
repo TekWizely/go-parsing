@@ -103,16 +103,16 @@ For this, we have `Emit()`:
 func (p * Parser) Emit(ast interface{})
 ```
 
-##### Discarding Matched Tokens ( `Discard()` )
+##### Discarding Matched Tokens ( `Clear()` )
 
 Sometimes, you may match a series of tokens that you simply wish to discard.
 
-To discard matched tokens without emitting an AST, use the `Discard()` method:
+To discard matched tokens without emitting an AST, use the `Clear()` method:
 
 ```go
-// Discard discards all previously-matched tokens without emitting any ASTs.
+// Clear discards all previously-matched tokens without emitting any ASTs.
 //
-func (p *Parser) Discard()
+func (p *Parser) Clear()
 ```
 
 ##### Creating Save Points ( `Marker()` / `CanReset()` / `Reset()` )
@@ -131,7 +131,7 @@ func (p * Parser) Marker() *Marker
 
 ###### Before Using A Marker, Ensure That You Can
 
-A marker is good up until the next `Emit()` or `Discard()` action.
+A marker is good up until the next `Emit()` or `Clear()` action.
 
 A well-behaved parser will first ensure that a marker is valid before trying to use it.
 

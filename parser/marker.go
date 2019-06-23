@@ -18,7 +18,7 @@ type Marker struct {
 }
 
 // Marker returns a marker that you can use to reset the parser to a previous state.
-// A marker is good up until the next Emit() or Discard() action.
+// A marker is good up until the next Emit() or Clear() action.
 // Use CanReset() to verify that a marker is still valid before using it.
 // Use Reset() to reset the parser state to the marker position.
 //

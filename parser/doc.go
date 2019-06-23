@@ -84,9 +84,9 @@ Discarding Matched Tokens
 
 Sometimes, you may match a series of tokens that you simply wish to discard:
 
-	// Discard discards all previously-matched tokens without emitting any ASTs.
+	// Clear discards all previously-matched tokens without emitting any ASTs.
 	//
-	func (p *Parser) Discard()
+	func (p *Parser) Clear()
 
 
 Creating Save Points
@@ -98,7 +98,7 @@ different context:
 	//
 	func (p * Parser) Marker() *Marker
 
-A marker is good up until the next `Emit()` or `Discard()` action.
+A marker is good up until the next `Emit()` or `Clear()` action.
 
 Before using a marker, confirm it is still valid:
 
