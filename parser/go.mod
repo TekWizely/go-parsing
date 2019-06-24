@@ -7,7 +7,7 @@ require (
 	//
 	// $ go get github.com/tekwizely/go-parsing/lexer@master
 	//
-	github.com/tekwizely/go-parsing/lexer v0.0.0-20190624034051-15300d92c8b8
+	github.com/tekwizely/go-parsing/lexer v0.0.0-20190624041335-d3f84c1c0b98
 	github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190622183031-974f82a44df9
 )
 
