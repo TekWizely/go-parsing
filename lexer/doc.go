@@ -137,22 +137,22 @@ A marker is good up until the next `Emit()` or `Clear()` action.
 
 Before using a marker, confirm it is still valid:
 
-	// CanReset confirms if the marker is still valid.
+	// Valid confirms if the marker is still valid.
 	//
-	func (l *Lexer) CanReset(m *Marker) bool
+	func (m *Marker) Valid() bool
 
 Once you've confirmed a marker is still valid:
 
-	// Reset resets the lexer state to the marker position.
+	// Apply resets the lexer state to the marker position.
 	// Returns the LexerFn that was stored at the time the marker was created.
 	//
-	func (l *Lexer) Reset(m *Marker) LexerFn
+	func (m *Marker) Apply() LexerFn
 
 NOTE: Resetting a marker does not reset the lexer function that was active when the marker was created.
 Instead it simply returns the function reference.  If you want to return control to the function saved in the marker,
 you can use this pattern:
 
-	return lexer.Reset(marker); // Resets the lexer and returns control to the saved LexerFn
+	return marker.Apply(); // Resets the lexer and returns control to the saved LexerFn
 
 
 Token Types

@@ -172,7 +172,7 @@ To discard previously-matched runes without emitting any tokens, use the `Clear(
 func (l *Lexer) Clear()
 ```
 
-##### Creating Save Points ( `Marker()` / `CanReset()` / `Reset()` )
+##### Creating Save Points ( `Marker()` / `Valid()` / `Apply()` )
 
 The Lexer allows you to create save points and reset to them if you decide you want to re-try matching runes in a different context.
 
@@ -192,24 +192,24 @@ A marker is good up until the next `Emit()` or `Clear()` action.
 
 A well-behaved lexer will first ensure that a marker is valid before trying to use it.
 
-For this, we have `CanReset()`:
+For this, we have `Marker.Valid()`:
 
 ```go
-// CanReset confirms if the marker is still valid.
-// If CanReset returns true, you can safely reset the lexer state to the marker position.
+// Valid confirms if the marker is still valid.
+// If Valid returns true, you can safely reset the lexer state to the marker position.
 //
-func (l *Lexer) CanReset(m *Marker) bool
+func (m *Marker) Valid() bool
 ```
 
 ###### Resetting Lexer State
 
-Once you've confirmed a marker is still valid, `Reset()` will let you reset the lexer state.
+Once you've confirmed a marker is still valid, `Marker.Apply()` will let you reset the lexer state.
 
 ```go
-// Reset resets the lexer state to the marker position.
+// Apply resets the lexer state to the marker position.
 // Returns the LexerFn that was stored at the time the marker was created.
 //
-func (l *Lexer) Reset(m *Marker) LexerFn
+func (m *Marker) Apply() LexerFn
 ```
 
 **NOTE:** Resetting a marker does not reset the lexer function that was active when the marker was created.  Instead it returns the function reference, giving the current lexer function the choice to use it or not.

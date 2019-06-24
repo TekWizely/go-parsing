@@ -2,11 +2,11 @@ package lexer
 
 import "testing"
 
-// expectCanReset
+// expectMarkerValid
 //
-func expectCanReset(t *testing.T, l *Lexer, m *Marker, match bool) {
-	if l.CanReset(m) != match {
-		t.Errorf("Lexer.CanReset() expecting '%t'", match)
+func expectMarkerValid(t *testing.T, m *Marker, match bool) {
+	if m.Valid() != match {
+		t.Errorf("Maker.Valid() expecting '%t'", match)
 	}
 }
 
@@ -15,7 +15,7 @@ func expectCanReset(t *testing.T, l *Lexer, m *Marker, match bool) {
 func TestMarkerUnused(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		m := l.Marker()
-		expectCanReset(t, l, m, true)
+		expectMarkerValid(t, m, true)
 		// Ignore marker
 		//
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
@@ -26,15 +26,15 @@ func TestMarkerUnused(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerCanReset
+// TestMarkerValid
 //
-func TestMarkerCanReset(t *testing.T) {
+func TestMarkerValid(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		m := l.Marker()
 		expectNextString(t, l, "123ABC")
-		expectCanReset(t, l, m, true)
+		expectMarkerValid(t, m, true)
 		l.EmitToken(T_STRING)
-		expectCanReset(t, l, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
@@ -42,17 +42,17 @@ func TestMarkerCanReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerImmediateReset
+// TestMarkerImmediateApply
 //
-func TestMarkerImmediateReset(t *testing.T) {
+func TestMarkerImmediateApply(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		m := l.Marker()
-		expectCanReset(t, l, m, true)
-		// Reset it immediately
+		expectMarkerValid(t, m, true)
+		// Apply it immediately
 		//
-		l.Reset(m)
+		m.Apply()
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
-		expectCanReset(t, l, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
@@ -60,18 +60,18 @@ func TestMarkerImmediateReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerReset
+// TestMarkerApply
 //
-func TestMarkerReset(t *testing.T) {
+func TestMarkerApply(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		m := l.Marker()
-		expectCanReset(t, l, m, true)
+		expectMarkerValid(t, m, true)
 		expectNextString(t, l, "123ABC")
-		expectCanReset(t, l, m, true)
-		l.Reset(m)
-		expectCanReset(t, l, m, true)
+		expectMarkerValid(t, m, true)
+		m.Apply()
+		expectMarkerValid(t, m, true)
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
-		expectCanReset(t, l, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
@@ -79,20 +79,20 @@ func TestMarkerReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerResetInvalid
+// TestMarkerApplyInvalid
 //
-func TestMarkerResetInvalid(t *testing.T) {
+func TestMarkerApplyInvalid(t *testing.T) {
 	fn := func(l *Lexer) LexerFn {
 		m := l.Marker()
-		expectCanReset(t, l, m, true)
+		expectMarkerValid(t, m, true)
 		expectNextString(t, l, "123ABC")
-		expectCanReset(t, l, m, true)
-		l.Reset(m)
+		expectMarkerValid(t, m, true)
+		m.Apply()
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
-		expectCanReset(t, l, m, false)
-		// CanReset said no, but let's try anyway
+		expectMarkerValid(t, m, false)
+		// Valid said no, but let's try anyway
 		//
-		l.Reset(m)
+		m.Apply()
 		return nil
 	}
 	assertPanic(t, func() {
