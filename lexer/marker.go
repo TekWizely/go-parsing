@@ -20,7 +20,7 @@ type Marker struct {
 
 // Marker returns a marker that you can use to reset the lexer to a previous state.
 // A marker is good up until the next Emit() or Clear() action.
-// Use Valid() to verify that a marker is still valid before using it.
+// Use Marker.Valid() to verify that a marker is still valid before using it.
 // Use Marker.Apply() to reset the lexer state to the marker position.
 //
 func (l *Lexer) Marker() *Marker {
@@ -28,7 +28,7 @@ func (l *Lexer) Marker() *Marker {
 }
 
 // Valid confirms if the marker is still valid.
-// If Valid returns true, you can safely reset the lexer state to the marker position via Marker.Apply()
+// If Valid returns true, you can safely reset the lexer state to the marker position via Marker.Apply().
 //
 func (m *Marker) Valid() bool {
 	// ALL markers invalid once EOF emitted

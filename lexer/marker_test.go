@@ -8,7 +8,7 @@ import (
 //
 func expectMarkerValid(t *testing.T, m *Marker, match bool) {
 	if m.Valid() != match {
-		t.Errorf("Maker.Valid() expecting '%t'", match)
+		t.Errorf("Marker.Valid() expecting '%t'", match)
 	}
 }
 
