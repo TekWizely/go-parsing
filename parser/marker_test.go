@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-// expectCanReset
+// expectMarkerValid
 //
-func expectCanReset(t *testing.T, p *Parser, m *Marker, match bool) {
-	if p.CanReset(m) != match {
-		t.Errorf("Parser.CanReset() expecting '%t'", match)
+func expectMarkerValid(t *testing.T, m *Marker, match bool) {
+	if m.Valid() != match {
+		t.Errorf("Marker.Valid() expecting '%t'", match)
 	}
 }
 
@@ -17,7 +17,7 @@ func expectCanReset(t *testing.T, p *Parser, m *Marker, match bool) {
 func TestMarkerUnused(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		return nil
@@ -28,15 +28,15 @@ func TestMarkerUnused(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerCanReset
+// TestMarkerValid
 //
-func TestMarkerCanReset(t *testing.T) {
+func TestMarkerValid(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
-		expectCanReset(t, p, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	tokens := mockLexer(T_START)
@@ -45,19 +45,19 @@ func TestMarkerCanReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerImmediateReset
+// TestMarkerImmediateApply
 //
-func TestMarkerImmediateReset(t *testing.T) {
+func TestMarkerImmediateApply(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
-		expectCanReset(t, p, m, true)
-		// Reset it immediately
+		expectMarkerValid(t, m, true)
+		// Apply it immediately
 		//
-		p.Reset(m)
-		expectCanReset(t, p, m, true)
+		m.Apply()
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
-		expectCanReset(t, p, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	tokens := mockLexer(T_START)
@@ -66,19 +66,19 @@ func TestMarkerImmediateReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerReset
+// TestMarkerApply
 //
-func TestMarkerReset(t *testing.T) {
+func TestMarkerApply(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
-		expectCanReset(t, p, m, true)
-		p.Reset(m)
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
+		m.Apply()
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
-		expectCanReset(t, p, m, false)
+		expectMarkerValid(t, m, false)
 		return nil
 	}
 	tokens := mockLexer(T_START)
@@ -87,26 +87,52 @@ func TestMarkerReset(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestMarkerResetInvalid
+// TestMarkerApplyInvalid
 //
-func TestMarkerResetInvalid(t *testing.T) {
+func TestMarkerApplyInvalid(t *testing.T) {
 	fn := func(p *Parser) ParserFn {
 		m := p.Marker()
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
-		expectCanReset(t, p, m, true)
-		p.Reset(m)
-		expectCanReset(t, p, m, true)
+		expectMarkerValid(t, m, true)
+		m.Apply()
+		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
-		expectCanReset(t, p, m, false)
-		// CanReset said no, but let's try anyway
+		expectMarkerValid(t, m, false)
+		// Valid said no, but let's try anyway
 		//
-		p.Reset(m)
+		m.Apply()
 		return nil
 	}
 	tokens := mockLexer(T_START)
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
 	}, "Invalid marker")
+}
+
+func TestMarkerApplyNextFn(t *testing.T) {
+
+	var marker *Marker
+	var used = false
+
+	fn1 := func(p *Parser) ParserFn {
+		if used {
+			t.Error("Marker.Apply() expected to return function that marker was created in")
+			return nil
+		}
+		used = true
+		return marker.Apply()
+	}
+
+	fn2 := func(p *Parser) ParserFn {
+		if used {
+			return nil
+		}
+		marker = p.Marker()
+		return fn1
+	}
+	tokens := mockLexer(T_START)
+	nexter := Parse(tokens, fn2)
+	expectNexterEOF(t, nexter)
 }

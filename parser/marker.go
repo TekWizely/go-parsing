@@ -7,10 +7,11 @@ import "container/list"
 // See the following parser functions for creating and user markers:
 //
 //  - Parser.Marker()
-//  - Parser.CanReset()
-//  - Parser.Reset()
+//  - Marker.Valid()
+//  - Marker.Apply()
 //
 type Marker struct {
+	parser    *Parser
 	markerID  int
 	matchTail *list.Element
 	matchLen  int
@@ -19,34 +20,34 @@ type Marker struct {
 
 // Marker returns a marker that you can use to reset the parser to a previous state.
 // A marker is good up until the next Emit() or Clear() action.
-// Use CanReset() to verify that a marker is still valid before using it.
-// Use Reset() to reset the parser state to the marker position.
+// Use Marker.Valid() to verify that a marker is still valid before using it.
+// Use Marker.Apply() to reset the parser state to the marker position.
 //
 func (p *Parser) Marker() *Marker {
-	return &Marker{markerID: p.markerID, matchTail: p.matchTail, matchLen: p.matchLen, nextFn: p.nextFn}
+	return &Marker{parser: p, markerID: p.markerID, matchTail: p.matchTail, matchLen: p.matchLen, nextFn: p.nextFn}
 }
 
-// CanReset confirms if the marker is still valid.
-// If CanReset returns true, you can safely reset the parser state to the marker position.
+// Valid confirms if the marker is still valid.
+// If Valid returns true, you can safely reset the parser state to the marker position via Marker.Apply().
 //
-func (p *Parser) CanReset(m *Marker) bool {
+func (m *Marker) Valid() bool {
 	// ALL markers invalid once EOF emitted
 	//
-	return !p.eofOut && m.markerID == p.markerID
+	return !m.parser.eofOut && m.markerID == m.parser.markerID
 }
 
-// Reset resets the parser state to the marker position.
+// Apply resets the parser state to the marker position.
 // Returns the ParserFn that was stored at the time the marker was created.
-// Use `return marker.Reset()` to tell the parser to forward to the marked function.
-// Use CanReset() to verify that a marker is still valid before using it.
-// It is safe to reset a marker multiple times, as long as it passes CanReset().
-// Panics if marker fails CanReset() check.
+// Use `return marker.Apply()` to tell the parser to forward to the marked function.
+// Use Valid() to verify that a marker is still valid before using it.
+// It is safe to apply a marker multiple times, as long as it passes Valid().
+// Panics if marker fails Valid check.
 //
-func (p *Parser) Reset(m *Marker) ParserFn {
-	if p.CanReset(m) == false {
+func (m *Marker) Apply() ParserFn {
+	if m.Valid() == false {
 		panic("Invalid marker")
 	}
-	p.matchTail = m.matchTail
-	p.matchLen = m.matchLen
-	return p.nextFn
+	m.parser.matchTail = m.matchTail
+	m.parser.matchLen = m.matchLen
+	return m.nextFn
 }
