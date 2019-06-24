@@ -49,5 +49,5 @@ func (m *Marker) Apply() LexerFn {
 	}
 	m.lexer.matchTail = m.matchTail
 	m.lexer.matchLen = m.matchLen
-	return m.lexer.nextFn
+	return m.nextFn
 }

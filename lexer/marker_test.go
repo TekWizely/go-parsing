@@ -1,6 +1,8 @@
 package lexer
 
-import "testing"
+import (
+	"testing"
+)
 
 // expectMarkerValid
 //
@@ -98,4 +100,29 @@ func TestMarkerApplyInvalid(t *testing.T) {
 	assertPanic(t, func() {
 		_, _ = LexString("123ABC", fn).Next()
 	}, "Invalid marker")
+}
+
+func TestMarkerApplyNextFn(t *testing.T) {
+
+	var marker *Marker
+	var used = false
+
+	fn1 := func(l *Lexer) LexerFn {
+		if used {
+			t.Error("Marker.Apply() expected to return function that marker was created in")
+			return nil
+		}
+		used = true
+		return marker.Apply()
+	}
+
+	fn2 := func(l *Lexer) LexerFn {
+		if used {
+			return nil
+		}
+		marker = l.Marker()
+		return fn1
+	}
+	nexter := LexString(".", fn2)
+	expectNexterEOF(t, nexter)
 }
