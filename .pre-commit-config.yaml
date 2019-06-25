@@ -20,6 +20,7 @@ repos:
     # Go-Related Hooks
     #
 -   repo: git://github.com/dnephin/pre-commit-golang
+#   rev: v0.3.4
     rev: v0.3.3
     hooks:
       - id: go-fmt
