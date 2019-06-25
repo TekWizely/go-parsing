@@ -208,7 +208,7 @@ func tryMatchNumber(l *lexer.Lexer) bool {
 
 			}
 		} else {
-			l.Reset(m)
+			m.Apply()
 		}
 		return true
 	}
@@ -401,7 +401,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 	}
 
 	if err != nil {
-		p.Reset(m)
+		m.Apply()
 	}
 
 	return
