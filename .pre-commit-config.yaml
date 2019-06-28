@@ -57,21 +57,23 @@ repos:
     rev: v0.5.0
     hooks:
       -   id: go-build-repo-pkg
-          alias: go-build
+          alias: build
           always_run: true
       -   id: go-test-repo-pkg
-          alias: go-test
+          alias: test
           always_run: true
       -   id: go-vet-repo-pkg
-          alias: go-vet
+          alias: vet
           always_run: true
 #     -   id: go-fmt-fix
 #     -   id: go-imports-fix # replaces go-fmt-fix
 #         alias: go-fmt
       -   id: go-returns-fix # replaces go-imports-fix & go-fmt-fix
-          alias: go-fmt
+          alias: fmt
       -   id: go-lint
+          alias: lint
       -   id: go-critic
+          alias: critic
       #
       # GolangCI-Lint
       # - Fast Multi-Linter
@@ -80,5 +82,5 @@ repos:
       # - https://github.com/golangci/golangci-lint
       #
 #     -   id: golangci-lint-repo-fix
-#         alias: golangci
+#         alias: ci
 #         always_run: true
