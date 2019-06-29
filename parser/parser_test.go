@@ -122,8 +122,8 @@ func TestNilFn(t *testing.T) {
 }
 
 func TestParserFnSkipedWhenNoCanPeek(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
-		t.Error("Parser should not call ParserFn when CanPeek(1) == false")
+	fn := func(p *Parser) Fn {
+		t.Error("Parser should not call Parser.Fn when CanPeek(1) == false")
 		return nil
 	}
 	tokens := mockLexer()
@@ -134,7 +134,7 @@ func TestParserFnSkipedWhenNoCanPeek(t *testing.T) {
 // TestEmit
 //
 func TestEmit(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectNext(t, p, T_START, "")
 		p.Emit("T_START")
 		return nil
@@ -148,7 +148,7 @@ func TestEmit(t *testing.T) {
 // TestCanPeek
 //
 func TestCanPeek(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectCanPeek(t, p, 1, true)
 
 		expectPeekType(t, p, 1, T_ONE)
@@ -171,7 +171,7 @@ func TestCanPeek(t *testing.T) {
 // TestCanPeekPastEOF
 //
 func TestCanPeekPastEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectCanPeek(t, p, 4, false)
 
 		expectCanPeek(t, p, 3, true)
@@ -196,7 +196,7 @@ func TestCanPeekPastEOF(t *testing.T) {
 // TestCanPeekRangeError
 //
 func TestCanPeekRangeError(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		assertPanic(t, func() {
 			p.CanPeek(-1)
 		}, "Parser.CanPeek: range error")
@@ -213,7 +213,7 @@ func TestCanPeekRangeError(t *testing.T) {
 // TestPeek1
 //
 func TestPeek1(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeekType(t, p, 1, T_ONE)
 		return nil
 	}
@@ -225,7 +225,7 @@ func TestPeek1(t *testing.T) {
 // TestPeek11
 //
 func TestPeek11(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeekType(t, p, 1, T_ONE)
 		expectPeekType(t, p, 1, T_ONE)
 		return nil
@@ -238,7 +238,7 @@ func TestPeek11(t *testing.T) {
 // TestPeek12
 //
 func TestPeek12(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeekType(t, p, 1, T_ONE)
 		expectPeekType(t, p, 2, T_TWO)
 		return nil
@@ -251,7 +251,7 @@ func TestPeek12(t *testing.T) {
 // TestPeekEmpty
 //
 func TestPeekEmpty(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		assertPanic(t, func() {
 			p.Peek(1)
 		}, "Parser.Peek: No AST available")
@@ -265,7 +265,7 @@ func TestPeekEmpty(t *testing.T) {
 // TestPeekRangeError
 //
 func TestPeekRangeError(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		assertPanic(t, func() {
 			p.Peek(-1)
 		}, "Parser.Peek: range error")
@@ -282,7 +282,7 @@ func TestPeekRangeError(t *testing.T) {
 // TestNext1
 //
 func TestNext1(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		return nil
@@ -295,7 +295,7 @@ func TestNext1(t *testing.T) {
 // TestNext2
 //
 func TestNext2(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		expectPeek(t, p, 1, T_TWO, "")
@@ -310,7 +310,7 @@ func TestNext2(t *testing.T) {
 // TestNextEmpty
 //
 func TestNextEmpty(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		assertPanic(t, func() {
 			p.Next()
 		}, "Parser.Next: No AST available")
@@ -324,7 +324,7 @@ func TestNextEmpty(t *testing.T) {
 // TestNextEmit1
 //
 func TestNextEmit1(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Emit("T_ONE")
@@ -339,7 +339,7 @@ func TestNextEmit1(t *testing.T) {
 // TestNextEmit2
 //
 func TestNextEmit2(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Emit("T_ONE")
@@ -358,7 +358,7 @@ func TestNextEmit2(t *testing.T) {
 // TestClear1
 //
 func TestClear1(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Clear()
@@ -372,7 +372,7 @@ func TestClear1(t *testing.T) {
 // TestClear2
 //
 func TestClear2(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Emit("T_ONE")
@@ -390,7 +390,7 @@ func TestClear2(t *testing.T) {
 // TestClear3
 //
 func TestClear3(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectPeek(t, p, 1, T_ONE, "")
 		expectNext(t, p, T_ONE, "")
 		p.Clear()
@@ -408,7 +408,7 @@ func TestClear3(t *testing.T) {
 // TestEmitEOF1
 //
 func TestEmitEOF1(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		p.EmitEOF()
 		expectEOF(t, p)
 		return nil
@@ -421,7 +421,7 @@ func TestEmitEOF1(t *testing.T) {
 // TestEmitEOF2
 //
 func TestEmitEOF2(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectNext(t, p, T_ONE, "")
 		p.EmitEOF()
 		expectEOF(t, p)
@@ -435,7 +435,7 @@ func TestEmitEOF2(t *testing.T) {
 // TestEmitEOF3
 //
 func TestEmitEOF3(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		p.Emit(nil)
 		expectEOF(t, p)
 		return nil
@@ -448,7 +448,7 @@ func TestEmitEOF3(t *testing.T) {
 // TestEmitAfterEOF
 //
 func TestEmitAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectNext(t, p, T_ONE, "")
 		p.EmitEOF()
 		expectEOF(t, p)
@@ -464,7 +464,7 @@ func TestEmitAfterEOF(t *testing.T) {
 // TestCanPeekAfterEOF
 //
 func TestCanPeekAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		p.EmitEOF()
 		expectEOF(t, p)
 		expectCanPeek(t, p, 1, false)
@@ -478,7 +478,7 @@ func TestCanPeekAfterEOF(t *testing.T) {
 // TestPeekAfterEOF
 //
 func TestPeekAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		p.EmitEOF()
 		expectEOF(t, p)
 		assertPanic(t, func() {
@@ -494,7 +494,7 @@ func TestPeekAfterEOF(t *testing.T) {
 // TestNextAfterEOF
 //
 func TestNextAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		p.EmitEOF()
 		expectEOF(t, p)
 		assertPanic(t, func() {
@@ -510,7 +510,7 @@ func TestNextAfterEOF(t *testing.T) {
 // TestClearAfterEOF
 //
 func TestClearAfterEOF(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		expectNext(t, p, T_ONE, "")
 		p.EmitEOF()
 		expectEOF(t, p)

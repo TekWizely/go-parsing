@@ -230,7 +230,7 @@ func tryMatchID(l *lexer.Lexer) bool {
 // parse tries to parse an expression from the lexed tokens.
 // Delegates to either parseEvaluation or parseAssignment.
 //
-func parse(p *parser.Parser) parser.ParserFn {
+func parse(p *parser.Parser) parser.Fn {
 
 	switch {
 
@@ -250,7 +250,7 @@ func parse(p *parser.Parser) parser.ParserFn {
 // The assignment will be in the form [ ID '=' expression ].
 // Assumes "ID '='" has been peek-matched by root parser.
 //
-func parseAssignment(p *parser.Parser) parser.ParserFn {
+func parseAssignment(p *parser.Parser) parser.Fn {
 	tID := p.Next()
 	p.Next() // Skip '='
 	if value, err := parseGeneralExpression(p); err == nil {
@@ -269,7 +269,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 
 // parseEvaluation parses a general experssion and emits the computed result.
 //
-func parseEvaluation(p *parser.Parser) parser.ParserFn {
+func parseEvaluation(p *parser.Parser) parser.Fn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//

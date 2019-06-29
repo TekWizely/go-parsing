@@ -15,7 +15,7 @@ func expectMarkerValid(t *testing.T, m *Marker, match bool) {
 // TestMarkerUnused
 //
 func TestMarkerUnused(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
@@ -31,7 +31,7 @@ func TestMarkerUnused(t *testing.T) {
 // TestMarkerValid
 //
 func TestMarkerValid(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
@@ -48,7 +48,7 @@ func TestMarkerValid(t *testing.T) {
 // TestMarkerImmediateApply
 //
 func TestMarkerImmediateApply(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
 		// Apply it immediately
@@ -69,7 +69,7 @@ func TestMarkerImmediateApply(t *testing.T) {
 // TestMarkerApply
 //
 func TestMarkerApply(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
@@ -90,7 +90,7 @@ func TestMarkerApply(t *testing.T) {
 // TestMarkerApplyInvalid
 //
 func TestMarkerApplyInvalid(t *testing.T) {
-	fn := func(p *Parser) ParserFn {
+	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
 		expectNext(t, p, T_START, "")
@@ -116,7 +116,7 @@ func TestMarkerApplyNextFn(t *testing.T) {
 	var marker *Marker
 	var used = false
 
-	fn1 := func(p *Parser) ParserFn {
+	fn1 := func(p *Parser) Fn {
 		if used {
 			t.Error("Marker.Apply() expected to return function that marker was created in")
 			return nil
@@ -125,7 +125,7 @@ func TestMarkerApplyNextFn(t *testing.T) {
 		return marker.Apply()
 	}
 
-	fn2 := func(p *Parser) ParserFn {
+	fn2 := func(p *Parser) Fn {
 		if used {
 			return nil
 		}

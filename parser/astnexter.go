@@ -35,7 +35,7 @@ func (e *astNexter) Next() (interface{}, error) {
 	return tok, nil
 }
 
-// hasNext Initiates calls to ParserFn functions and is the primary entry point for retrieving ASTs from the parser.
+// hasNext Initiates calls to Parser.Fn functions and is the primary entry point for retrieving ASTs from the parser.
 //
 func (e *astNexter) hasNext() bool {
 	// If AST previously fetched, return now

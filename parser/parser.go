@@ -7,25 +7,25 @@ import (
 	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
-// ParserFn are user functions that scan tokens and emit ASTs.
+// Fn are user functions that scan tokens and emit ASTs.
 // Functions are allowed to emit multiple ASTs within a single call-back.
 // The parser executes functions in a continuous loop until either the function returns nil or emits an EOF value.
 // Functions should return nil after emitting EOF, as no further interactions are allowed afterwards.
 // The parser will auto-emit EOF before exiting if it has not already been emitted.
 //
-type ParserFn func(*Parser) ParserFn
+type Fn func(*Parser) Fn
 
 // Parse initiates a parser against the input token stream.
 // The returned ASTNexter can be used to retrieve emitted ASTs.
 // The parser will auto-emit EOF before exiting it if has not already been emitted.
 //
-func Parse(tokens token.Nexter, start ParserFn) ASTNexter {
+func Parse(tokens token.Nexter, start Fn) ASTNexter {
 	p := newParser(tokens, start)
 	return &astNexter{parser: p}
 }
 
-// Parser is passed into your ParserFn functions and provides methods to inspect tokens and emit ASTs.
-// When your ParserFn is called, the parser guarantees that 'CanPeek(1) == true`, ensuring there is at least one token
+// Parser is passed into your Parser.Fn functions and provides methods to inspect tokens and emit ASTs.
+// When your Parser.Fn is called, the parser guarantees that 'CanPeek(1) == true`, ensuring there is at least one token
 // to review/match.
 //
 type Parser struct {
@@ -33,7 +33,7 @@ type Parser struct {
 	cache     *list.List    // Cache of fetched lexer tokens, including matched & peeked
 	matchTail *list.Element // Points to last matched element in the cache, nil if no tokens matched yet
 	matchLen  int           // Len of peek buffer.  Makes growPeek faster when no growth needed
-	nextFn    ParserFn      // the next parsing function to enter
+	nextFn    Fn            // the next parsing function to enter
 	output    *list.List    // Cache of emitted ASTs ready for pickup
 	eof       bool          // Has EOF been reached on the input tokens? NOTE Peek buffer may still have tokens in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
@@ -166,7 +166,7 @@ func (p *Parser) Clear() {
 
 // newParser
 //
-func newParser(tokens token.Nexter, start ParserFn) *Parser {
+func newParser(tokens token.Nexter, start Fn) *Parser {
 	return &Parser{
 		input:     tokens,
 		cache:     list.New(),

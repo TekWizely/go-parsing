@@ -12,7 +12,7 @@ Initiating a Parser
 
 	// Parse initiates a parser against the input token stream.
 	//
-	func Parse(tokens token.Nexter, start ParserFn) ASTNexter
+	func Parse(tokens token.Nexter, start parser.Fn) ASTNexter
 
 
 Parser Functions
@@ -20,16 +20,16 @@ Parser Functions
 In addition to the `token.Nexter`, the Parse function also accepts a function which serves as the starting point for
 your parser:
 
-	// ParserFn are user functions that scan tokens and emit ASTs.
+	// parser.Fn are user functions that scan tokens and emit ASTs.
 	//
-	type ParserFn func(*Parser) ParserFn
+	type parser.Fn func(*Parser) parser.Fn
 
 The main Parser process will call into this function to initiate parsing.
 
 
-Simplified ParserFn Loop
+Simplified Parser.Fn Loop
 
-You'll notice that the `ParserFn` return type is another `ParserFn`.
+You'll notice that the `Parser.Fn` return type is another `Parser.Fn`.
 
 This is to allow for simplified flow control of your parser function.
 
@@ -42,14 +42,14 @@ Simply return from your method after (possibly) emitting an AST, and the Parser 
 
 Switching Parser Context
 
-Switching contexts is as easy as returning a reference to another `ParserFn`.
+Switching contexts is as easy as returning a reference to another `Parser.Fn`.
 
 
 Shutting Down The Parser
 
-You can shut down the main Parser loop from within your `ParserFn` by simply returning `nil`.
+You can shut down the main Parser loop from within your `Parser.Fn` by simply returning `nil`.
 
-All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `ParserFn`
+All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `Parser.Fn`
 calls.
 
 
@@ -109,15 +109,15 @@ Before using a marker, confirm it is still valid:
 Once you've confirmed a marker is still valid:
 
 	// Apply resets the parser state to the marker position.
-	// Returns the ParserFn that was stored at the time the marker was created.
+	// Returns the Parser.Fn that was stored at the time the marker was created.
 	//
-	func (m *Marker) Apply() ParserFn
+	func (m *Marker) Apply() parser.Fn
 
 NOTE: Resetting a marker does not reset the parser function that was active when the marker was created.
 Instead it simply returns the function reference.  If you want to return control to the function saved in the marker,
 you can use this pattern:
 
-	return marker.Apply(); // Resets the parser and returns control to the saved ParserFn
+	return marker.Apply(); // Resets the parser and returns control to the saved Parser.Fn
 
 
 Retrieving Emitted ASTs

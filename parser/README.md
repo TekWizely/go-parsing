@@ -26,10 +26,10 @@ Parsing is initiated through the `Parse` method:
 ```go
 // Parse initiates a parser against the input token stream.
 //
-func Parse(tokens token.Nexter, start ParserFn) ASTNexter
+func Parse(tokens token.Nexter, start parser.Fn) ASTNexter
 ```
 
-#### Parser Functions ( `parser.ParserFN` )
+#### Parser Functions ( `parser.Fn` )
 
 In addition to the `token.Nexter`, the Parse function also accepts a function which serves as the starting point for your parser.
 
@@ -37,12 +37,12 @@ The main Parser process will call into this `start` function to initiate parsing
 
 Parser functions scan tokens and emit Abstract Syntax Trees (ASTs).
 
-Parser defines `ParserFn` with the following signature:
+Parser defines `Parser.Fn` with the following signature:
 
 ```go
-// ParserFn are user functions that scan tokens and emit ASTs.
+// parser.Fn are user functions that scan tokens and emit ASTs.
 //
-type ParserFn func(*Parser) ParserFn
+type parser.Fn func(*Parser) parser.Fn
 ```
 
 #### Scanning Tokens ( `parser.Parser` )
@@ -150,16 +150,16 @@ Once you've confirmed a marker is still valid, `Marker.Apply()` will let you res
 
 ```go
 // Apply resets the parser state to the marker position.
-// Returns the ParserFn that was stored at the time the marker was created.
+// Returns the Parser.Fn that was stored at the time the marker was created.
 //
-func (m *Marker) Apply() ParserFn
+func (m *Marker) Apply() parser.Fn
 ```
 
 **NOTE:** Resetting a marker does not reset the parser function that was active when the marker was created.  Instead it returns the function reference, giving the current parser function the choice to use it or not.
 
-#### Returning From Parser Function ( `return ParserFn` )
+#### Returning From Parser Function ( `return parser.Fn` )
 
-You'll notice that the `ParserFn` return type is another `ParserFn`
+You'll notice that the `Parser.Fn` return type is another `Parser.Fn`
 
 This is to allow for simplified flow control of your parser function.
 
@@ -173,13 +173,13 @@ Simply return from your method after (possibly) emitting an AST, and the Parser 
 
 ###### Context-Switching
 
-Switching contexts is as easy as returning a reference to another `ParserFn`.
+Switching contexts is as easy as returning a reference to another `Parser.Fn`.
 
 ###### Shutting Down The Parser Loop
 
-You can shut down the main Parser loop from within your `ParserFn` by simply returning `nil`.
+You can shut down the main Parser loop from within your `Parser.Fn` by simply returning `nil`.
 
-All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `ParserFn` calls.
+All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `Parser.Fn` calls.
 
 #### Retrieving Emitted ASTs ( `parser.ASTNexter` )
 
@@ -434,7 +434,7 @@ func tryMatchID(l *lexer.Lexer) bool {
 // parse tries to parse an expression from the lexed tokens.
 // Delegates to either parseEvaluation or parseAssignment.
 //
-func parse(p *parser.Parser) parser.ParserFn {
+func parse(p *parser.Parser) parser.Fn {
 
 	switch {
 
@@ -454,7 +454,7 @@ func parse(p *parser.Parser) parser.ParserFn {
 // The assignment will be in the form [ ID '=' expression ].
 // Assumes "ID '='" has been peek-matched by root parser.
 //
-func parseAssignment(p *parser.Parser) parser.ParserFn {
+func parseAssignment(p *parser.Parser) parser.Fn {
 	tID := p.Next()
 	p.Next() // Skip '='
 	if value, err := parseGeneralExpression(p); err == nil {
@@ -473,7 +473,7 @@ func parseAssignment(p *parser.Parser) parser.ParserFn {
 
 // parseEvaluation parses a general experssion and emits the computed result.
 //
-func parseEvaluation(p *parser.Parser) parser.ParserFn {
+func parseEvaluation(p *parser.Parser) parser.Fn {
 	if value, err := parseGeneralExpression(p); err == nil {
 		// Should be at end of input
 		//
