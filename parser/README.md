@@ -50,7 +50,6 @@ type parser.Fn func(*Parser) parser.Fn
 
 When called, your parser function will receive a `Parser` object which provides methods to inspect tokens.
 
------------------------
 ##### Peeking At Tokens ( `CanPeek()` / `Peek()` )
 
 ###### Before Peeking, Ensure That You Can
