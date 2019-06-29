@@ -301,7 +301,7 @@ func main() {
 
 // lex is the starting (and only) StateFn for lexing the input into tokens
 //
-func lex(l *lexer.Lexer) lexer.LexerFn {
+func lex(l *lexer.Lexer) lexer.Fn {
 
 	// Single-char token?
 	//
