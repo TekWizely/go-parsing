@@ -1,6 +1,4 @@
-# go-parsing / parser
-[![GoDoc](https://godoc.org/github.com/tekwizely/go-parsing/parser?status.svg)](https://godoc.org/github.com/tekwizely/go-parsing/parser)
-[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/tekwizely/go-parsing/blob/master/LICENSE)
+# go-parsing / parser [![GoDoc](https://godoc.org/github.com/tekwizely/go-parsing/parser?status.svg)](https://godoc.org/github.com/tekwizely/go-parsing/parser) [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/tekwizely/go-parsing/blob/master/LICENSE)
 
 ## Overview
 
@@ -19,6 +17,7 @@ Some Features of this Parser:
 import "github.com/tekwizely/go-parsing/parser"
 ```
 
+------------------------
 #### Initiating a Parser ( `parser.Parse` )
 
 Parsing is initiated through the `Parse` method:
@@ -29,6 +28,7 @@ Parsing is initiated through the `Parse` method:
 func Parse(tokens token.Nexter, start parser.Fn) ASTNexter
 ```
 
+---------------------
 #### Parser Functions ( `parser.Fn` )
 
 In addition to the `token.Nexter`, the Parse function also accepts a function which serves as the starting point for your parser.
@@ -45,10 +45,12 @@ Parser defines `Parser.Fn` with the following signature:
 type parser.Fn func(*Parser) parser.Fn
 ```
 
+--------------------
 #### Scanning Tokens ( `parser.Parser` )
 
 When called, your parser function will receive a `Parser` object which provides methods to inspect tokens.
 
+-----------------------
 ##### Peeking At Tokens ( `CanPeek()` / `Peek()` )
 
 ###### Before Peeking, Ensure That You Can
@@ -78,6 +80,7 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the tok
 func (p *Parser) Peek(n int) token.Token
 ```
 
+----------------------
 ##### Consuming Tokens ( `Next()` )
 
 Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will match the next token from the input:
@@ -90,6 +93,7 @@ func (p *Parser) Next() token.Token
 
 **NOTE:** When the Parser calls your parser function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one token to review/match.
 
+-------------------
 ##### Emitting ASTs ( `Emit()` )
 
 Once you've processed one or more tokens, and built up an abstract syntax tree, you can emit it for further processing (for example, by an interpreter).
@@ -103,6 +107,7 @@ For this, we have `Emit()`:
 func (p * Parser) Emit(ast interface{})
 ```
 
+-------------------------------
 ##### Discarding Matched Tokens ( `Clear()` )
 
 Sometimes, you may match a series of tokens that you simply wish to discard.
@@ -115,6 +120,7 @@ To discard matched tokens without emitting an AST, use the `Clear()` method:
 func (p *Parser) Clear()
 ```
 
+--------------------------
 ##### Creating Save Points ( `Marker()` / `Valid()` / `Apply()` )
 
 The Parser allows you to create save points and reset to them if you decide you want to re-try matching tokens in a different context.
@@ -157,6 +163,7 @@ func (m *Marker) Apply() parser.Fn
 
 **NOTE:** Resetting a marker does not reset the parser function that was active when the marker was created.  Instead it returns the function reference, giving the current parser function the choice to use it or not.
 
+-----------------------------------
 #### Returning From Parser Function ( `return parser.Fn` )
 
 You'll notice that the `Parser.Fn` return type is another `Parser.Fn`
@@ -181,6 +188,7 @@ You can shut down the main Parser loop from within your `Parser.Fn` by simply re
 
 All previously emitted ASTs will still be available for pickup, but the parser will stop making any further `Parser.Fn` calls.
 
+----------------------------
 #### Retrieving Emitted ASTs ( `parser.ASTNexter` )
 
 When called, the Parse function will return an `ASTNexter` which provides a means of retrieving ASTs emitted from the parser:
@@ -195,6 +203,7 @@ type ASTNexter interface {
 }
 ```
 
+----------
 ## Example (calculator)
 
 Here's an example program that utilizes the parser (and lexer) to provide a simple calculator with support for variables.
@@ -612,6 +621,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 }
 ```
 
+----------
 ## License
 
-The `go-parsing` repo and all contained packages are released under the [MIT](https://opensource.org/licenses/MIT) License.  See `LICENSE` file.
+The `tekwizely/go-parsing` repo and all contained packages are released under the [MIT](https://opensource.org/licenses/MIT) License.  See `LICENSE` file.
