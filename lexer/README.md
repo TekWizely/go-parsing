@@ -1,6 +1,4 @@
-# go-parsing / lexer
-[![GoDoc](https://godoc.org/github.com/tekwizely/go-parsing/lexer?status.svg)](https://godoc.org/github.com/tekwizely/go-parsing/lexer)
-[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/tekwizely/go-parsing/blob/master/LICENSE)
+# go-parsing / lexer [![GoDoc](https://godoc.org/github.com/tekwizely/go-parsing/lexer?status.svg)](https://godoc.org/github.com/tekwizely/go-parsing/lexer) [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/tekwizely/go-parsing/blob/master/LICENSE)
 
 ## Overview
 
@@ -22,6 +20,7 @@ Some Features of this Lexer:
 import "github.com/tekwizely/go-parsing/lexer"
 ```
 
+-----------------------
 #### Initiating a Lexer ( `lexer.Lex*` )
 
 Lexing is initiated through various `Lex*` methods, each accepting a different type of input to lex from:
@@ -56,6 +55,7 @@ func LexRunes(input []rune, start lexer.Fn) token.Nexter
 func LexBytes(input []byte, start lexer.Fn) token.Nexter
 ```
 
+--------------------
 #### Lexer Functions ( `lexer.Fn` )
 
 In addition to the `input` data, each Lex function also accepts a function which serves as the starting point for your lexer.
@@ -72,6 +72,7 @@ Lexer defines `Lexer.Fn` with the following signature:
 type lexer.Fn func(*Lexer) lexer.Fn
 ```
 
+-------------------
 #### Scanning Runes ( `lexer.Lexer` )
 
 When called, your lexer function will receive a `Lexer` object which provides methods to inspect runes and match them to tokens.
@@ -105,6 +106,7 @@ Once you're sure you can safely peek ahead, `Peek()` will let you review the run
 func (l *Lexer) Peek(n int) rune
 ```
 
+---------------------
 ##### Consuming Runes ( `Next()` )
 
 Once you confirm its safe to do so (see `CanPeek()` / `Peek()`), `Next()` will match the next rune from the input, making it part of the current token:
@@ -117,6 +119,7 @@ func (l *Lexer) Next() rune
 
 **NOTE:** When the Lexer calls your lexer function, it guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to review/match.
 
+----------------------------------------
 ##### Reviewing The Current Token String ( `PeekToken()` )
 
 Once you've built up a token by consuming 1 or more runes, you may want to review it in its entirety before deciding what type of token it represents.
@@ -130,6 +133,7 @@ For this we have `PeekToken()`:
 func (l *Lexer) PeekToken() string
 ```
 
+---------------------
 ##### Emitting Tokens ( `EmitToken()` / `EmitType()` )
 
 Once you've determined what the matched rune(s) represent, you can emit a token for further processing (for example, by a parser).
@@ -160,6 +164,7 @@ For these scenarios, you can use `EmitType` to emit just the token type, discard
 func (l *Lexer) EmitType(t token.Type)
 ```
 
+------------------------------
 ##### Discarding Matched Runes ( `Clear()` )
 
 Sometimes, you may match a series of runes that you simply wish to discard. For example, in certain contexts, whitespace characters may be ignorable.
@@ -172,6 +177,7 @@ To discard previously-matched runes without emitting any tokens, use the `Clear(
 func (l *Lexer) Clear()
 ```
 
+--------------------------
 ##### Creating Save Points ( `Marker()` / `Valid()` / `Apply()` )
 
 The Lexer allows you to create save points and reset to them if you decide you want to re-try matching runes in a different context.
@@ -214,6 +220,7 @@ func (m *Marker) Apply() lexer.Fn
 
 **NOTE:** Resetting a marker does not reset the lexer function that was active when the marker was created.  Instead it returns the function reference, giving the current lexer function the choice to use it or not.
 
+----------------------------------
 #### Returning From Lexer Function ( `return lexer.Fn` )
 
 You'll notice that the `Lexer.Fn` return type is another `Lexer.Fn`
@@ -242,6 +249,7 @@ You can shut down the main Lexer loop from within your `Lexer.Fn` by simply retu
 
 All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `Lexer.Fn` calls.
 
+----------------
 #### Token Types ( `token.Type` )
 
 ##### Built-Ins
@@ -269,6 +277,7 @@ const (
 )
 ```
 
+------------------------------
 #### Retrieving Emitted Tokens ( `token.Nexter` )
 
 When called, the Lex* functions will return a `token.Nexter` which provides a means of retrieving tokens (and errors) emitted from the lexer:
@@ -283,6 +292,7 @@ type Nexter interface {
 }
 ```
 
+----------
 ## Example (wordcount)
 
 Here's an example program that utilizes the lexer to count the number of words, spaces, lines and characters in a file.
@@ -434,6 +444,7 @@ func lexerFn(l *lexer.Lexer) lexer.Fn {
 }
 ```
 
+----------
 ## License
 
-The `go-parsing` repo and all contained packages are released under the [MIT](https://opensource.org/licenses/MIT) License.  See `LICENSE` file.
+The `tekwizely/go-parsing` repo and all contained packages are released under the [MIT](https://opensource.org/licenses/MIT) License.  See `LICENSE` file.
