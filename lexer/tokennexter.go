@@ -32,7 +32,7 @@ func (t *tokenNexter) Next() (token.Token, error) {
 	return tok, nil
 }
 
-// hasNext Initiates calls to LexerFn functions and is the primary entry point for retrieving tokens from the lexer.
+// hasNext Initiates calls to lexer.Fn functions and is the primary entry point for retrieving tokens from the lexer.
 //
 func (t *tokenNexter) hasNext() bool {
 	// If token previously fetched, return now

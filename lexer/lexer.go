@@ -12,13 +12,13 @@ import (
 	"github.com/tekwizely/go-parsing/lexer/token"
 )
 
-// LexerFn are user functions that scan runes and emit tokens.
+// Fn are user functions that scan runes and emit tokens.
 // Functions are allowed to emit multiple tokens within a single call-back.
 // The lexer executes functions in a continuous loop until either the function returns nil or emits an EOF token.
 // Functions should return nil after emitting EOF, as no further interactions are allowed afterwards.
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 //
-type LexerFn func(*Lexer) LexerFn
+type Fn func(*Lexer) Fn
 
 // LexString initiates a lexer against the input string.
 // The returned token.Nexter can be used to retrieve emitted tokens.
@@ -26,7 +26,7 @@ type LexerFn func(*Lexer) LexerFn
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input string in an io.RuneReader, then calling LexRuneReader().
 //
-func LexString(input string, start LexerFn) token.Nexter {
+func LexString(input string, start Fn) token.Nexter {
 	return LexRuneReader(strings.NewReader(input), start)
 }
 
@@ -36,7 +36,7 @@ func LexString(input string, start LexerFn) token.Nexter {
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // LexRuneReader is the primary lexer entrypoint. All others are convenience methods that delegate to here.
 //
-func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter {
+func LexRuneReader(input io.RuneReader, start Fn) token.Nexter {
 	l := newLexer(input, start)
 	return &tokenNexter{lexer: l}
 }
@@ -48,7 +48,7 @@ func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter {
 // This is a convenience method, wrapping the input io.Reader in an io.RuneReader, then calling LexRuneReader().
 // If the provided reader already implements io.RuneReader, it is used without wrapping.
 //
-func LexReader(input io.Reader, start LexerFn) token.Nexter {
+func LexReader(input io.Reader, start Fn) token.Nexter {
 	var runeReader io.RuneReader
 	if r, ok := input.(io.RuneReader); ok {
 		runeReader = r
@@ -64,7 +64,7 @@ func LexReader(input io.Reader, start LexerFn) token.Nexter {
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []rune in an io.RuneReader, then calling LexRuneReader().
 //
-func LexRunes(input []rune, start LexerFn) token.Nexter {
+func LexRunes(input []rune, start Fn) token.Nexter {
 	return LexRuneReader(strings.NewReader(string(input)), start)
 }
 
@@ -74,12 +74,12 @@ func LexRunes(input []rune, start LexerFn) token.Nexter {
 // The lexer will auto-emit EOF before exiting if it has not already been emitted.
 // This is a convenience method, wrapping the input []byte in an io.RuneReader, then calling LexRuneReader().
 //
-func LexBytes(input []byte, start LexerFn) token.Nexter {
+func LexBytes(input []byte, start Fn) token.Nexter {
 	return LexRuneReader(bytes.NewReader(input), start)
 }
 
-// Lexer is passed into your LexerFn functions and provides methods to inspect runes and match them to tokens.
-// When your LexerFn is called, the lexer guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to
+// Lexer is passed into your Lexer.Fn functions and provides methods to inspect runes and match them to tokens.
+// When your Lexer.Fn is called, the lexer guarantees that `CanPeek(1) == true`, ensuring there is at least one rune to
 // review/match.
 //
 type Lexer struct {
@@ -87,7 +87,7 @@ type Lexer struct {
 	cache     *list.List    // Cache of fetched runes, including matched & peeked
 	matchTail *list.Element // Points to last matched element in the cache, nil if no runes matched yet
 	matchLen  int           // Len of match buffer.  Makes growPeek faster when no growth needed
-	nextFn    LexerFn       // the next lexing function to enter
+	nextFn    Fn            // the next lexing function to enter
 	output    *list.List    // Cache of emitted tokens ready for pickup by a parser
 	eof       bool          // Has EOF been reached on the input reader? NOTE Peek buffer may still have runes in it
 	eofOut    bool          // Has EOF been emitted to the output buffer?
@@ -264,7 +264,7 @@ func (l *Lexer) Clear() {
 
 // newLexer
 //
-func newLexer(reader io.RuneReader, start LexerFn) *Lexer {
+func newLexer(reader io.RuneReader, start Fn) *Lexer {
 	l := &Lexer{
 		input:     reader,
 		cache:     list.New(),

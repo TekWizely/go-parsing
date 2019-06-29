@@ -15,7 +15,7 @@ type Marker struct {
 	markerID  int
 	matchTail *list.Element
 	matchLen  int
-	nextFn    LexerFn
+	nextFn    Fn
 }
 
 // Marker returns a marker that you can use to reset the lexer to a previous state.
@@ -37,13 +37,13 @@ func (m *Marker) Valid() bool {
 }
 
 // Apply resets the lexer state to the marker position.
-// Returns the LexerFn that was stored at the time the marker was created.
+// Returns the Lexer.Fn that was stored at the time the marker was created.
 // Use `return marker.Apply()` to tell the lexer to forward to the marked function.
 // Use Valid() to verify that a marker is still valid before using it.
 // It is safe to apply a marker multiple times, as long as it passes Valid().
 // Panics if marker fails Valid() check.
 //
-func (m *Marker) Apply() LexerFn {
+func (m *Marker) Apply() Fn {
 	if m.Valid() == false {
 		panic("Invalid marker")
 	}

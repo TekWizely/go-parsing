@@ -61,7 +61,7 @@ func expectNexterError(t *testing.T, nexter token.Nexter, errMsg string) {
 // TestTokensHasNext1
 //
 func TestTokensHasNext1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitType(T_START)
 		return nil
 	}
@@ -73,7 +73,7 @@ func TestTokensHasNext1(t *testing.T) {
 // TestTokensHasNext2
 //
 func TestTokensHasNext2(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitType(T_START)
 		return nil
 	}

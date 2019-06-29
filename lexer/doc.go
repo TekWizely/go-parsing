@@ -15,23 +15,23 @@ Lexing is initiated through various Lex* methods, each accepting a different typ
 
 	// Input Type: string
 	//
-	func LexString(input string, start LexerFn) token.Nexter
+	func LexString(input string, start lexer.Fn) token.Nexter
 
 	// Input Type: io.RuneReader
 	//
-	func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter
+	func LexRuneReader(input io.RuneReader, start lexer.Fn) token.Nexter
 
 	// Input Type: io.Reader
 	//
-	func LexReader(input io.Reader, start LexerFn) token.Nexter
+	func LexReader(input io.Reader, start lexer.Fn) token.Nexter
 
 	// Input Type: []rune
 	//
-	func LexRunes(input []rune, start LexerFn) token.Nexter
+	func LexRunes(input []rune, start lexer.Fn) token.Nexter
 
 	// Input Type: []byte
 	//
-	func LexBytes(input []byte, start LexerFn) token.Nexter
+	func LexBytes(input []byte, start lexer.Fn) token.Nexter
 
 
 Lexer Functions
@@ -39,16 +39,16 @@ Lexer Functions
 In addition to the input data, each Lex function also accepts a function which serves as the starting point for your
 lexer:
 
-	// LexerFn are user functions that scan runes and emit tokens.
+	// lexer.Fn are user functions that scan runes and emit tokens.
 	//
-	type LexerFn func(*Lexer) LexerFn
+	type lexer.Fn func(*Lexer) lexer.Fn
 
 The main Lexer process will call into this function to initiate lexing.
 
 
-Simplified LexerFn Loop
+Simplified Lexer.Fn Loop
 
-You'll notice that the `LexerFN` return type is another `LexerFn`.
+You'll notice that the `Lexer.Fn` return type is another `Lexer.Fn`.
 
 This is to allow for simplified flow control of your lexer function.
 
@@ -61,7 +61,7 @@ Simply return from your method after (possibly) emitting a token, and the Lexer 
 
 Switching Lexer Context
 
-Switching contexts is as easy as returning a reference to another LexerFn.
+Switching contexts is as easy as returning a reference to another Lexer.Fn.
 
 For example, if, within your main lexer function, you encounter a `"`, you can simply return a reference to your
 `quotedStringLexer` function and the Lexer will transfer control to it.
@@ -72,9 +72,9 @@ Once finished, your quoted string lexer can return control back to your main lex
 
 Shutting Down The Lexer
 
-You can shut down the main Lexer loop from within your `LexerFn` by simply returning `nil`.
+You can shut down the main Lexer loop from within your `Lexer.Fn` by simply returning `nil`.
 
-All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `LexerFn`
+All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `Lexer.Fn`
 calls.
 
 
@@ -144,15 +144,15 @@ Before using a marker, confirm it is still valid:
 Once you've confirmed a marker is still valid:
 
 	// Apply resets the lexer state to the marker position.
-	// Returns the LexerFn that was stored at the time the marker was created.
+	// Returns the Lexer.Fn that was stored at the time the marker was created.
 	//
-	func (m *Marker) Apply() LexerFn
+	func (m *Marker) Apply() lexer.Fn
 
 NOTE: Resetting a marker does not reset the lexer function that was active when the marker was created.
 Instead it simply returns the function reference.  If you want to return control to the function saved in the marker,
 you can use this pattern:
 
-	return marker.Apply(); // Resets the lexer and returns control to the saved LexerFn
+	return marker.Apply(); // Resets the lexer and returns control to the saved Lexer.Fn
 
 
 Token Types

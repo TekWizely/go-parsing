@@ -94,7 +94,7 @@ func main() {
 	fmt.Printf("%d words, %d spaces, %d lines, %d chars\n", words, spaces, lines, chars)
 }
 
-func lexerFn(l *lexer.Lexer) lexer.LexerFn {
+func lexerFn(l *lexer.Lexer) lexer.Fn {
 
 	// Can skip canPeek() check on first rune, per lexer rules
 	//

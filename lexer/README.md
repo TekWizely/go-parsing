@@ -29,34 +29,34 @@ Lexing is initiated through various `Lex*` methods, each accepting a different t
 ###### Input Type: `string`
 
 ```go
-func LexString(input string, start LexerFn) token.Nexter
+func LexString(input string, start lexer.Fn) token.Nexter
 ```
 
 ###### Input Type: `io.RuneReader`
 
 ```go
-func LexRuneReader(input io.RuneReader, start LexerFn) token.Nexter
+func LexRuneReader(input io.RuneReader, start lexer.Fn) token.Nexter
 ```
 
 ###### Input Type: `io.Reader`
 
 ```go
-func LexReader(input io.Reader, start LexerFn) token.Nexter
+func LexReader(input io.Reader, start lexer.Fn) token.Nexter
 ```
 
 ###### Input Type: `[]rune`
 
 ```go
-func LexRunes(input []rune, start LexerFn) token.Nexter
+func LexRunes(input []rune, start lexer.Fn) token.Nexter
 ```
 
 ###### Input Type: `[]byte`
 
 ```go
-func LexBytes(input []byte, start LexerFn) token.Nexter
+func LexBytes(input []byte, start lexer.Fn) token.Nexter
 ```
 
-#### Lexer Functions ( `lexer.LexerFn` )
+#### Lexer Functions ( `lexer.Fn` )
 
 In addition to the `input` data, each Lex function also accepts a function which serves as the starting point for your lexer.
 
@@ -64,12 +64,12 @@ The main Lexer process will call into this `start` function to initiate lexing.
 
 Lexer functions scan runes and emit tokens.
 
-Lexer defines `LexerFn` with the following signature:
+Lexer defines `Lexer.Fn` with the following signature:
 
 ```go
-// LexerFn are user functions that scan runes and emit tokens.
+// lexer.Fn are user functions that scan runes and emit tokens.
 //
-type LexerFn func(*Lexer) LexerFn
+type lexer.Fn func(*Lexer) lexer.Fn
 ```
 
 #### Scanning Runes ( `lexer.Lexer` )
@@ -207,16 +207,16 @@ Once you've confirmed a marker is still valid, `Marker.Apply()` will let you res
 
 ```go
 // Apply resets the lexer state to the marker position.
-// Returns the LexerFn that was stored at the time the marker was created.
+// Returns the Lexer.Fn that was stored at the time the marker was created.
 //
-func (m *Marker) Apply() LexerFn
+func (m *Marker) Apply() lexer.Fn
 ```
 
 **NOTE:** Resetting a marker does not reset the lexer function that was active when the marker was created.  Instead it returns the function reference, giving the current lexer function the choice to use it or not.
 
-#### Returning From Lexer Function ( `return LexerFn` )
+#### Returning From Lexer Function ( `return lexer.Fn` )
 
-You'll notice that the `LexerFn` return type is another `LexerFn`
+You'll notice that the `Lexer.Fn` return type is another `Lexer.Fn`
 
 This is to allow for simplified flow control of your lexer function.
 
@@ -230,7 +230,7 @@ Simply return from your method after (possibly) emitting a token, and the Lexer 
 
 ###### Context-Switching
 
-Switching contexts is as easy as returning a reference to another `LexerFn`.
+Switching contexts is as easy as returning a reference to another `Lexer.Fn`.
 
 For example, if, within your main lexer function, you encounter a `"`, you can simply return a reference to your `quotedStringLexer` function and the Lexer will transfer control to it.
 
@@ -238,9 +238,9 @@ Once finished, your quoted string lexer can return control back to your main lex
 
 ###### Shutting Down The Lexer Loop
 
-You can shut down the main Lexer loop from within your `LexerFn` by simply returning `nil`.
+You can shut down the main Lexer loop from within your `Lexer.Fn` by simply returning `nil`.
 
-All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `LexerFn` calls.
+All previously emitted tokens will still be available for pickup, but the lexer will stop making any further `Lexer.Fn` calls.
 
 #### Token Types ( `token.Type` )
 
@@ -386,7 +386,7 @@ func main() {
 	fmt.Printf("%d words, %d spaces, %d lines, %d chars\n", words, spaces, lines, chars)
 }
 
-func lexerFn(l *lexer.Lexer) lexer.LexerFn {
+func lexerFn(l *lexer.Lexer) lexer.Fn {
 
 	// Can skip canPeek() check on first rune, per lexer rules
 	//

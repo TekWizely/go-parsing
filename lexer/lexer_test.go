@@ -113,8 +113,8 @@ func TestNilFn(t *testing.T) {
 // TestLexerFnSkippedWhenNoCanPeek
 //
 func TestLexerFnSkippedWhenNoCanPeek(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
-		t.Error("Lexer should not call LexerFn when CanPeek(1) == false")
+	fn := func(l *Lexer) Fn {
+		t.Error("Lexer should not call Lexer.Fn when CanPeek(1) == false")
 		return nil
 	}
 	nexter := LexString("", fn)
@@ -124,7 +124,7 @@ func TestLexerFnSkippedWhenNoCanPeek(t *testing.T) {
 // TestEmittoken.Ttype
 //
 func TestEmitEmptyType(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitType(T_START)
 		return nil
 	}
@@ -136,7 +136,7 @@ func TestEmitEmptyType(t *testing.T) {
 // TestEmitEmptyToken
 //
 func TestEmitEmptyToken(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitToken(T_START)
 		return nil
 	}
@@ -148,7 +148,7 @@ func TestEmitEmptyToken(t *testing.T) {
 // TestCanPeek
 //
 func TestCanPeek(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectCanPeek(t, l, 1, true)
 
 		expectPeek(t, l, 1, '1')
@@ -170,7 +170,7 @@ func TestCanPeek(t *testing.T) {
 // TestCanPeekPastEOF
 //
 func TestCanPeekPastEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectCanPeek(t, l, 4, false)
 
 		expectCanPeek(t, l, 3, true)
@@ -194,7 +194,7 @@ func TestCanPeekPastEOF(t *testing.T) {
 // TestCanPeekRangeError
 //
 func TestCanPeekRangeError(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		assertPanic(t, func() {
 			l.CanPeek(-1)
 		}, "Lexer.CanPeek: range error")
@@ -210,7 +210,7 @@ func TestCanPeekRangeError(t *testing.T) {
 // TestPeek1
 //
 func TestPeek1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, '1')
 		return nil
 	}
@@ -222,7 +222,7 @@ func TestPeek1(t *testing.T) {
 // TestPeek11
 //
 func TestPeek11(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectPeek(t, l, 1, 'A')
 		return nil
@@ -234,7 +234,7 @@ func TestPeek11(t *testing.T) {
 // TestPeek12
 //
 func TestPeek12(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectPeek(t, l, 2, 'B')
 		return nil
@@ -246,7 +246,7 @@ func TestPeek12(t *testing.T) {
 // TestPeekEmpty
 //
 func TestPeekEmpty(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNext(t, l, '.')
 		assertPanic(t, func() {
 			expectPeek(t, l, 1, utf8.RuneError)
@@ -260,7 +260,7 @@ func TestPeekEmpty(t *testing.T) {
 // TestPeekRangeError
 //
 func TestPeekRangeError(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		assertPanic(t, func() {
 			l.Peek(-1)
 		}, "Lexer.Peek: range error")
@@ -276,7 +276,7 @@ func TestPeekRangeError(t *testing.T) {
 // TestNext1
 //
 func TestNext1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
 		return nil
@@ -288,7 +288,7 @@ func TestNext1(t *testing.T) {
 // TestNext2
 //
 func TestNext2(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
 		expectPeek(t, l, 1, 'B')
@@ -302,7 +302,7 @@ func TestNext2(t *testing.T) {
 // TestNextEmpty
 //
 func TestNextEmpty(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNext(t, l, '.')
 		assertPanic(t, func() {
 			expectNext(t, l, utf8.RuneError)
@@ -316,7 +316,7 @@ func TestNextEmpty(t *testing.T) {
 // TestNextEmit1
 //
 func TestNextEmit1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
 		l.EmitToken(T_CHAR)
@@ -330,7 +330,7 @@ func TestNextEmit1(t *testing.T) {
 // TestNextEmit2
 //
 func TestNextEmit2(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
 		l.EmitToken(T_CHAR)
@@ -348,7 +348,7 @@ func TestNextEmit2(t *testing.T) {
 // TestMatchInt
 //
 func TestMatchInt(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123", T_INT)
 		return nil
 	}
@@ -360,7 +360,7 @@ func TestMatchInt(t *testing.T) {
 // TestMatchIntString
 //
 func TestMatchIntString(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123", T_INT)
 		expectMatchEmitString(t, l, "ABC", T_STRING)
 		return nil
@@ -374,7 +374,7 @@ func TestMatchIntString(t *testing.T) {
 // TestMatchString
 //
 func TestMatchString(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
@@ -386,7 +386,7 @@ func TestMatchString(t *testing.T) {
 // TestMatchRunes
 //
 func TestMatchRunes(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
@@ -398,7 +398,7 @@ func TestMatchRunes(t *testing.T) {
 // TestMatchBytes
 //
 func TestMatchBytes(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
@@ -410,7 +410,7 @@ func TestMatchBytes(t *testing.T) {
 // TestMatchReader
 //
 func TestMatchReader(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123ABC", T_STRING)
 		return nil
 	}
@@ -422,7 +422,7 @@ func TestMatchReader(t *testing.T) {
 // TestClear1
 //
 func TestClear1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123ABC")
 		l.Clear()
 		return nil
@@ -434,7 +434,7 @@ func TestClear1(t *testing.T) {
 // TestClear2
 //
 func TestClear2(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectMatchEmitString(t, l, "123", T_INT)
 		expectNextString(t, l, "ABC")
 		l.Clear()
@@ -448,7 +448,7 @@ func TestClear2(t *testing.T) {
 // TestClear3
 //
 func TestClear3(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.Clear()
 		expectMatchEmitString(t, l, "ABC", T_STRING)
@@ -462,7 +462,7 @@ func TestClear3(t *testing.T) {
 // TestEmitEOF1
 //
 func TestEmitEOF1(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		return nil
@@ -474,7 +474,7 @@ func TestEmitEOF1(t *testing.T) {
 // TestEmitEOF2
 //
 func TestEmitEOF2(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)
@@ -487,7 +487,7 @@ func TestEmitEOF2(t *testing.T) {
 // TestEmitEOF3
 //
 func TestEmitEOF3(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitType(T_EOF)
 		expectEOF(t, l)
 		return nil
@@ -499,7 +499,7 @@ func TestEmitEOF3(t *testing.T) {
 // TestEmitEOF4
 //
 func TestEmitEOF4(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitToken(T_EOF)
 		expectEOF(t, l)
 		return nil
@@ -511,7 +511,7 @@ func TestEmitEOF4(t *testing.T) {
 // TestEmitEOF5
 //
 func TestEmitEOF5(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.EmitToken(T_EOF)
 		expectEOF(t, l)
@@ -524,7 +524,7 @@ func TestEmitEOF5(t *testing.T) {
 // TestEmitError
 //
 func TestEmitError(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitError("ERROR")
 		return nil
 	}
@@ -536,7 +536,7 @@ func TestEmitError(t *testing.T) {
 // TestEmitErrorf
 //
 func TestEmitErrorf(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitErrorf("ERROR: %s %d", "Error", 1)
 		return nil
 	}
@@ -548,7 +548,7 @@ func TestEmitErrorf(t *testing.T) {
 // TestEmitAfterEOF
 //
 func TestEmitAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)
@@ -563,7 +563,7 @@ func TestEmitAfterEOF(t *testing.T) {
 // TestEmitTypeAfterEOF
 //
 func TestEmitTypeAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		l.EmitType(T_START)
@@ -577,7 +577,7 @@ func TestEmitTypeAfterEOF(t *testing.T) {
 // TestCanPeekAfterEOF
 //
 func TestCanPeekAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		expectCanPeek(t, l, 1, false)
@@ -590,7 +590,7 @@ func TestCanPeekAfterEOF(t *testing.T) {
 // TestPeekAfterEOF
 //
 func TestPeekAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		assertPanic(t, func() {
@@ -605,7 +605,7 @@ func TestPeekAfterEOF(t *testing.T) {
 // TestNextAfterEOF
 //
 func TestNextAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		assertPanic(t, func() {
@@ -620,7 +620,7 @@ func TestNextAfterEOF(t *testing.T) {
 // TestPeekTokenAfterEOF
 //
 func TestPeekTokenAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)
@@ -636,7 +636,7 @@ func TestPeekTokenAfterEOF(t *testing.T) {
 // TestEmitErrorAfterEOF
 //
 func TestEmitErrorAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
 		l.EmitError("ERROR")
@@ -650,7 +650,7 @@ func TestEmitErrorAfterEOF(t *testing.T) {
 // TestClearAfterEOF
 //
 func TestClearAfterEOF(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)

@@ -15,7 +15,7 @@ func expectMarkerValid(t *testing.T, m *Marker, match bool) {
 // TestMarkerUnused
 //
 func TestMarkerUnused(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		m := l.Marker()
 		expectMarkerValid(t, m, true)
 		// Ignore marker
@@ -31,7 +31,7 @@ func TestMarkerUnused(t *testing.T) {
 // TestMarkerValid
 //
 func TestMarkerValid(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		m := l.Marker()
 		expectNextString(t, l, "123ABC")
 		expectMarkerValid(t, m, true)
@@ -47,7 +47,7 @@ func TestMarkerValid(t *testing.T) {
 // TestMarkerImmediateApply
 //
 func TestMarkerImmediateApply(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		m := l.Marker()
 		expectMarkerValid(t, m, true)
 		// Apply it immediately
@@ -65,7 +65,7 @@ func TestMarkerImmediateApply(t *testing.T) {
 // TestMarkerApply
 //
 func TestMarkerApply(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		m := l.Marker()
 		expectMarkerValid(t, m, true)
 		expectNextString(t, l, "123ABC")
@@ -84,7 +84,7 @@ func TestMarkerApply(t *testing.T) {
 // TestMarkerApplyInvalid
 //
 func TestMarkerApplyInvalid(t *testing.T) {
-	fn := func(l *Lexer) LexerFn {
+	fn := func(l *Lexer) Fn {
 		m := l.Marker()
 		expectMarkerValid(t, m, true)
 		expectNextString(t, l, "123ABC")
@@ -107,7 +107,7 @@ func TestMarkerApplyNextFn(t *testing.T) {
 	var marker *Marker
 	var used = false
 
-	fn1 := func(l *Lexer) LexerFn {
+	fn1 := func(l *Lexer) Fn {
 		if used {
 			t.Error("Marker.Apply() expected to return function that marker was created in")
 			return nil
@@ -116,7 +116,7 @@ func TestMarkerApplyNextFn(t *testing.T) {
 		return marker.Apply()
 	}
 
-	fn2 := func(l *Lexer) LexerFn {
+	fn2 := func(l *Lexer) Fn {
 		if used {
 			return nil
 		}
