@@ -154,7 +154,7 @@ func (l *Lexer) EmitToken(t token.Type)
 
 ###### Emitting Token Type Only
 
-For some token types, the text value of the token isn't needed, and the `token.Type` carries enough context to fully describe the token (ex. `'+' -> T_PLUS`).
+For some token types, the text value of the token isn't needed, and the `token.Type` carries enough context to fully describe the token (ex. `'+' -> TPlus`).
 
 For these scenarios, you can use `EmitType` to emit just the token type, discarding the previously-matched runes:
 
@@ -259,21 +259,21 @@ Lexer defines a few pre-defined token values:
 ```go
 
 const (
-    T_LEX_ERR token.Type = iota // Lexer error
-    T_UNKNOWN                   // Unknown rune(s)
-    T_EOF                       // EOF
-    T_START                     // Marker for user tokens ( use T_START + iota )
+    TLexErr token.Type = iota // Lexer error
+    TUnknown                  // Unknown rune(s)
+    TEof                      // EOF
+    TStart                    // Marker for user tokens ( use TStart + iota )
 )
 ```
 
 ##### Defining Your Lexer Tokens
 
-You define your own token types starting from `T_START`:
+You define your own token types starting from `TStart`:
 
 ```go
 const (
-    T_INT = lexer.T_START + iota
-    T_CHAR
+    TInt = lexer.TStart + iota
+    TChar
 )
 ```
 
@@ -319,9 +319,9 @@ func usage() {
 // We define our lexer tokens starting from the pre-defined START token
 //
 const (
-	T_SPACE = lexer.T_START + iota
-	T_NEWLINE
-	T_WORD
+	TSpace = lexer.TStart + iota
+	TNewline
+	TWord
 )
 
 // We will attempt to match 3 newline styles: [ "\n", "\r", "\r\n" ]
@@ -369,16 +369,16 @@ func main() {
 		chars += len(t.Value())
 
 		switch t.Type() {
-		case T_WORD:
+		case TWord:
 			words++
 			emptyLine = false
 
-		case T_NEWLINE:
+		case TNewline:
 			lines++
 			spaces += len(t.Value())
 			emptyLine = true
 
-		case T_SPACE:
+		case TSpace:
 			spaces += len(t.Value())
 			emptyLine = false
 
@@ -407,7 +407,7 @@ func lexerFn(l *lexer.Lexer) lexer.Fn {
 	//
 	case r == runeNewLine:
 		l.Next()
-		l.EmitToken(T_NEWLINE)
+		l.EmitToken(TNewline)
 
 	// Return '\r', optionally followed by newLine '\n'
 	// We check this before Space to avoid hit from unicode.IsSpace() check
@@ -417,7 +417,7 @@ func lexerFn(l *lexer.Lexer) lexer.Fn {
 		if l.CanPeek(1) && l.Peek(1) == runeNewLine {
 			l.Next()
 		}
-		l.EmitToken(T_NEWLINE)
+		l.EmitToken(TNewline)
 
 	// Space or Word
 	//
@@ -434,9 +434,9 @@ func lexerFn(l *lexer.Lexer) lexer.Fn {
 		// Emit token
 		//
 		if isSpace {
-			l.EmitToken(T_SPACE)
+			l.EmitToken(TSpace)
 		} else {
-			l.EmitToken(T_WORD)
+			l.EmitToken(TWord)
 		}
 	}
 

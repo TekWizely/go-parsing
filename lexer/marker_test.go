@@ -20,11 +20,11 @@ func TestMarkerUnused(t *testing.T) {
 		expectMarkerValid(t, m, true)
 		// Ignore marker
 		//
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -35,12 +35,12 @@ func TestMarkerValid(t *testing.T) {
 		m := l.Marker()
 		expectNextString(t, l, "123ABC")
 		expectMarkerValid(t, m, true)
-		l.EmitToken(T_STRING)
+		l.EmitToken(TString)
 		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -53,12 +53,12 @@ func TestMarkerImmediateApply(t *testing.T) {
 		// Apply it immediately
 		//
 		m.Apply()
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -72,12 +72,12 @@ func TestMarkerApply(t *testing.T) {
 		expectMarkerValid(t, m, true)
 		m.Apply()
 		expectMarkerValid(t, m, true)
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		expectMarkerValid(t, m, false)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -90,7 +90,7 @@ func TestMarkerApplyInvalid(t *testing.T) {
 		expectNextString(t, l, "123ABC")
 		expectMarkerValid(t, m, true)
 		m.Apply()
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		expectMarkerValid(t, m, false)
 		// Valid said no, but let's try anyway
 		//

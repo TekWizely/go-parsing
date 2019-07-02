@@ -181,8 +181,8 @@ func (l *Lexer) PeekToken() string {
 }
 
 // EmitToken emits a token of the specified type, along with all of the matched runes.
-// It is safe to emit T_EOF via this method.
-// If the type is T_EOF, then all previously-matched runes are discarded and this is treated as EmitEOF().
+// It is safe to emit TEof via this method.
+// If the type is TEof, then all previously-matched runes are discarded and this is treated as EmitEOF().
 // All outstanding markers are invalidated after this call.
 // See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
@@ -198,7 +198,7 @@ func (l *Lexer) EmitToken(t token.Type) {
 
 // EmitType emits a token of the specified type, discarding all previously-matched runes.
 // The emitted token will have a Text() value of "".
-// It is safe to emit T_EOF via this method.
+// It is safe to emit TEof via this method.
 // All outstanding markers are invalidated after this call.
 // See EmitEOF for more details on the effects of emitting EOF.
 // Panics if EOF already emitted.
@@ -212,7 +212,7 @@ func (l *Lexer) EmitType(t token.Type) {
 	l.emit(t, false)
 }
 
-// EmitError Emits a token of type T_LEX_ERR with the specified err string as the token text.
+// EmitError Emits a token of type TLexErr with the specified err string as the token text.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 //
@@ -224,10 +224,10 @@ func (l *Lexer) EmitError(err string) {
 	}
 	l.clear(false)
 	// TODO This is a tad kludgie - Think of a better way to inject a string into the standard emit flow.
-	l.output.PushBack(newToken(T_LEX_ERR, err))
+	l.output.PushBack(newToken(TLexErr, err))
 }
 
-// EmitErrorf Emits a token of type T_LEX_ERR with the formatted err string as the token text.
+// EmitErrorf Emits a token of type TLexErr with the formatted err string as the token text.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
 // This is a convenience method that simply sends the formatted string to EmitError().
@@ -237,16 +237,16 @@ func (l *Lexer) EmitErrorf(format string, args ...interface{}) {
 }
 
 // EmitEOF emits a token of type TokenEOF, discarding all previously-matched runes.
-// You will likely never need to call this directly, as Lex will auto-emit EOF (T_EOF) before exiting,
+// You will likely never need to call this directly, as Lex will auto-emit EOF (TEof) before exiting,
 // if not already emitted.
 // No more reads to the underlying RuneReader will happen once EOF is emitted.
 // No more runes can be matched once EOF is emitted.
 // All outstanding markers are invalidated after this call.
 // Panics if EOF already emitted.
-// This is a convenience method that simply calls EmitType(T_EOF).
+// This is a convenience method that simply calls EmitType(TEof).
 //
 func (l *Lexer) EmitEOF() {
-	l.EmitType(T_EOF)
+	l.EmitType(TEof)
 }
 
 // Clear discards all previously-matched runes without emitting any tokens.
@@ -351,7 +351,7 @@ func (l *Lexer) peekHead() *list.Element {
 }
 
 // emit Emits a Token, optionally including the matched text.
-// If token.Type is T_EOF, emitText is ignored and treated as false.
+// If token.Type is TEof, emitText is ignored and treated as false.
 // Panics if EOF already emitted.
 //
 func (l *Lexer) emit(t token.Type, emitText bool) {
@@ -365,7 +365,7 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 
 	// If emitting EOF
 	//
-	if T_EOF == t {
+	if TEof == t {
 		// Clear the peek buffer, discarding matched runes
 		//
 		l.matchTail = nil
@@ -381,7 +381,7 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 		l.eofOut = true
 		// Emit EOF token
 		//
-		l.output.PushBack(newToken(T_EOF, ""))
+		l.output.PushBack(newToken(TEof, ""))
 	} else {
 		s := l.clear(emitText)
 

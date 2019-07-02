@@ -11,9 +11,9 @@ import (
 // Define tokens used in various tests
 //
 const (
-	T_INT token.Type = T_START + iota // Just for convenience since we use it a bunch here
-	T_CHAR
-	T_STRING
+	TInt token.Type = TStart + iota
+	TChar
+	TString
 )
 
 // assertPanic
@@ -125,11 +125,11 @@ func TestLexerFnSkippedWhenNoCanPeek(t *testing.T) {
 //
 func TestEmitEmptyType(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		l.EmitType(T_START)
+		l.EmitType(TStart)
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, T_START, "")
+	expectNexterNext(t, nexter, TStart, "")
 	expectNexterEOF(t, nexter)
 }
 
@@ -137,11 +137,11 @@ func TestEmitEmptyType(t *testing.T) {
 //
 func TestEmitEmptyToken(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		l.EmitToken(T_START)
+		l.EmitToken(TStart)
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, T_START, "")
+	expectNexterNext(t, nexter, TStart, "")
 	expectNexterEOF(t, nexter)
 }
 
@@ -319,11 +319,11 @@ func TestNextEmit1(t *testing.T) {
 	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
-		l.EmitToken(T_CHAR)
+		l.EmitToken(TChar)
 		return nil
 	}
 	nexter := LexString("AB", fn)
-	expectNexterNext(t, nexter, T_CHAR, "A")
+	expectNexterNext(t, nexter, TChar, "A")
 	expectNexterEOF(t, nexter)
 }
 
@@ -333,15 +333,15 @@ func TestNextEmit2(t *testing.T) {
 	fn := func(l *Lexer) Fn {
 		expectPeek(t, l, 1, 'A')
 		expectNext(t, l, 'A')
-		l.EmitToken(T_CHAR)
+		l.EmitToken(TChar)
 		expectPeek(t, l, 1, 'B')
 		expectNext(t, l, 'B')
-		l.EmitToken(T_CHAR)
+		l.EmitToken(TChar)
 		return nil
 	}
 	nexter := LexString("AB", fn)
-	expectNexterNext(t, nexter, T_CHAR, "A")
-	expectNexterNext(t, nexter, T_CHAR, "B")
+	expectNexterNext(t, nexter, TChar, "A")
+	expectNexterNext(t, nexter, TChar, "B")
 	expectNexterEOF(t, nexter)
 }
 
@@ -349,11 +349,11 @@ func TestNextEmit2(t *testing.T) {
 //
 func TestMatchInt(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123", T_INT)
+		expectMatchEmitString(t, l, "123", TInt)
 		return nil
 	}
 	nexter := LexString("123", fn)
-	expectNexterNext(t, nexter, T_INT, "123")
+	expectNexterNext(t, nexter, TInt, "123")
 	expectNexterEOF(t, nexter)
 }
 
@@ -361,13 +361,13 @@ func TestMatchInt(t *testing.T) {
 //
 func TestMatchIntString(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123", T_INT)
-		expectMatchEmitString(t, l, "ABC", T_STRING)
+		expectMatchEmitString(t, l, "123", TInt)
+		expectMatchEmitString(t, l, "ABC", TString)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_INT, "123")
-	expectNexterNext(t, nexter, T_STRING, "ABC")
+	expectNexterNext(t, nexter, TInt, "123")
+	expectNexterNext(t, nexter, TString, "ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -375,11 +375,11 @@ func TestMatchIntString(t *testing.T) {
 //
 func TestMatchString(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -387,11 +387,11 @@ func TestMatchString(t *testing.T) {
 //
 func TestMatchRunes(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		return nil
 	}
 	nexter := LexRunes([]rune("123ABC"), fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -399,11 +399,11 @@ func TestMatchRunes(t *testing.T) {
 //
 func TestMatchBytes(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		return nil
 	}
 	nexter := LexBytes([]byte("123ABC"), fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -411,11 +411,11 @@ func TestMatchBytes(t *testing.T) {
 //
 func TestMatchReader(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123ABC", T_STRING)
+		expectMatchEmitString(t, l, "123ABC", TString)
 		return nil
 	}
 	nexter := LexReader(strings.NewReader("123ABC"), fn)
-	expectNexterNext(t, nexter, T_STRING, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -435,13 +435,13 @@ func TestClear1(t *testing.T) {
 //
 func TestClear2(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		expectMatchEmitString(t, l, "123", T_INT)
+		expectMatchEmitString(t, l, "123", TInt)
 		expectNextString(t, l, "ABC")
 		l.Clear()
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_INT, "123")
+	expectNexterNext(t, nexter, TInt, "123")
 	expectNexterEOF(t, nexter)
 }
 
@@ -451,11 +451,11 @@ func TestClear3(t *testing.T) {
 	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
 		l.Clear()
-		expectMatchEmitString(t, l, "ABC", T_STRING)
+		expectMatchEmitString(t, l, "ABC", TString)
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, T_STRING, "ABC")
+	expectNexterNext(t, nexter, TString, "ABC")
 	expectNexterEOF(t, nexter)
 }
 
@@ -488,7 +488,7 @@ func TestEmitEOF2(t *testing.T) {
 //
 func TestEmitEOF3(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		l.EmitType(T_EOF)
+		l.EmitType(TEof)
 		expectEOF(t, l)
 		return nil
 	}
@@ -500,7 +500,7 @@ func TestEmitEOF3(t *testing.T) {
 //
 func TestEmitEOF4(t *testing.T) {
 	fn := func(l *Lexer) Fn {
-		l.EmitToken(T_EOF)
+		l.EmitToken(TEof)
 		expectEOF(t, l)
 		return nil
 	}
@@ -513,7 +513,7 @@ func TestEmitEOF4(t *testing.T) {
 func TestEmitEOF5(t *testing.T) {
 	fn := func(l *Lexer) Fn {
 		expectNextString(t, l, "123")
-		l.EmitToken(T_EOF)
+		l.EmitToken(TEof)
 		expectEOF(t, l)
 		return nil
 	}
@@ -552,7 +552,7 @@ func TestEmitAfterEOF(t *testing.T) {
 		expectNextString(t, l, "123")
 		l.EmitEOF()
 		expectEOF(t, l)
-		l.EmitToken(T_INT)
+		l.EmitToken(TInt)
 		return nil
 	}
 	assertPanic(t, func() {
@@ -566,7 +566,7 @@ func TestEmitTypeAfterEOF(t *testing.T) {
 	fn := func(l *Lexer) Fn {
 		l.EmitEOF()
 		expectEOF(t, l)
-		l.EmitType(T_START)
+		l.EmitType(TStart)
 		return nil
 	}
 	assertPanic(t, func() {

@@ -23,25 +23,25 @@ func assertToken(t *testing.T, tok *_token, typ token.Type, value string, eof bo
 // TestTokenEnums
 //
 func TestTokenEnums(t *testing.T) {
-	// T_LEX_ERR
+	// TLexErr
 	//
-	if T_LEX_ERR != 0 { // iota
-		t.Error("T_LEX_ERR != 0")
+	if TLexErr != 0 { // iota
+		t.Error("TLexErr != 0")
 	}
-	// T_UNKNOWN
+	// TUnknown
 	//
-	if T_UNKNOWN != 1 {
-		t.Error("T_UNKNOWN != 1")
+	if TUnknown != 1 {
+		t.Error("TUnknown != 1")
 	}
-	// T_EOF
+	// TEof
 	//
-	if T_EOF != 2 {
-		t.Error("T_EOF != 2")
+	if TEof != 2 {
+		t.Error("TEof != 2")
 	}
-	// T_START
+	// TStart
 	//
-	if T_START != 3 {
-		t.Error("T_START != 3")
+	if TStart != 3 {
+		t.Error("TStart != 3")
 	}
 	// tEnd
 	//
@@ -53,27 +53,27 @@ func TestTokenEnums(t *testing.T) {
 // TestNewToken
 //
 func TestNewToken(t *testing.T) {
-	tok := newToken(T_START, "START")
-	assertToken(t, tok, T_START, "START", false)
+	tok := newToken(TStart, "START")
+	assertToken(t, tok, TStart, "START", false)
 }
 
 // TestNewTokenEmptyString
 //
 func TestNewTokenEmptyString(t *testing.T) {
-	tok := newToken(T_START, "")
-	assertToken(t, tok, T_START, "", false)
+	tok := newToken(TStart, "")
+	assertToken(t, tok, TStart, "", false)
 }
 
 // TestNewTokenEOF
 //
 func TestNewTokenEOF(t *testing.T) {
-	tok := newToken(T_EOF, "EOF")
-	assertToken(t, tok, T_EOF, "EOF", true)
+	tok := newToken(TEof, "EOF")
+	assertToken(t, tok, TEof, "EOF", true)
 }
 
 // TestNewTokenEOFEmptyString
 //
 func TestNewTokenEOFEmptyString(t *testing.T) {
-	tok := newToken(T_EOF, "")
-	assertToken(t, tok, T_EOF, "", true)
+	tok := newToken(TEof, "")
+	assertToken(t, tok, TEof, "", true)
 }

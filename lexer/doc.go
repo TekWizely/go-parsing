@@ -160,17 +160,17 @@ Token Types
 Lexer defines a few pre-defined token values:
 
 	const (
-		T_LEX_ERR token.Type = iota // Lexer error
-		T_UNKNOWN                   // Unknown rune(s)
-		T_EOF                       // EOF
-		T_START                     // Marker for user tokens ( use T_START + iota )
+		TLexErr token.Type = iota // Lexer error
+		TUnknown                  // Unknown rune(s)
+		TEof                      // EOF
+		TStart                    // Marker for user tokens ( use TStart + iota )
 	)
 
-You define your own token types starting from T_START:
+You define your own token types starting from TStart:
 
 	const (
-		T_INT = lexer.T_START + iota
-		T_CHAR
+		TInt = lexer.TStart + iota
+		TChar
 	)
 
 

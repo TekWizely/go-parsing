@@ -26,7 +26,7 @@ func (t *tokenNexter) Next() (token.Token, error) {
 	t.next = nil
 	// Error?
 	//
-	if tok.Type() == T_LEX_ERR {
+	if tok.Type() == TLexErr {
 		return nil, errors.New(tok.Value())
 	}
 	return tok, nil
