@@ -57,7 +57,7 @@ func (t *tokenNexter) hasNext() bool {
 		// Lexer Terminated or input at EOF, let's clean up.
 		// If EOF was never emitted, then emit it now.
 		//
-		if t.lexer.eofOut == false {
+		if !t.lexer.eofOut {
 			t.lexer.EmitEOF()
 		}
 	}

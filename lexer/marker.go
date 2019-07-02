@@ -44,7 +44,7 @@ func (m *Marker) Valid() bool {
 // Panics if marker fails Valid() check.
 //
 func (m *Marker) Apply() Fn {
-	if m.Valid() == false {
+	if !m.Valid() {
 		panic("Invalid marker")
 	}
 	m.lexer.matchTail = m.matchTail
