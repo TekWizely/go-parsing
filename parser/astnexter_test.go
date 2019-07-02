@@ -41,23 +41,24 @@ func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
 	}
 }
 
-// expectNexterError confirms Next() == (nil, "$errMsg")
-//
-func expectNexterError(t *testing.T, nexter ASTNexter, errMsg string) {
-	ast, err := nexter.Next()
-	// Used switch per go-critic ifElseChain nag
-	//
-	switch {
-	case err == nil && ast == nil:
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
-	case err == nil && ast != nil:
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', nil)", errMsg, ast)
-	case err != nil && ast != nil:
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', '%s')", errMsg, ast, err.Error())
-	case err != nil && ast == nil && err.Error() != errMsg:
-		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, '%s')", errMsg, err.Error())
-	}
-}
+// Disabled per deadcode nag
+// // expectNexterError confirms Next() == (nil, "$errMsg")
+// //
+// func expectNexterError(t *testing.T, nexter ASTNexter, errMsg string) {
+// 	ast, err := nexter.Next()
+// 	// Used switch per go-critic ifElseChain nag
+// 	//
+// 	switch {
+// 	case err == nil && ast == nil:
+// 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
+// 	case err == nil && ast != nil:
+// 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', nil)", errMsg, ast)
+// 	case err != nil && ast != nil:
+// 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', '%s')", errMsg, ast, err.Error())
+// 	case err != nil && ast == nil && err.Error() != errMsg:
+// 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, '%s')", errMsg, err.Error())
+// 	}
+// }
 
 // TestNexterHasNext1
 //
