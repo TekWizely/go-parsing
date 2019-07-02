@@ -56,13 +56,12 @@ func (e *astNexter) hasNext() bool {
 		//
 		if e.parser.nextFn != nil && e.parser.CanPeek(1) {
 			e.parser.nextFn = e.parser.nextFn(e.parser)
-		} else {
-			// Parser Terminated, let's clean up.
-			// If EOF was never emitted, then emit it now.
-			//
-			if e.parser.eofOut == false {
-				e.parser.EmitEOF()
-			}
+		} else
+		// Parser Terminated, let's clean up.
+		// If EOF was never emitted, then emit it now.
+		//
+		if e.parser.eofOut == false {
+			e.parser.EmitEOF()
 		}
 	}
 	// Consume the AST.
