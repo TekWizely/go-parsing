@@ -18,13 +18,13 @@ func TestMarkerUnused(t *testing.T) {
 	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -34,14 +34,14 @@ func TestMarkerValid(t *testing.T) {
 	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		expectMarkerValid(t, m, false)
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -55,14 +55,14 @@ func TestMarkerImmediateApply(t *testing.T) {
 		//
 		m.Apply()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		expectMarkerValid(t, m, false)
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -72,18 +72,18 @@ func TestMarkerApply(t *testing.T) {
 	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
+		expectNext(t, p, TStart, "")
 		expectMarkerValid(t, m, true)
 		m.Apply()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		expectMarkerValid(t, m, false)
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -93,19 +93,19 @@ func TestMarkerApplyInvalid(t *testing.T) {
 	fn := func(p *Parser) Fn {
 		m := p.Marker()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
+		expectNext(t, p, TStart, "")
 		expectMarkerValid(t, m, true)
 		m.Apply()
 		expectMarkerValid(t, m, true)
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		expectMarkerValid(t, m, false)
 		// Valid said no, but let's try anyway
 		//
 		m.Apply()
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
 	}, "Invalid marker")
@@ -132,7 +132,7 @@ func TestMarkerApplyNextFn(t *testing.T) {
 		marker = p.Marker()
 		return fn1
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn2)
 	expectNexterEOF(t, nexter)
 }

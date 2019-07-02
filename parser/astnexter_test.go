@@ -63,13 +63,13 @@ func expectNexterError(t *testing.T, nexter ASTNexter, errMsg string) {
 //
 func TestNexterHasNext1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -77,13 +77,13 @@ func TestNexterHasNext1(t *testing.T) {
 //
 func TestNexterHasNext2(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 

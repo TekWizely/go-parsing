@@ -256,15 +256,15 @@ import (
 // We define our lexer tokens starting from the pre-defined EOF token
 //
 const (
-	T_ID token.Type = lexer.T_START + iota
-	T_NUMBER
-	T_PLUS
-	T_MINUS
-	T_MULTIPLY
-	T_DIVIDE
-	T_EQUALS
-	T_OPEN_PAREN
-	T_CLOSE_PAREN
+	TId token.Type = lexer.TStart + iota
+	TNumber
+	TPlus
+	TMinus
+	TMultiply
+	TDivide
+	TEquals
+	TOpenParen
+	TCloseParen
 )
 
 // To store variables
@@ -275,7 +275,7 @@ var vars = map[string]float64{}
 //
 var singleChars = []byte{'+', '-', '*', '/', '=', '(', ')'}
 
-var singleTokens = []token.Type{T_PLUS, T_MINUS, T_MULTIPLY, T_DIVIDE, T_EQUALS, T_OPEN_PAREN, T_CLOSE_PAREN}
+var singleTokens = []token.Type{TPlus, TMinus, TMultiply, TDivide, TEquals, TOpenParen, TCloseParen}
 
 // main
 //
@@ -329,12 +329,12 @@ func lex(l *lexer.Lexer) lexer.Fn {
 	// Number
 	//
 	case tryMatchNumber(l):
-		l.EmitToken(T_NUMBER)
+		l.EmitToken(TNumber)
 
 	// ID
 	//
 	case tryMatchID(l):
-		l.EmitToken(T_ID)
+		l.EmitToken(TId)
 
 	// Unknown
 	//
@@ -448,7 +448,7 @@ func parse(p *parser.Parser) parser.Fn {
 
 	// Assignment
 	//
-	case p.CanPeek(3) && p.PeekType(1) == T_ID && p.PeekType(2) == T_EQUALS:
+	case p.CanPeek(3) && p.PeekType(1) == TId && p.PeekType(2) == TEquals:
 		return parseAssignment
 
 	// Evaluation
@@ -514,7 +514,7 @@ func parseAdditiveExpression(p *parser.Parser) (f float64, err error) {
 
 		// Add (+)
 		//
-		case T_PLUS:
+		case TPlus:
 			p.Next() // Skip '+'
 			if a, err = parseAdditiveExpression(p); err == nil {
 				f += a
@@ -522,7 +522,7 @@ func parseAdditiveExpression(p *parser.Parser) (f float64, err error) {
 
 		// Subtract (-)
 		//
-		case T_MINUS:
+		case TMinus:
 			p.Next() // Skip '-'
 			if a, err = parseAdditiveExpression(p); err == nil {
 				f -= a
@@ -544,7 +544,7 @@ func parseMultiplicitiveExpression(p *parser.Parser) (f float64, err error) {
 
 		// Multiply (*)
 		//
-		case T_MULTIPLY:
+		case TMultiply:
 			p.Next() // Skip '*'
 			if m, err = parseMultiplicitiveExpression(p); err == nil {
 				f *= m
@@ -552,7 +552,7 @@ func parseMultiplicitiveExpression(p *parser.Parser) (f float64, err error) {
 
 		// Divide (/)
 		//
-		case T_DIVIDE:
+		case TDivide:
 			p.Next() // Skip '/'
 			if m, err = parseMultiplicitiveExpression(p); err == nil {
 				f /= m
@@ -579,7 +579,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 
 	// ID
 	//
-	case T_ID:
+	case TId:
 		var id = p.Next().Value()
 		var ok bool
 		if f, ok = vars[id]; !ok {
@@ -588,7 +588,7 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 
 	// Number
 	//
-	case T_NUMBER:
+	case TNumber:
 		n := p.Next().Value()
 		if f, err = strconv.ParseFloat(n, 64); err != nil {
 			fmt.Printf("Error parsing number '%s': %s", n, err.Error())
@@ -596,10 +596,10 @@ func parseOperand(p *parser.Parser) (f float64, err error) {
 
 	// '(' Expresson ')'
 	//
-	case T_OPEN_PAREN:
+	case TOpenParen:
 		p.Next() // Skip '('
 		if f, err = parseGeneralExpression(p); err == nil {
-			if p.CanPeek(1) && p.PeekType(1) == T_CLOSE_PAREN {
+			if p.CanPeek(1) && p.PeekType(1) == TCloseParen {
 				p.Next() // Skip ')'
 			} else {
 				err = errors.New("Unbalanced Paren")

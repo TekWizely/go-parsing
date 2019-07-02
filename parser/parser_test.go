@@ -10,10 +10,10 @@ import (
 // Define tokens used in various tests
 //
 const (
-	T_START token.Type = iota
-	T_ONE
-	T_TWO
-	T_THREE
+	TStart token.Type = iota
+	TOne
+	TTwo
+	TThree
 )
 
 // mockToken creates a token.Token from a token.Type
@@ -135,13 +135,13 @@ func TestParserFnSkipedWhenNoCanPeek(t *testing.T) {
 //
 func TestEmit(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_START, "")
-		p.Emit("T_START")
+		expectNext(t, p, TStart, "")
+		p.Emit("TStart")
 		return nil
 	}
-	tokens := mockLexer(T_START)
+	tokens := mockLexer(TStart)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_START")
+	expectNexterNext(t, nexter, "TStart")
 	expectNexterEOF(t, nexter)
 }
 
@@ -151,19 +151,19 @@ func TestCanPeek(t *testing.T) {
 	fn := func(p *Parser) Fn {
 		expectCanPeek(t, p, 1, true)
 
-		expectPeekType(t, p, 1, T_ONE)
+		expectPeekType(t, p, 1, TOne)
 
 		expectCanPeek(t, p, 2, true)
 
-		expectPeekType(t, p, 2, T_TWO)
+		expectPeekType(t, p, 2, TTwo)
 
 		expectCanPeek(t, p, 3, true)
 
-		expectPeekType(t, p, 3, T_THREE)
+		expectPeekType(t, p, 3, TThree)
 
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO, T_THREE)
+	tokens := mockLexer(TOne, TTwo, TThree)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -176,19 +176,19 @@ func TestCanPeekPastEOF(t *testing.T) {
 
 		expectCanPeek(t, p, 3, true)
 
-		expectPeekType(t, p, 3, T_THREE)
+		expectPeekType(t, p, 3, TThree)
 
 		expectCanPeek(t, p, 2, true)
 
-		expectPeekType(t, p, 2, T_TWO)
+		expectPeekType(t, p, 2, TTwo)
 
 		expectCanPeek(t, p, 1, true)
 
-		expectPeekType(t, p, 1, T_ONE)
+		expectPeekType(t, p, 1, TOne)
 
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO, T_THREE)
+	tokens := mockLexer(TOne, TTwo, TThree)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -214,10 +214,10 @@ func TestCanPeekRangeError(t *testing.T) {
 //
 func TestPeek1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeekType(t, p, 1, T_ONE)
+		expectPeekType(t, p, 1, TOne)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -226,11 +226,11 @@ func TestPeek1(t *testing.T) {
 //
 func TestPeek11(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeekType(t, p, 1, T_ONE)
-		expectPeekType(t, p, 1, T_ONE)
+		expectPeekType(t, p, 1, TOne)
+		expectPeekType(t, p, 1, TOne)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -239,11 +239,11 @@ func TestPeek11(t *testing.T) {
 //
 func TestPeek12(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeekType(t, p, 1, T_ONE)
-		expectPeekType(t, p, 2, T_TWO)
+		expectPeekType(t, p, 1, TOne)
+		expectPeekType(t, p, 2, TTwo)
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO)
+	tokens := mockLexer(TOne, TTwo)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -283,11 +283,11 @@ func TestPeekRangeError(t *testing.T) {
 //
 func TestNext1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -296,13 +296,13 @@ func TestNext1(t *testing.T) {
 //
 func TestNext2(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
-		expectPeek(t, p, 1, T_TWO, "")
-		expectNext(t, p, T_TWO, "")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
+		expectPeek(t, p, 1, TTwo, "")
+		expectNext(t, p, TTwo, "")
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO)
+	tokens := mockLexer(TOne, TTwo)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -325,14 +325,14 @@ func TestNextEmpty(t *testing.T) {
 //
 func TestNextEmit1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
-		p.Emit("T_ONE")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
+		p.Emit("TOne")
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_ONE")
+	expectNexterNext(t, nexter, "TOne")
 	expectNexterEOF(t, nexter)
 }
 
@@ -340,18 +340,18 @@ func TestNextEmit1(t *testing.T) {
 //
 func TestNextEmit2(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
-		p.Emit("T_ONE")
-		expectPeek(t, p, 1, T_TWO, "")
-		expectNext(t, p, T_TWO, "")
-		p.Emit("T_TWO")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
+		p.Emit("TOne")
+		expectPeek(t, p, 1, TTwo, "")
+		expectNext(t, p, TTwo, "")
+		p.Emit("TTwo")
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO)
+	tokens := mockLexer(TOne, TTwo)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_ONE")
-	expectNexterNext(t, nexter, "T_TWO")
+	expectNexterNext(t, nexter, "TOne")
+	expectNexterNext(t, nexter, "TTwo")
 	expectNexterEOF(t, nexter)
 }
 
@@ -359,12 +359,12 @@ func TestNextEmit2(t *testing.T) {
 //
 func TestClear1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
 		p.Clear()
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -373,17 +373,17 @@ func TestClear1(t *testing.T) {
 //
 func TestClear2(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
-		p.Emit("T_ONE")
-		expectPeek(t, p, 1, T_TWO, "")
-		expectNext(t, p, T_TWO, "")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
+		p.Emit("TOne")
+		expectPeek(t, p, 1, TTwo, "")
+		expectNext(t, p, TTwo, "")
 		p.Clear()
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO)
+	tokens := mockLexer(TOne, TTwo)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_ONE")
+	expectNexterNext(t, nexter, "TOne")
 	expectNexterEOF(t, nexter)
 }
 
@@ -391,17 +391,17 @@ func TestClear2(t *testing.T) {
 //
 func TestClear3(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectPeek(t, p, 1, T_ONE, "")
-		expectNext(t, p, T_ONE, "")
+		expectPeek(t, p, 1, TOne, "")
+		expectNext(t, p, TOne, "")
 		p.Clear()
-		expectPeek(t, p, 1, T_TWO, "")
-		expectNext(t, p, T_TWO, "")
-		p.Emit("T_TWO")
+		expectPeek(t, p, 1, TTwo, "")
+		expectNext(t, p, TTwo, "")
+		p.Emit("TTwo")
 		return nil
 	}
-	tokens := mockLexer(T_ONE, T_TWO)
+	tokens := mockLexer(TOne, TTwo)
 	nexter := Parse(tokens, fn)
-	expectNexterNext(t, nexter, "T_TWO")
+	expectNexterNext(t, nexter, "TTwo")
 	expectNexterEOF(t, nexter)
 }
 
@@ -413,7 +413,7 @@ func TestEmitEOF1(t *testing.T) {
 		expectEOF(t, p)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -422,12 +422,12 @@ func TestEmitEOF1(t *testing.T) {
 //
 func TestEmitEOF2(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_ONE, "")
+		expectNext(t, p, TOne, "")
 		p.EmitEOF()
 		expectEOF(t, p)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -440,7 +440,7 @@ func TestEmitEOF3(t *testing.T) {
 		expectEOF(t, p)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -449,13 +449,13 @@ func TestEmitEOF3(t *testing.T) {
 //
 func TestEmitAfterEOF(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_ONE, "")
+		expectNext(t, p, TOne, "")
 		p.EmitEOF()
 		expectEOF(t, p)
-		p.Emit("T_ONE")
+		p.Emit("TOne")
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
 	}, "Parser.Emit: No further emits allowed after EOF is emitted")
@@ -470,7 +470,7 @@ func TestCanPeekAfterEOF(t *testing.T) {
 		expectCanPeek(t, p, 1, false)
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -486,7 +486,7 @@ func TestPeekAfterEOF(t *testing.T) {
 		}, "Parser.Peek: No tokens can be peeked after EOF is emitted")
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -502,7 +502,7 @@ func TestNextAfterEOF(t *testing.T) {
 		}, "Parser.Next: No tokens can be matched after EOF is emitted")
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	nexter := Parse(tokens, fn)
 	expectNexterEOF(t, nexter)
 }
@@ -511,13 +511,13 @@ func TestNextAfterEOF(t *testing.T) {
 //
 func TestClearAfterEOF(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		expectNext(t, p, T_ONE, "")
+		expectNext(t, p, TOne, "")
 		p.EmitEOF()
 		expectEOF(t, p)
 		p.Clear()
 		return nil
 	}
-	tokens := mockLexer(T_ONE)
+	tokens := mockLexer(TOne)
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
 	}, "Parser.Clear: No clears allowed after EOF is emitted")
