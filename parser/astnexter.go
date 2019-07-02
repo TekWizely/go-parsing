@@ -60,7 +60,7 @@ func (e *astNexter) hasNext() bool {
 		// Parser Terminated, let's clean up.
 		// If EOF was never emitted, then emit it now.
 		//
-		if e.parser.eofOut == false {
+		if !e.parser.eofOut {
 			e.parser.EmitEOF()
 		}
 	}
