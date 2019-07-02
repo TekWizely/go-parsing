@@ -9,15 +9,16 @@ import (
 //
 func expectNexterEOF(t *testing.T, nexter ASTNexter) {
 	ast, err := nexter.Next()
-	if err == nil {
-		if ast == nil {
-			t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, nil)")
-		} else {
-			t.Errorf("Nexter.Next() expecting (nil, EOF), received ('%v', nil)", ast)
-		}
-	} else if ast != nil {
+	// Used switch per go-critic ifElseChain nag
+	//
+	switch {
+	case err == nil && ast == nil:
+		t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, nil)")
+	case err == nil && ast != nil:
+		t.Errorf("Nexter.Next() expecting (nil, EOF), received ('%v', nil)", ast)
+	case err != nil && ast != nil:
 		t.Errorf("Nexter.Next() expecting (nil, EOF), received ('%v', '%s')'", ast, err.Error())
-	} else if err != io.EOF {
+	case err != nil && ast == nil && err != io.EOF:
 		t.Errorf("Nexter.Next() expecting (nil, EOF), received (nil, '%s')", err.Error())
 	}
 }
@@ -26,15 +27,16 @@ func expectNexterEOF(t *testing.T, nexter ASTNexter) {
 //
 func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
 	ast, err := nexter.Next() // Assume ast, when non-nil, is of type string
-	if ast == nil {
-		if err == nil {
-			t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, nil)'", match)
-		} else {
-			t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, '%s')'", match, err.Error())
-		}
-	} else if err != nil {
+	// Used switch per go-critic ifElseChain nag
+	//
+	switch {
+	case ast == nil && err == nil:
+		t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, nil)'", match)
+	case ast == nil && err != nil:
+		t.Errorf("Nexter.Next() expecting ('%s', nil), received (nil, '%s')'", match, err.Error())
+	case ast != nil && err != nil:
 		t.Errorf("Nexter.Next() expecting ('%s', nil), received ('%v', '%s')'", match, ast, err.Error())
-	} else if ast.(string) != match {
+	case ast != nil && err == nil && ast.(string) != match:
 		t.Errorf("Nexter.Next() expecting ('%s', nil), received ('%v', nil)'", match, ast)
 	}
 }
@@ -43,15 +45,16 @@ func expectNexterNext(t *testing.T, nexter ASTNexter, match string) {
 //
 func expectNexterError(t *testing.T, nexter ASTNexter, errMsg string) {
 	ast, err := nexter.Next()
-	if err == nil {
-		if ast == nil {
-			t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
-		} else {
-			t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', nil)", errMsg, ast)
-		}
-	} else if ast != nil {
+	// Used switch per go-critic ifElseChain nag
+	//
+	switch {
+	case err == nil && ast == nil:
+		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, nil)", errMsg)
+	case err == nil && ast != nil:
+		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', nil)", errMsg, ast)
+	case err != nil && ast != nil:
 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received ('%v', '%s')", errMsg, ast, err.Error())
-	} else if err.Error() != errMsg {
+	case err != nil && ast == nil && err.Error() != errMsg:
 		t.Errorf("Nexter.Next() expecting (nil, '%s'), received (nil, '%s')", errMsg, err.Error())
 	}
 }
