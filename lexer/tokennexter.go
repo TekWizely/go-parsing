@@ -53,13 +53,12 @@ func (t *tokenNexter) hasNext() bool {
 		//
 		if t.lexer.nextFn != nil && t.lexer.CanPeek(1) {
 			t.lexer.nextFn = t.lexer.nextFn(t.lexer)
-		} else {
-			// Lexer Terminated or input at EOF, let's clean up.
-			// If EOF was never emitted, then emit it now.
-			//
-			if t.lexer.eofOut == false {
-				t.lexer.EmitEOF()
-			}
+		} else
+		// Lexer Terminated or input at EOF, let's clean up.
+		// If EOF was never emitted, then emit it now.
+		//
+		if t.lexer.eofOut == false {
+			t.lexer.EmitEOF()
 		}
 	}
 	// Consume the token.
