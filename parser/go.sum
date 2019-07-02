@@ -1,4 +1,4 @@
-github.com/tekwizely/go-parsing/lexer v0.0.0-20190702055928-93c162643515 h1:BiPrCRmwRPuwaXDMej7W6FJboENS70fNkG4ZRnlpKCk=
-github.com/tekwizely/go-parsing/lexer v0.0.0-20190702055928-93c162643515/go.mod h1:Oaebibsn9h2Wj93N1eAHxh/EHyTJPWpUtd3/xC5hq2I=
+github.com/tekwizely/go-parsing/lexer v0.0.0-20190702211947-89bd4df59bc0 h1:Exe7j9/xlezutp0A3XD17SIc9FWOu1Prn4FYNIjsZqg=
+github.com/tekwizely/go-parsing/lexer v0.0.0-20190702211947-89bd4df59bc0/go.mod h1:Oaebibsn9h2Wj93N1eAHxh/EHyTJPWpUtd3/xC5hq2I=
 github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190622183031-974f82a44df9 h1:CER0b3S1SASqumhRMvcosZUkAMs5ATzZoaCcREHBsO4=
 github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190622183031-974f82a44df9/go.mod h1:hrGEp224LWZwYH1FrdvwQC2uMjZdX5MDsydAc5FnrXM=
