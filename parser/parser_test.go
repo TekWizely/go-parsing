@@ -1,7 +1,10 @@
 package parser
 
 import (
+	"errors"
 	"io"
+	"log"
+	"strings"
 	"testing"
 
 	"github.com/tekwizely/go-parsing/lexer/token"
@@ -34,9 +37,13 @@ func (t *mockToken) Value() string {
 type mockNexter struct {
 	tokens []token.Type
 	i      int
+	err    error
 }
 
 func (n *mockNexter) Next() (token.Token, error) {
+	if n.err != nil {
+		return nil, n.err
+	}
 	if n.i >= cap(n.tokens) {
 		return nil, io.EOF
 	}
@@ -49,6 +56,12 @@ func (n *mockNexter) Next() (token.Token, error) {
 //
 func mockLexer(tokens ...token.Type) token.Nexter {
 	return &mockNexter{tokens: tokens}
+}
+
+// mockLexerErr
+//
+func mockLexerErr(err error) token.Nexter {
+	return &mockNexter{err: err}
 }
 
 // assertPanic
@@ -409,7 +422,7 @@ func TestClear3(t *testing.T) {
 //
 func TestEmitEOF1(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		p.EmitEOF()
+		p.EmitEOF() // Emits EOF explicitly
 		expectEOF(t, p)
 		return nil
 	}
@@ -436,7 +449,7 @@ func TestEmitEOF2(t *testing.T) {
 //
 func TestEmitEOF3(t *testing.T) {
 	fn := func(p *Parser) Fn {
-		p.Emit(nil)
+		p.Emit(nil) // Emits nil for EOF
 		expectEOF(t, p)
 		return nil
 	}
@@ -521,4 +534,23 @@ func TestClearAfterEOF(t *testing.T) {
 	assertPanic(t, func() {
 		_, _ = Parse(tokens, fn).Next()
 	}, "Parser.Clear: No clears allowed after EOF is emitted")
+}
+
+// TestTokenNexterNonEOFError should log an error but otherwise behave as EOF
+//
+func TestTokenNexterNonEOFError(t *testing.T) {
+	sb := &strings.Builder{}
+	log.SetFlags(0)
+	log.SetOutput(sb)
+	fn := func(p *Parser) Fn {
+		p.EmitEOF() // Emits EOF explicitly
+		expectEOF(t, p)
+		return nil
+	}
+	tokens := mockLexerErr(errors.New("test Error"))
+	nexter := Parse(tokens, fn)
+	expectNexterEOF(t, nexter)
+	if log := sb.String(); log != "non-EOF error returned from lexer, treating as EOF: test Error\n" {
+		t.Errorf("Parser.growPeek received wrong log message: '%s'", log)
+	}
 }

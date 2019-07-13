@@ -3,6 +3,7 @@ package parser
 import (
 	"container/list"
 	"io"
+	"log"
 
 	"github.com/tekwizely/go-parsing/lexer/token"
 )
@@ -216,9 +217,9 @@ func (p *Parser) growPeek(n int) bool {
 			default:
 				// For lack of a better plan, treat as EOF for now
 				// TODO Think about how to handle non-EOF errors.
-				// TODO Log error.
 				// TODO Expose upstream?
 				//
+				log.Printf("non-EOF error returned from lexer, treating as EOF: %v", err)
 				p.eof = true
 			}
 		}
