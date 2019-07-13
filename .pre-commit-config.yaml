@@ -30,6 +30,23 @@ repos:
     #   By default, hooks run against matching staged files individually.
     #   Currently, file-based hooks DO NOT accept user-args.
     #
+    # Directory-Based Hooks:
+    #   Some hooks work on a per-directory basis.  The hooks run against the
+    #   directory containing one or more matching staged files.
+    #   Currently, directory-based hooks DO NOT accept user-args.
+    #
+    # Directory-Hook Suffixes:
+    #   *-mod-* : Hook runs inside first module root directory going up
+    #             $FILE path.
+    #   *-dir-* : Hook runs using './$(dirname $FILE)' as target.
+    #   *-pkg-* : Hook runs using '$(go list)/$(dirname $FILE)' as target.
+    #
+    # ! Multiple Hook Invocations
+    # !   By design, the directory-based hooks only execute against a given
+    # !   directory once per hook invocation.
+    # !   HOWEVER, due to OS command-line length limits, Pre-Commit can invoke
+    # !   a hook multiple times if a large number of files are staged.
+    #
     # Repo-Based Hooks:
     #   Hooks named '*-repo-*' only run once (if any matching files are staged).
     #   They are NOT provided the list of staged files.
