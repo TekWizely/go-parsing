@@ -4,7 +4,8 @@ Package token isolates the token-related types and interfaces used between the l
 */
 package token
 
-// Token captures the type code + optional text string emitted from the lexer.
+// Token captures the type code, text string (optional), and positional
+// information (optional) of tokens emitted from the lexer.
 //
 type Token interface {
 
@@ -16,6 +17,24 @@ type Token interface {
 	// Can be the empty string.
 	//
 	Value() string
+
+	// Line returns the line number, within the source input, that the token originated on.
+	// The definition of a 'line' is implementation-specific.
+	// The field is optional.  If set by the token creator, it should be 1-based.
+	// The value may only represent a best-guess.
+	// A value less < 1 should be interpreted as not set for the token.
+	//
+	Line() int
+
+	// Column returns the column number, relative to line(), that the token originated on.
+	// The definition of a 'line' is implementation-specific.
+	// Some implementations may track column from the beginning of the input (i.e file offset).
+	// The value is generally expected to represent rune count (vs bytes).
+	// The field is optional.  If set by the token creator, it should be 1-based.
+	// The value may only represent a best-guess.
+	// A value less < 1 should be interpreted as not set for the token.
+	//
+	Column() int
 }
 
 // Type identifies the type code of tokens emitted from the lexer.
