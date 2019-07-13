@@ -6,6 +6,7 @@ import (
 	"container/list"
 	"fmt"
 	"io"
+	"log"
 	"strings"
 	"unicode/utf8"
 
@@ -313,10 +314,8 @@ func (l *Lexer) growPeek(n int) bool {
 		if err != nil {
 			switch err {
 			// EOF Error
-			// Treat NoProgress as EOF for now
-			// TODO Decide if ErrNoProgress should be treated as Non-EOF error.
 			//
-			case io.EOF, io.ErrNoProgress:
+			case io.EOF:
 				l.eof = true
 
 			// NON-EOF Error
@@ -324,9 +323,9 @@ func (l *Lexer) growPeek(n int) bool {
 			default:
 				// For lack of a better plan, treat as EOF for now
 				// TODO Think about how to handle non-EOF errors.
-				// TODO Log error.
 				// TODO Expose upstream?
 				//
+				log.Printf("non-EOF error returned from rune reader, treating as EOF: %v", err)
 				l.eof = true
 			}
 		}

@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"io"
+	"log"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -15,6 +17,16 @@ const (
 	TChar
 	TString
 )
+
+// runeReaderErr
+//
+type runeReaderErr struct {
+	err error
+}
+
+func (rr *runeReaderErr) ReadRune() (r rune, size int, err error) {
+	return 0, 0, rr.err
+}
 
 // assertPanic
 //
@@ -660,4 +672,20 @@ func TestClearAfterEOF(t *testing.T) {
 	assertPanic(t, func() {
 		_, _ = LexString("123", fn).Next()
 	}, "Lexer.Clear: No clears allowed after EOF is emitted")
+}
+
+// TestRuneReaderNonEOFError should log an error but otherwise behave as EOF
+//
+func TestRuneReaderNonEOFError(t *testing.T) {
+	sb := &strings.Builder{}
+	log.SetFlags(0)
+	log.SetOutput(sb)
+	fn := func(l *Lexer) Fn {
+		return nil
+	}
+	nexter := LexRuneReader(&runeReaderErr{err: io.ErrUnexpectedEOF}, fn)
+	expectNexterEOF(t, nexter)
+	if log := sb.String(); log != "non-EOF error returned from rune reader, treating as EOF: unexpected EOF\n" {
+		t.Errorf("Lexer.growPeek received wrong log message: '%s'", log)
+	}
 }
