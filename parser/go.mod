@@ -7,8 +7,8 @@ require (
 	//
 	// $ go get github.com/tekwizely/go-parsing/lexer@master
 	//
-	github.com/tekwizely/go-parsing/lexer v0.0.0-20190702221217-85e7753f1d8c
-	github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190622183031-974f82a44df9
+	github.com/tekwizely/go-parsing/lexer v0.0.0-20190714043513-9514494dd58a
+	github.com/tekwizely/go-parsing/lexer/token v0.0.0-20190714025745-8a1a69651c50
 )
 
 // For Local testing against changes that aren't upstream

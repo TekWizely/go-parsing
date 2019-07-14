@@ -31,6 +31,12 @@ func (t *mockToken) Type() token.Type {
 func (t *mockToken) Value() string {
 	return ""
 }
+func (t *mockToken) Line() int {
+	return -1
+}
+func (t *mockToken) Column() int {
+	return -1
+}
 
 // mockNexter creates a token.Nexter from a list of token.Type
 //
