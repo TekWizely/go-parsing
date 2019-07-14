@@ -31,21 +31,15 @@ type Token interface {
 	//
 	Value() string
 
-	// Line returns the line number, within the source input, that the token originated on.
-	// The definition of a 'line' is implementation-specific.
-	// The field is optional.  If set by the token creator, it should be 1-based.
-	// The value may only represent a best-guess.
-	// A value less < 1 should be interpreted as not set for the token.
+	// Line returns the line number, relative to the beginning of the source input, that the token originated on.
+	// Lines should start at 1, but a value of 0 is valid for tokens generated at
+	// the beginning of the input stream before any runes are consumed.
 	//
 	Line() int
 
-	// Column returns the column number, relative to line(), that the token originated on.
-	// The definition of a 'line' is implementation-specific.
-	// Some implementations may track column from the beginning of the input (i.e file offset).
-	// The value is generally expected to represent rune count (vs bytes).
-	// The field is optional.  If set by the token creator, it should be 1-based.
-	// The value may only represent a best-guess.
-	// A value less < 1 should be interpreted as not set for the token.
+	// Column returns the column number, relative to the start of Line(), that the token originated on.
+	// Columns should start at 1, but a value of 0 is valid for tokens generated at
+	// the beginning of a newline before any runes are consumed.
 	//
 	Column() int
 }
