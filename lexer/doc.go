@@ -7,6 +7,7 @@ Some Features of this Lexer:
  * Rune-Centric
  * Infinite Lookahead
  * Mark / Reset Functionality
+ * Line / Column Tracking
 
 
 Initiating a Lexer
@@ -186,6 +187,16 @@ emitted from the lexer:
 		//
 		Next() (token.Token, error)
 	}
+
+
+Tracking Lines and Columns
+
+Lexer tracks lines and columns as runes are consumed, and exposes them in the emitted Tokens.
+
+Lexer uses '\n' as the newline separator when tracking line counts.
+
+NOTE: Error messages with line/column information may reference the start of an attempted token match and not the
+position of the rune(s) that generated the error.
 
 
 Example Programs
