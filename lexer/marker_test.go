@@ -24,7 +24,7 @@ func TestMarkerUnused(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -40,7 +40,7 @@ func TestMarkerValid(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -58,7 +58,7 @@ func TestMarkerImmediateApply(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -77,7 +77,7 @@ func TestMarkerApply(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 

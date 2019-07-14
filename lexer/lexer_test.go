@@ -141,7 +141,7 @@ func TestEmitEmptyType(t *testing.T) {
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, TStart, "")
+	expectNexterNext(t, nexter, TStart, "", 0, 0)
 	expectNexterEOF(t, nexter)
 }
 
@@ -153,7 +153,7 @@ func TestEmitEmptyToken(t *testing.T) {
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, TStart, "")
+	expectNexterNext(t, nexter, TStart, "", 0, 0)
 	expectNexterEOF(t, nexter)
 }
 
@@ -335,7 +335,7 @@ func TestNextEmit1(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("AB", fn)
-	expectNexterNext(t, nexter, TChar, "A")
+	expectNexterNext(t, nexter, TChar, "A", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -352,8 +352,8 @@ func TestNextEmit2(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("AB", fn)
-	expectNexterNext(t, nexter, TChar, "A")
-	expectNexterNext(t, nexter, TChar, "B")
+	expectNexterNext(t, nexter, TChar, "A", 1, 1)
+	expectNexterNext(t, nexter, TChar, "B", 1, 2)
 	expectNexterEOF(t, nexter)
 }
 
@@ -365,7 +365,7 @@ func TestMatchInt(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123", fn)
-	expectNexterNext(t, nexter, TInt, "123")
+	expectNexterNext(t, nexter, TInt, "123", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -378,8 +378,8 @@ func TestMatchIntString(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TInt, "123")
-	expectNexterNext(t, nexter, TString, "ABC")
+	expectNexterNext(t, nexter, TInt, "123", 1, 1)
+	expectNexterNext(t, nexter, TString, "ABC", 1, 4)
 	expectNexterEOF(t, nexter)
 }
 
@@ -391,7 +391,7 @@ func TestMatchString(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -403,7 +403,7 @@ func TestMatchRunes(t *testing.T) {
 		return nil
 	}
 	nexter := LexRunes([]rune("123ABC"), fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -415,7 +415,7 @@ func TestMatchBytes(t *testing.T) {
 		return nil
 	}
 	nexter := LexBytes([]byte("123ABC"), fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -427,7 +427,7 @@ func TestMatchReader(t *testing.T) {
 		return nil
 	}
 	nexter := LexReader(strings.NewReader("123ABC"), fn)
-	expectNexterNext(t, nexter, TString, "123ABC")
+	expectNexterNext(t, nexter, TString, "123ABC", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -453,7 +453,7 @@ func TestClear2(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TInt, "123")
+	expectNexterNext(t, nexter, TInt, "123", 1, 1)
 	expectNexterEOF(t, nexter)
 }
 
@@ -467,7 +467,82 @@ func TestClear3(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123ABC", fn)
-	expectNexterNext(t, nexter, TString, "ABC")
+	expectNexterNext(t, nexter, TString, "ABC", 1, 4)
+	expectNexterEOF(t, nexter)
+}
+
+// TestLineNumber0
+//
+func TestLineNumber0(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectCanPeek(t, l, 1, true)
+		l.EmitType(TUnknown)
+		return nil
+	}
+	nexter := LexString(".", fn)
+	expectNexterNext(t, nexter, TUnknown, "", 0, 0)
+	expectNexterEOF(t, nexter)
+}
+
+// TestLineNumber1
+//
+func TestLineNumber1(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectMatchEmitString(t, l, "1", TInt)
+		return nil
+	}
+	nexter := LexString("1", fn)
+	expectNexterNext(t, nexter, TInt, "1", 1, 1)
+	expectNexterEOF(t, nexter)
+}
+
+// TestLineNumber2
+//
+func TestLineNumber2(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectMatchEmitString(t, l, "\n", TChar)
+		l.EmitType(TUnknown)
+		return nil
+	}
+	nexter := LexString("\n", fn)
+	expectNexterNext(t, nexter, TChar, "\n", 1, 1)
+	expectNexterNext(t, nexter, TUnknown, "", 2, 0)
+	expectNexterEOF(t, nexter)
+}
+
+// TestLineNumber3
+//
+func TestLineNumber3(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectMatchEmitString(t, l, "Hello", TString)
+		expectMatchEmitString(t, l, "\n", TChar)
+		l.EmitType(TUnknown)
+		return nil
+	}
+	nexter := LexString("Hello\n", fn)
+	expectNexterNext(t, nexter, TString, "Hello", 1, 1)
+	expectNexterNext(t, nexter, TChar, "\n", 1, 6)
+	expectNexterNext(t, nexter, TUnknown, "", 2, 0)
+	expectNexterEOF(t, nexter)
+}
+
+// TestLineNumber4
+//
+func TestLineNumber4(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectMatchEmitString(t, l, "\n", TChar)
+		l.EmitType(TUnknown)
+		expectMatchEmitString(t, l, "Hello", TString)
+		expectMatchEmitString(t, l, "\n", TChar)
+		l.EmitType(TUnknown)
+		return nil
+	}
+	nexter := LexString("\nHello\n", fn)
+	expectNexterNext(t, nexter, TChar, "\n", 1, 1)
+	expectNexterNext(t, nexter, TUnknown, "", 2, 0)
+	expectNexterNext(t, nexter, TString, "Hello", 2, 1)
+	expectNexterNext(t, nexter, TChar, "\n", 2, 6)
+	expectNexterNext(t, nexter, TUnknown, "", 3, 0)
 	expectNexterEOF(t, nexter)
 }
 
@@ -541,7 +616,27 @@ func TestEmitError(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123", fn)
-	expectNexterError(t, nexter, "ERROR")
+	expectNexterError(t, nexter, "0:0: ERROR")
+	expectNexterEOF(t, nexter)
+}
+
+// TestEmitErrorLineNumber
+//
+func TestEmitErrorLineNumber(t *testing.T) {
+	fn := func(l *Lexer) Fn {
+		expectMatchEmitString(t, l, "\n", TUnknown)
+		expectMatchEmitString(t, l, "12345", TString)
+		expectMatchEmitString(t, l, "\n", TUnknown)
+		expectMatchEmitString(t, l, "12345", TString)
+		l.EmitError("ERROR")
+		return nil
+	}
+	nexter := LexString("\n12345\n1234567890", fn)
+	expectNexterNext(t, nexter, TUnknown, "\n", 1, 1)
+	expectNexterNext(t, nexter, TString, "12345", 2, 1)
+	expectNexterNext(t, nexter, TUnknown, "\n", 2, 6)
+	expectNexterNext(t, nexter, TString, "12345", 3, 1)
+	expectNexterError(t, nexter, "3:6: ERROR")
 	expectNexterEOF(t, nexter)
 }
 
@@ -553,7 +648,7 @@ func TestEmitErrorf(t *testing.T) {
 		return nil
 	}
 	nexter := LexString("123", fn)
-	expectNexterError(t, nexter, "ERROR: Error 1")
+	expectNexterError(t, nexter, "0:0: ERROR: Error 1")
 	expectNexterEOF(t, nexter)
 }
 

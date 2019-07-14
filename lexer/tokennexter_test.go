@@ -27,7 +27,7 @@ func expectNexterEOF(t *testing.T, nexter token.Nexter) {
 
 // expectNexterNext confirms Next() == (Token{type, value}, nil)
 //
-func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value string) {
+func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value string, line int, column int) {
 	tok, err := nexter.Next()
 	// Used switch per go-critic ifElseChain nag
 	//
@@ -39,7 +39,7 @@ func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value s
 	case tok != nil && err != nil:
 		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, '%s')'", typ, value, tok.Type(), tok.Value(), err.Error())
 	case tok != nil && err == nil && (tok.Type() != typ || tok.Value() != value):
-		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, nil)'", typ, value, tok.Type(), tok.Value())
+		assertToken(t, tok.(*_token), typ, value, line, column, false)
 	}
 }
 
@@ -69,7 +69,7 @@ func TestTokensHasNext1(t *testing.T) {
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, TStart, "")
+	expectNexterNext(t, nexter, TStart, "", 0, 0)
 	expectNexterEOF(t, nexter)
 }
 
@@ -81,7 +81,7 @@ func TestTokensHasNext2(t *testing.T) {
 		return nil
 	}
 	nexter := LexString(".", fn)
-	expectNexterNext(t, nexter, TStart, "")
+	expectNexterNext(t, nexter, TStart, "", 0, 0)
 	expectNexterEOF(t, nexter)
 }
 

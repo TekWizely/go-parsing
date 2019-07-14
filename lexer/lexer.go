@@ -88,6 +88,8 @@ type Lexer struct {
 	cache     *list.List    // Cache of fetched runes, including matched & peeked
 	matchTail *list.Element // Points to last matched element in the cache, nil if no runes matched yet
 	matchLen  int           // Len of match buffer.  Makes growPeek faster when no growth needed
+	line      int           // Input line number
+	column    int           // Input column number (relative to line)
 	nextFn    Fn            // the next lexing function to enter
 	output    *list.List    // Cache of emitted tokens ready for pickup by a parser
 	eof       bool          // Has EOF been reached on the input reader? NOTE Peek buffer may still have runes in it
@@ -225,7 +227,8 @@ func (l *Lexer) EmitError(err string) {
 	}
 	l.clear(false)
 	// TODO This is a tad kludgie - Think of a better way to inject a string into the standard emit flow.
-	l.output.PushBack(newToken(TLexErr, err))
+	err = fmt.Sprintf("%d:%d: %s", l.line, l.column, err)
+	l.output.PushBack(newToken(TLexErr, err, l.line, l.column))
 }
 
 // EmitErrorf Emits a token of type TLexErr with the formatted err string as the token text.
@@ -271,6 +274,8 @@ func newLexer(reader io.RuneReader, start Fn) *Lexer {
 		cache:     list.New(),
 		matchTail: nil,
 		matchLen:  0,
+		line:      0,
+		column:    0,
 		nextFn:    start,
 		output:    list.New(),
 		eof:       false,
@@ -353,7 +358,7 @@ func (l *Lexer) peekHead() *list.Element {
 // If token.Type is TEof, emitText is ignored and treated as false.
 // Panics if EOF already emitted.
 //
-func (l *Lexer) emit(t token.Type, emitText bool) {
+func (l *Lexer) emit(typ token.Type, emitText bool) {
 	// TODO Current tests show this will never be called. Maybe uncomment this once in awhile to confirm :)
 	// // Nothing can be emitted after EOF
 	// // NOTE: This check is a fail-safe and will likely never hit as all public methods check/panic explicitly.
@@ -362,59 +367,69 @@ func (l *Lexer) emit(t token.Type, emitText bool) {
 	// 	panic("Lexer: No further emits allowed after EOF is emitted")
 	// }
 
+	// Fetch/clear the matched token
+	//
+	value, line, column := l.clear(typ != TEof && emitText) // Force-discard on EOF
 	// If emitting EOF
 	//
-	if TEof == t {
-		// Clear the peek buffer, discarding matched runes
+	if typ == TEof {
+		// Reset the peek buffer
 		//
-		l.matchTail = nil
-		l.matchLen = 0
-		l.cache.Init()
-		// Invalidate outstanding markers manually,
-		// avoiding otherwise redundant call to clear()
-		//
-		l.markerID++ // TODO If it ever takes 2+ commands to invalidate markers, then turn into separate method.
+		// assert(l.matchLen == 0)
+		// assert(l.matchTail == nil)
+		l.cache.Init() // TODO May not be strictly necessary
 		// Mark EOF
 		//
 		l.eof = true
 		l.eofOut = true
-		// Emit EOF token
-		//
-		l.output.PushBack(newToken(TEof, ""))
-	} else {
-		s := l.clear(emitText)
-
-		l.output.PushBack(newToken(t, s))
 	}
+
+	l.output.PushBack(newToken(typ, value, line, column))
 }
 
 // clear discards the previously-matched runes, optionally returning them as a
-// string.
+// string, along with their starting line/column within the input.
 // All outstanding markers are invalidated after this call.
 //
-func (l *Lexer) clear(returnText bool) string {
-	var s string
-	if returnText {
-		// Build the token into a string
-		//
-		b := &strings.Builder{}
-		for l.matchLen > 0 {
-			e := l.cache.Front()
-			b.WriteRune(e.Value.(rune))
-			l.cache.Remove(e)
-			l.matchLen--
+func (l *Lexer) clear(returnText bool) (string, int, int) {
+	// For saving matched runes
+	// Stays empty if !returnText
+	//
+	b := &strings.Builder{}
+	// Default values. Will update if matchLen > 0
+	//
+	line, column := l.line, l.column
+	first := false
+	for l.matchLen > 0 {
+		e := l.cache.Front()
+		r := e.Value.(rune)
+		if returnText {
+			b.WriteRune(r)
 		}
-		s = b.String()
-	} else {
-		// Discard runes
+		// Adjust line/column for first line / new line
 		//
-		for l.matchLen > 0 {
-			l.cache.Remove(l.cache.Front())
-			l.matchLen--
+		if l.line == 0 {
+			l.line = 1
 		}
-		s = ""
+		if l.column == 0 {
+			l.column = 1
+		}
+		// If first pass, save line/column
+		//
+		if first {
+			line, column = l.line, l.column
+			first = false
+		}
+		if r == '\n' {
+			l.line++
+			l.column = 0
+		} else {
+			l.column++
+		}
+		l.cache.Remove(e)
+		l.matchLen--
 	}
+	l.matchTail = nil
 	l.markerID++ // Invalidate outstanding markers
-
-	return s
+	return b.String(), line, column
 }

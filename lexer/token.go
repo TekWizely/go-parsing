@@ -23,14 +23,16 @@ const (
 // token is the internal structure that backs the lexer's Token.
 //
 type _token struct {
-	typ   token.Type
-	value string
+	typ    token.Type
+	value  string
+	line   int
+	column int
 }
 
 // newToken
 //
-func newToken(typ token.Type, value string) *_token {
-	return &_token{typ: typ, value: value}
+func newToken(typ token.Type, value string, line int, column int) *_token {
+	return &_token{typ: typ, value: value, line: line, column: column}
 }
 
 // Type implements Token.Type().
@@ -43,6 +45,18 @@ func (t *_token) Type() token.Type {
 //
 func (t *_token) Value() string {
 	return t.value
+}
+
+// Line implements Token.Line().
+//
+func (t *_token) Line() int {
+	return t.line
+}
+
+// Column implements Token.Column().
+//
+func (t *_token) Column() int {
+	return t.column
 }
 
 // eof returns true if the token.Type == TEof.
