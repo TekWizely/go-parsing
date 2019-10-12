@@ -4,7 +4,7 @@ A Multi-Package Go Repo Focused on Text Parsing, with Lexers, Parsers, and Relat
 
 ## Goal
 
-This repo aspires to be the best toolset for creating hand-written lexers and parsers in Golang.
+This repo aspires to be a useful toolset for creating hand-written lexers and parsers in Golang.
 
 ## Multi-Module Repo
 
