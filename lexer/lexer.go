@@ -414,7 +414,7 @@ func (l *Lexer) clear(returnText bool) (string, int, int) {
 		if l.column == 0 {
 			l.column = 1
 		}
-		// If first pass, save line/column
+		// If first pass, re-fetch (possibly adjusted) values
 		//
 		if first {
 			line, column = l.line, l.column
