@@ -38,7 +38,7 @@ func expectNexterNext(t *testing.T, nexter token.Nexter, typ token.Type, value s
 		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received (nil, '%s')'", typ, value, err.Error())
 	case tok != nil && err != nil:
 		t.Errorf("Nexter.Next() expecting ({%d, '%s'}, nil), received ({%d, '%s'}, '%s')'", typ, value, tok.Type(), tok.Value(), err.Error())
-	case tok != nil && err == nil && (tok.Type() != typ || tok.Value() != value):
+	case tok != nil && err == nil && (tok.Type() != typ || tok.Value() != value || tok.Line() != line || tok.Column() != column):
 		assertToken(t, tok.(*_token), typ, value, line, column, false)
 	}
 }
