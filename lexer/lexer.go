@@ -399,7 +399,7 @@ func (l *Lexer) clear(returnText bool) (string, int, int) {
 	// Default values. Will update if matchLen > 0
 	//
 	line, column := l.line, l.column
-	first := false
+	first := true
 	for l.matchLen > 0 {
 		e := l.cache.Front()
 		r := e.Value.(rune)
@@ -414,7 +414,7 @@ func (l *Lexer) clear(returnText bool) (string, int, int) {
 		if l.column == 0 {
 			l.column = 1
 		}
-		// If first pass, save line/column
+		// If first pass, re-fetch (possibly adjusted) values
 		//
 		if first {
 			line, column = l.line, l.column

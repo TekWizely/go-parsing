@@ -133,7 +133,7 @@ func TestLexerFnSkippedWhenNoCanPeek(t *testing.T) {
 	expectNexterEOF(t, nexter)
 }
 
-// TestEmittoken.Ttype
+// TestEmitEmptyType
 //
 func TestEmitEmptyType(t *testing.T) {
 	fn := func(l *Lexer) Fn {
