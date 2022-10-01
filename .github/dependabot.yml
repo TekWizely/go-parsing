@@ -1,0 +1,38 @@
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/lexer"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/lexer/matcher"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/lexer/rangespec"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/lexer/runes"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/lexer/token"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gomod"
+    directory: "/parser"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
